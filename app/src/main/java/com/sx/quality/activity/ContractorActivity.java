@@ -211,7 +211,6 @@ public class ContractorActivity extends BaseActivity {
     @Event({R.id.imgBtnLeft})
     private void onClick(View view){
         switch (view.getId()) {
-            // 返回前一页
             case R.id.imgBtnLeft:
                 this.finish();
                 break;
