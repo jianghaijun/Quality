@@ -146,6 +146,7 @@ public class ContractorActivity extends BaseActivity {
     private void setContractorNode(List<ContractorListBean> contractorBean) {
         try {
             int listSize = contractorBean.size();
+            // 添加节点
             if (contractorBean != null && listSize > 0) {
                 // 创建根节点
                 root = new Node("山西东二环高速公路", "000000");
