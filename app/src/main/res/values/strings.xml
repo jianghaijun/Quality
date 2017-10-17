@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">山西东二环高速公路</string>
+    <string name="app_title">山西东二环高速公路</string>
+
+    <string name="not_network">当前无可用网络!</string>
+
+    <string name="person_setting">个人设置</string>
+    <string name="contractor">承包商</string>
+    <string name="owner">业主</string>
+    <string name="supervision">监理</string>
+    <string name="to_upload_photos">待上传照片</string>
+    <string name="level_one">一级</string>
+    <string name="show_photo">显示图片</string>
+    <string name="up_load">上传</string>
+    <string name="choice_type">选择分类</string>
+
+    <string name="server_exception">服务器异常！</string>
+    <string name="get_data_exception">获取数据失败！</string>
+
+    <string name="upload_context">文件上传中…</string>
+    <string name="picture_source">图片来源</string>
+    <string name="photo_graph">拍照</string>
+    <string name="album">相册</string>
+    <string name="cancel">取消</string>
+    <string name="up_load_now">立即上传</string>
+    <string name="temporarily_reserved">暂时保留</string>
+    <string name="search_condition">请输入检索条件</string>
+    <string name="file_name">文件名称:</string>
+    <string name="file_description">文件描述:</string>
+    <string name="input_file_name">请输入文件名称</string>
+    <string name="input_file_description">请描述文件</string>
+    <string name="query">确认</string>
+    <string name="file_info">描述文件</string>
+    <string name="data_error">服务器返回数据有误!</string>
+
+</resources>

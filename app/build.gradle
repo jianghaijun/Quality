@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+
+configurations.all {
+    resolutionStrategy.force 'com.android.support:support-annotations:23.1.0'
+}
+
+def keystoreFilePath = ''
+def keystorePSW = ''
+def keystoreAlias = ''
+def keystoreAliasPSW = ''
+def keyFile = file('s.keystore.temp')
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+keystoreFilePath = properties.getProperty("keystore.path")
+
+if (keystoreFilePath) {
+    keystorePSW = properties.getProperty("keystore.password")
+    keystoreAlias = properties.getProperty("keystore.alias")
+    keystoreAliasPSW = properties.getProperty("keystore.alias_password")
+    keyFile = file(keystoreFilePath)
+}
+
+android {
+    signingConfigs {
+        debug {
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPSW
+            storeFile keyFile
+            storePassword keystorePSW
+        }
+
+        release {
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPSW
+            storeFile keyFile
+            storePassword keystorePSW
+        }
+    }
+
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "com.sx.quality.activity"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled true
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keyFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+            debuggable false
+        }
+    }
+
+    // 配置打包文件名
+    android.applicationVariants.all {
+        variant -> variant.outputs.each {
+            output -> output.outputFile = new File(output.outputFile.parent, "Quality_v" + defaultConfig.versionName +"_"+buildType.name+ ".apk");
+        }
+    }
+
+}
+
+dependencies {
+    provided fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.zhy:percent-support-extends:1.1.1'
+    compile 'org.xutils:xutils:3.5.0'
+    compile 'com.orhanobut:logger:2.1.1'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.zyao89:zloading:1.0.8'
+    compile 'org.litepal.android:core:1.6.0'
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+
+}

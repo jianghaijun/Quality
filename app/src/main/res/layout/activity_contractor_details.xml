@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.UpLoadPhotosActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="12%" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/thirty"
+        android:layout_margin="@dimen/two_dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@drawable/search_bg">
+
+        <ImageButton
+            android:layout_width="@dimen/twenty_dp"
+            android:layout_height="@dimen/twenty_dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/search" />
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="left|center"
+            android:hint="@string/search_condition"
+            android:paddingLeft="@dimen/five_dp"
+            android:textColor="@color/search_color"
+            android:textSize="@dimen/fourteen_sp" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvContractorDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/upload_photos"
+        android:padding="@dimen/ten_dp"
+        android:scrollbars="none">
+
+    </android.support.v7.widget.RecyclerView>
+</com.zhy.android.percent.support.PercentLinearLayout>

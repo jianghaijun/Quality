@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.MainActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="12%" />
+
+    <com.zhy.android.percent.support.PercentLinearLayout
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        app:layout_widthPercent="80%w">
+
+        <RelativeLayout
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            app:layout_heightPercent="80%h"
+            app:layout_widthPercent="30%w">
+
+            <ImageButton
+                android:id="@+id/imgBtnPersonalSetting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/personal_setting_bg" />
+
+            <com.zhy.android.percent.support.PercentRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/imgViewPersonSetting"
+                    android:layout_width="@dimen/zero_dp"
+                    android:layout_height="@dimen/zero_dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/personal_setting"
+                    app:layout_heightPercent="40%w"
+                    app:layout_widthPercent="40%w" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgViewPersonSetting"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:gravity="center"
+                    android:text="@string/person_setting"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twenty_sp" />
+            </com.zhy.android.percent.support.PercentRelativeLayout>
+        </RelativeLayout>
+
+        <com.zhy.android.percent.support.PercentLinearLayout
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_heightPercent="80%h"
+            app:layout_marginLeftPercent="5%w"
+            app:layout_marginRightPercent="5%w"
+            app:layout_widthPercent="30%w">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/zero_dp"
+                android:background="@null"
+                app:layout_heightPercent="47.5%h"
+                app:layout_marginBottomPercent="2.5%h">
+
+                <ImageButton
+                    android:id="@+id/imgBtnContractor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/contractor_bg" />
+
+                <com.zhy.android.percent.support.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/imgViewContractor"
+                        android:layout_width="@dimen/zero_dp"
+                        android:layout_height="@dimen/zero_dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/contractor"
+                        app:layout_heightPercent="40%w"
+                        app:layout_widthPercent="40%w" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgViewContractor"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:gravity="center"
+                        android:text="@string/contractor"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/twenty_sp" />
+                </com.zhy.android.percent.support.PercentRelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/zero_dp"
+                android:background="@null"
+                app:layout_heightPercent="47.5%h"
+                app:layout_marginTopPercent="2.5%h">
+
+                <ImageButton
+                    android:id="@+id/imgBtnOwner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/owner_bg" />
+
+                <com.zhy.android.percent.support.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/imgViewOwner"
+                        android:layout_width="@dimen/zero_dp"
+                        android:layout_height="@dimen/zero_dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/owner"
+                        app:layout_heightPercent="40%w"
+                        app:layout_widthPercent="40%w" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgViewOwner"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:gravity="center"
+                        android:text="@string/owner"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/twenty_sp" />
+                </com.zhy.android.percent.support.PercentRelativeLayout>
+            </RelativeLayout>
+        </com.zhy.android.percent.support.PercentLinearLayout>
+
+        <com.zhy.android.percent.support.PercentLinearLayout
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_heightPercent="80%h"
+            app:layout_widthPercent="30%w">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/zero_dp"
+                android:background="@null"
+                app:layout_heightPercent="47.5%h"
+                app:layout_marginBottomPercent="2.5%h">
+
+                <ImageButton
+                    android:id="@+id/imgBtnSupervision"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/supervision_bg" />
+
+                <com.zhy.android.percent.support.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/imgViewSupervision"
+                        android:layout_width="@dimen/zero_dp"
+                        android:layout_height="@dimen/zero_dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/supervision"
+                        app:layout_heightPercent="40%w"
+                        app:layout_widthPercent="40%w" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgViewSupervision"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:gravity="center"
+                        android:text="@string/supervision"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/twenty_sp" />
+                </com.zhy.android.percent.support.PercentRelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/zero_dp"
+                android:background="@null"
+                app:layout_heightPercent="47.5%h"
+                app:layout_marginTopPercent="2.5%h">
+
+                <ImageButton
+                    android:id="@+id/imgBtnToUploadPhotos"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/to_upload_photos_bg" />
+
+                <com.zhy.android.percent.support.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/imgViewToUploadPhotos"
+                        android:layout_width="@dimen/zero_dp"
+                        android:layout_height="@dimen/zero_dp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/to_upload_photos"
+                        app:layout_heightPercent="40%w"
+                        app:layout_widthPercent="40%w" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgViewToUploadPhotos"
+                        android:layout_marginTop="@dimen/five_dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/txtSubmitPhone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/to_upload_photos"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/twenty_sp" />
+
+                        <TextView
+                            android:id="@+id/txtSubmitPhoneNum"
+                            android:layout_width="@dimen/twenty_dp"
+                            android:layout_height="@dimen/twenty_dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:layout_toRightOf="@+id/txtSubmitPhone"
+                            android:background="@drawable/design_red_point"
+                            android:gravity="center"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/eight_sp" />
+                    </RelativeLayout>
+
+                </com.zhy.android.percent.support.PercentRelativeLayout>
+
+            </RelativeLayout>
+        </com.zhy.android.percent.support.PercentLinearLayout>
+    </com.zhy.android.percent.support.PercentLinearLayout>
+</com.zhy.android.percent.support.PercentLinearLayout>

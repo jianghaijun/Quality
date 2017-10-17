@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/contractor_list"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.ContractorActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="12%" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:scrollbars="none">
+        <com.sx.quality.view.CustomListView
+            android:id="@+id/lvContractorList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:divider="@color/gray"
+            android:dividerHeight="1dp"
+            android:scrollbars="none" >
+        </com.sx.quality.view.CustomListView>
+    </ScrollView>
+
+</com.zhy.android.percent.support.PercentLinearLayout>

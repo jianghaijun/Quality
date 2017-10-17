@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="main_bg">#0B384F</color>
+    <color name="main_check_bg">#0a2f40</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#D9D9D9</color>
+    <color name="black">#000000</color>
+
+    <!--各人设置-->
+    <color name="person_setting">#64019C</color>
+    <color name="person_setting_check">#5a028c</color>
+    <!--承包商-->
+    <color name="contractor">#368701</color>
+    <color name="contractor_check">#307801</color>
+    <!--业主-->
+    <color name="owner">#AF0140</color>
+    <color name="owner_check">#9f013a</color>
+    <!--监理-->
+    <color name="supervision">#FC9603</color>
+    <color name="supervision_check">#ea8c03</color>
+    <!--待上传照片-->
+    <color name="to_upload_photos">#217AF0</color>
+    <color name="to_upload_photos_check">#1f73e2</color>
+
+    <color name="contractor_list">#FAF0FA</color>
+    <color name="upload_photos">#226F89</color>
+
+    <color name="ml_gray">#ff9e9e9e</color>
+    <color name="ml_red">#ffff0000</color>
+    <!-- 提示框背景 -->
+    <color name="prompt_dialog_bg">#838383</color>
+    <!-- 设置背景 -->
+    <color name="prompt_dialog_reminder_bg">#F2F2F2</color>
+    <!-- 深灰色 -->
+    <color name="dark_grey">#7F7F7F</color>
+
+    !-- 深灰色 -->
+    <color name="search_color">#888888</color>
+
+</resources>

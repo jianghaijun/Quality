@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivUpLoadPhone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/five_dp"
+        android:scaleType="fitXY"/>
+
+    <!--<com.sx.quality.view.MLImageView
+        android:id="@+id/ivUpLoadPhone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        melove:border_color="@color/upload_photos"
+        melove:border_width="4dp"
+        melove:press_alpha="50"
+        melove:press_color="#00ff00"
+        melove:radius="8dp"
+        melove:shape_type="rectangle" />-->
+
+</LinearLayout>
