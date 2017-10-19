@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.SpUtil;
+
 /**
  * 启动界面
  * Created by jack on 2017/10/10.
@@ -28,7 +31,12 @@ public class SplashScreenActivity extends BaseActivity {
      * 启动下一界面
      */
     private void startNextActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+        boolean isLoginFlag = (boolean) SpUtil.get(this, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
+        if (isLoginFlag) {
+            startActivity(new Intent(this, MainActivity.class));
+        } else {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
         this.finish();
     }
 }

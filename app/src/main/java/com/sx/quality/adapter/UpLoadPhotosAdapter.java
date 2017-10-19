@@ -49,7 +49,7 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
         anim.start();
 
         Glide.with(mContext)
-                .load(upLoadPhoneList.get(position).getPictureAddress())
+                .load(upLoadPhoneList.get(position).getThumbPath())
                 .apply(options)
                 .thumbnail(0.1f)
                 .into(holder.ivUpLoadPhone);
@@ -58,6 +58,7 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ShowPhotoActivity.class);
+                intent.putExtra("thumbUrl", upLoadPhoneList.get(position).getThumbPath());
                 intent.putExtra("photoUrl", upLoadPhoneList.get(position).getPictureAddress());
                 intent.putExtra("isUpload", upLoadPhoneList.get(position).getIsToBeUpLoad());
                 mContext.startActivity(intent);

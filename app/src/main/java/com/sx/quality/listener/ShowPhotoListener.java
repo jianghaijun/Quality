@@ -6,5 +6,5 @@ package com.sx.quality.listener;
  */
 
 public interface ShowPhotoListener {
-    void selectWayOrShowPhoto(boolean isShowPhoto, String photoUrl, int isUpLoad);
+    void selectWayOrShowPhoto(boolean isShowPhoto,String thumbUrl, String photoUrl, int isUpLoad);
 }

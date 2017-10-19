@@ -3,11 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2B2B2B"
     tools:context="com.sx.quality.activity.SplashScreenActivity">
+
+    <ImageView
+        android:id="@+id/imgViewThumbPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#2B2B2B"/>
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/imgViewPhoto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#2B2B2B" />
+        android:layout_height="match_parent" />
 </RelativeLayout>

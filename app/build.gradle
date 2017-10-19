@@ -51,7 +51,7 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
         }
 
         release {
@@ -66,9 +66,10 @@ android {
 
     // 配置打包文件名
     android.applicationVariants.all {
-        variant -> variant.outputs.each {
-            output -> output.outputFile = new File(output.outputFile.parent, "Quality_v" + defaultConfig.versionName +"_"+buildType.name+ ".apk");
-        }
+        variant ->
+            variant.outputs.each {
+                output -> output.outputFile = new File(output.outputFile.parent, "Quality_v" + defaultConfig.versionName + "_" + buildType.name + ".apk");
+            }
     }
 
 }
@@ -78,7 +79,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.zhy:percent-support-extends:1.1.1'
@@ -92,5 +93,5 @@ dependencies {
     compile 'com.zyao89:zloading:1.0.8'
     compile 'org.litepal.android:core:1.6.0'
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
-
+    testCompile 'junit:junit:4.12'
 }

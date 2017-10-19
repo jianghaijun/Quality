@@ -8,10 +8,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 获取网络状态权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!--在SD卡中创建与删除文件权限-->
+    <!-- 在SD卡中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS" />
 
     <application
@@ -30,6 +29,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 登录 -->
+        <activity
+            android:name=".LoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
         <!-- 程序主界面 -->
         <activity
             android:name=".MainActivity"
@@ -50,12 +54,13 @@
             android:name=".UpLoadPhotosActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-
+        <!-- 展示照片 -->
         <activity
             android:name=".ShowPhotoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/ImageBrowseTransitionTheme" />
+
     </application>
 
 </manifest>

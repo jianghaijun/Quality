@@ -14,11 +14,20 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
     private int isToBeUpLoad = -1;
     private String pictureId;
     private String pictureDesc;
+    private String thumbPath;
     private String createtime;
     private String nodeId;
     private String pictureName;
     private String pictureNameNoSuffix;
     private String pictureAddress;
+
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
+    }
 
     public String getPictureNameNoSuffix() {
         return pictureNameNoSuffix;

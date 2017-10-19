@@ -273,7 +273,7 @@ public class ContractorDetailsActivity extends BaseActivity {
      */
     private ShowPhotoListener listener = new ShowPhotoListener() {
         @Override
-        public void selectWayOrShowPhoto(boolean isShowPhoto, String photoUrl, int isUpLoad) {
+        public void selectWayOrShowPhoto(boolean isShowPhoto, String thumbUrl, String photoUrl, int isUpLoad) {
             // 点击添加按钮--->选择照片
             if (isShowPhoto) {
                 SelectPhotoWayDialog selectPhotoWayDialog = new SelectPhotoWayDialog(mContext, selectPhotosWayListener);
@@ -282,6 +282,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             } else {
                 // 查看照片
                 Intent intent = new Intent(mContext, ShowPhotoActivity.class);
+                intent.putExtra("thumbUrl", thumbUrl);
                 intent.putExtra("photoUrl", photoUrl);
                 intent.putExtra("isUpload", isUpLoad);
                 startActivity(intent);
@@ -456,6 +457,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             addPhotoBean = new ContractorListPhotosBean();
             addPhotoBean.setPictureAddress(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setNodeId(nodeId);
+            addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setPictureDesc(fileDescription);
             addPhotoBean.setPictureNameNoSuffix(fileName);
             fileName = fileName + ".png";

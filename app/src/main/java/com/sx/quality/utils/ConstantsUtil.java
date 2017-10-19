@@ -8,9 +8,11 @@ public class ConstantsUtil {
     /** 基本路径 */
     public static final String BASE_URL = "http://qyh.weidingplus.com/";
 
-    /** sp_待上传照片 */
-    public static final String WAIT_UP_LOAD_PHOTOS = "WAIT_UP_LOAD_PHOTOS";
+    /** 是否登录成功 */
+    public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";
 
+    /** 登录 */
+    public static final String LOGIN = "login";
     /** 承包商列表 */
     public static final String CONTRACTOR_LIST = "getAllSxZlNodeList";
     /** 获取图片列表 */

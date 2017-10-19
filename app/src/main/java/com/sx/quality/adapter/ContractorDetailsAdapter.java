@@ -67,7 +67,7 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
             Glide.with(mContext).load(R.drawable.add).apply(options).into(holder.ivUpLoadPhone);
         } else {
             Glide.with(mContext)
-                    .load(phoneListBean.get(position).getPictureAddress())
+                    .load(phoneListBean.get(position).getThumbPath())
                     .apply(options)
                     .thumbnail(0.1f)
                     .into(holder.ivUpLoadPhone);
@@ -78,9 +78,9 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
             public void onClick(View v) {
                 // 调用相机或相册
                 if (position == 0) {
-                    listener.selectWayOrShowPhoto(true, "", 0);
+                    listener.selectWayOrShowPhoto(true, "", "", 0);
                 } else {
-                    listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
+                    listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getThumbPath(), phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
                 }
             }
         });
