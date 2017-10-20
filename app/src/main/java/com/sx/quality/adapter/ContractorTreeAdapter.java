@@ -46,19 +46,6 @@ public class ContractorTreeAdapter extends BaseAdapter {
 	}
 
 	/**
-	 *  展开选择项所有父节点
-	 */
-	public void filterAllFatherNode() {
-		alls.clear();
-		for (int i = 0; i < allsCache.size(); i++) {
-			Node n = allsCache.get(i);
-			if (!n.isParentCollapsed() || n.isRoot()) {
-				alls.add(n);
-			}
-		}
-	}
-
-	/**
 	 * 添加节点
 	 * @param node
 	 */
@@ -145,10 +132,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
 			/* 是否叶节点,即没有子节点的节点 */
 			if (!n.isLeaf()) {
 				n.setExpanded(!n.isExpanded());
-				//setExpandLevel(n.getLevel());
-				//filterNode();
-				filterAllFatherNode();
-
+				filterNode();
 				this.notifyDataSetChanged();
 			} else {
 				/*if (n.isUser()) {
@@ -158,9 +142,6 @@ public class ContractorTreeAdapter extends BaseAdapter {
 					n.setCheckBox(true);
 					this.notifyDataSetChanged();
 				}*/
-
-				//n.isLeaf()
-
 				Intent intent = new Intent();
 				intent.putExtra("nodeId", n.getUserId());
 				intent.setClass(mContext,ContractorDetailsActivity.class);
