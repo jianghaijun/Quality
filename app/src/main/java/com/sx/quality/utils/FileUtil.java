@@ -20,18 +20,36 @@ import java.net.URL;
 import static org.xutils.common.util.IOUtil.copy;
 
 /**
- * @author Administrator
- * @time 2017/10/12 0012 21:11
+ *                     _ooOoo_
+ *                    o8888888o
+ *                    88" . "88
+ *                    (| -_- |)
+ *                    O\  =  /O
+ *                 ____/`---'\____
+ *               .'  \\|     |//  `.
+ *              /  \\|||  :  |||//  \
+ *             /  _||||| -:- |||||-  \
+ *             |   | \\\  -  /// |   |
+ *             | \_|  ''\---/''  |   |
+ *             \  .-\__  `-`  ___/-. /
+ *           ___`. .'  /--.--\  `. . __
+ *        ."" '<  `.___\_<|>_/___.'  >'"".
+ *       | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *       \  \ `-.   \_ __\ /__ _/   .-` /  /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ *                     `=---='
+ * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * 			   佛祖保佑       永无BUG
+ *       Created by dell on 2017/10/20 17:41
  */
 
 public class FileUtil {
 
     /**
-     * Try to return the absolute file path from the given Uri
      *
      * @param context
      * @param uri
-     * @return the file path or null
+     * @return
      */
     public static String getRealFilePath(final Context context, final Uri uri ) {
         if ( null == uri ) return null;
@@ -87,14 +105,27 @@ public class FileUtil {
      * @param image
      */
     public static Bitmap compressBitmap(Bitmap image) {
-        // 最大图片大小 100KB
-        int maxSize = 100;
+        // 最大图片大小 500KB
+        int maxSize = 500;
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
+
+        int imgWidth = image.getWidth();
+        int imgHeight = image.getHeight();
+
+        // 压缩图片到1280*960
+        /*if (imgWidth < 960) {
+            imgWidth = 960;
+        }
+
+        if (imgHeight < 1280) {
+            imgHeight = 1280;
+        }*/
+
         // 压缩Bitmap到对应尺寸
-        Bitmap result = Bitmap.createBitmap(image.getWidth() / ratio, image.getHeight() / ratio, Bitmap.Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(imgWidth / ratio, imgHeight / ratio, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
-        Rect rect = new Rect(0, 0, image.getWidth() / ratio, image.getHeight() / ratio);
+        Rect rect = new Rect(0, 0, imgWidth / ratio, imgHeight / ratio);
         canvas.drawBitmap(image, null, rect, null);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

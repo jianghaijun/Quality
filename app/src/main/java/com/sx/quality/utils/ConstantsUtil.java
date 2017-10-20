@@ -12,7 +12,7 @@ public class ConstantsUtil {
     public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";
 
     /** 登录 */
-    public static final String LOGIN = "login";
+    public static final String LOGIN = "loginApi";
     /** 承包商列表 */
     public static final String CONTRACTOR_LIST = "getAllSxZlNodeList";
     /** 获取图片列表 */

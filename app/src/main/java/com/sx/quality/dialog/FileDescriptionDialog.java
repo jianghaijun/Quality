@@ -19,9 +19,7 @@ import com.sx.quality.utils.ToastUtil;
  */
 
 public class FileDescriptionDialog extends Dialog implements View.OnClickListener {
-    private EditText edtFileName;
-    private EditText edtFileDescription;
-    private Button btnQuery, btnCancel;
+    private EditText edtName1, edtName2, edtName3, edtName4;
     private Context mContext;
 
     private FileInfoListener fileInfoListener;
@@ -38,10 +36,13 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_description);
 
-        edtFileName = (EditText) findViewById(R.id.edtFileName);
-        edtFileDescription = (EditText) findViewById(R.id.edtFileDescription);
-        btnQuery = (Button) findViewById(R.id.btnQuery);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
+        edtName1 = (EditText) findViewById(R.id.edtName1);
+        edtName2 = (EditText) findViewById(R.id.edtName2);
+        edtName3 = (EditText) findViewById(R.id.edtName3);
+        edtName4 = (EditText) findViewById(R.id.edtName4);
+
+        Button btnQuery = (Button) findViewById(R.id.btnQuery);
+        Button btnCancel = (Button) findViewById(R.id.btnCancel);
 
         btnQuery.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
@@ -52,23 +53,31 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
         switch (v.getId()) {
             // 立即上传
             case R.id.btnQuery:
-                if (edtFileName.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入文件名称!");
-                } else if (edtFileDescription.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入描述文件信息!");
+                if (edtName1.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name1!");
+                } else if (edtName2.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name2!");
+                } else if (edtName3.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name3!");
+                } else if (edtName4.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name4!");
                 } else {
                     dismiss();
-                    fileInfoListener.fileInfo(edtFileName.getText().toString().trim(), edtFileDescription.getText().toString().trim(), true);
+                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName1.getText().toString().trim(), true);
                 }
                 break;
             case R.id.btnCancel:
-                if (edtFileName.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入文件名称!");
-                } else if (edtFileDescription.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入描述文件信息!");
+                if (edtName1.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name1!");
+                } else if (edtName2.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name2!");
+                } else if (edtName3.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name3!");
+                } else if (edtName4.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请输入Name4!");
                 } else {
                     dismiss();
-                    fileInfoListener.fileInfo(edtFileName.getText().toString().trim(), edtFileDescription.getText().toString().trim(), false);
+                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName1.getText().toString().trim(), false);
                 }
                 break;
         }

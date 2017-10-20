@@ -23,19 +23,67 @@ public class ImageUtil {
      *
      * @param context
      * @param src
-     * @param pictureName
-     *@param pictureDesc
      */
-    public static Bitmap createWaterMaskLeftTop(Context context, Bitmap src, String pictureName, String pictureDesc, String createTime) {
-        return createWaterMaskBitmap(src, context, pictureName, pictureDesc, createTime);
+    public static Bitmap createWaterMaskLeftTop(Context context, Bitmap src, String level_1, String level_2, String level_3, String createTime) {
+        return createWaterMaskBitmap(src, context, level_1, level_2, level_3, createTime);
     }
 
-    private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String pictureName, String pictureDesc, String createTime) {
+    private static Bitmap createWaterMaskBitmap(Bitmap src, Bitmap watermark, int paddingLeft, int paddingTop) {
         if (src == null) {
             return null;
         }
         int width = src.getWidth();
-        int height = src.getHeight() + 310;
+        int height = src.getHeight();
+        //创建一个bitmap
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        //将该图片作为画布
+        Canvas canvas = new Canvas(newBitmap);
+        //在画布 0，0坐标上开始绘制原始图片
+        canvas.drawBitmap(src, 0, 0, null);
+        //在画布上绘制水印图片
+        canvas.drawBitmap(watermark, paddingLeft, paddingTop, null);
+        // 保存
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        // 存储
+        canvas.restore();
+        return newBitmap;
+    }
+
+    private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String level_1, String level_2, String level_3, String createTime) {
+        if (src == null) {
+            return null;
+        }
+
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        // 创建水印为原图三分之一1280*960画布
+        Bitmap watermarkBitmap = Bitmap.createBitmap(src.getWidth() / 5 * 3, src.getHeight() / 3, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(watermarkBitmap);
+        canvas.drawColor(Color.rgb(1, 107, 94));
+
+        // 添加文字
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "东二环高速", 20, Color.WHITE, 10, 10);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_1, 20, Color.WHITE, 10, 40);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_2, 20, Color.WHITE, 10, 70);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_3, 20, Color.WHITE, 10, 100);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, createTime, 20, Color.WHITE, 10, 130);
+
+        // 创建一个新的和SRC长度宽度一样的位图
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        // 将该图片作为画布
+        canvas = new Canvas(newBitmap);
+        // 在画布 0，0坐标上开始绘制原始图片
+        canvas.drawBitmap(src, 0, 0, null);
+        //在画布上绘制水印图片
+        canvas.drawBitmap(watermarkBitmap, src.getWidth() - watermarkBitmap.getWidth(), src.getHeight() - watermarkBitmap.getHeight(), null);
+        // 保存
+        canvas.save(Canvas.ALL_SAVE_FLAG);
+        // 存储
+        canvas.restore();
+
+        /*int width = src.getWidth();
+        int height = src.getHeight();
         // 创建一个bitmap
         // 创建一个新的和SRC长度宽度一样的位图
         Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -68,7 +116,7 @@ public class ImageUtil {
         // 保存
         canvas.save(Canvas.ALL_SAVE_FLAG);
         // 存储
-        canvas.restore();
+        canvas.restore();*/
         return newBitmap;
     }
 
@@ -91,6 +139,22 @@ public class ImageUtil {
         Rect bounds = new Rect();
         paint.getTextBounds(text, 0, text.length(), bounds);
         return drawTextToBitmap(context, bitmap, text, paint, bounds, dp2px(context, paddingLeft), bitmap.getHeight() - dp2px(context, paddingBottom));
+    }
+
+    /**
+     * 给图片添加文字到左上角
+     * @param context
+     * @param bitmap
+     * @param text
+     * @return
+     */
+    public static Bitmap drawTextToLeftTop(Context context, Bitmap bitmap, String text, int size, int color, int paddingLeft, int paddingTop) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(color);
+        paint.setTextSize(dp2px(context, size));
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return drawTextToBitmap(context, bitmap, text, paint, bounds, dp2px(context, paddingLeft),  dp2px(context, paddingTop) + bounds.height());
     }
 
     //图片上绘制文字

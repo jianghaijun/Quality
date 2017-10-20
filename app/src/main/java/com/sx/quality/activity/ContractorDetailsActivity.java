@@ -397,8 +397,6 @@ public class ContractorDetailsActivity extends BaseActivity {
 
                     // 填写图片信息
                     FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, fileInfoListener);
-                    fileDescriptionDialog.setCancelable(false);
-                    fileDescriptionDialog.setCanceledOnTouchOutside(false);
                     fileDescriptionDialog.show();
                     break;
                 default:
@@ -417,7 +415,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             // 压缩图片
             bitmap = FileUtil.compressBitmap(bitmap);
             // 在图片上添加水印
-            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, addPhotoBean.getPictureNameNoSuffix(), addPhotoBean.getPictureDesc(), addPhotoBean.getCreatetime());
+            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, addPhotoBean.getPictureNameNoSuffix(), addPhotoBean.getPictureDesc(), addPhotoBean.getPictureDesc(), addPhotoBean.getCreatetime());
             // 保存到SD卡指定文件夹下
             saveBitmapFile(bitmap, fileUrlName);
             return null;

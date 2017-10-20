@@ -11,6 +11,7 @@
     tools:context="com.sx.quality.activity.LoginActivity">
 
     <ImageView
+        android:id="@+id/imgLogo"
         android:layout_width="@dimen/one_hundred_dp"
         android:layout_height="@dimen/one_hundred_dp"
         android:layout_gravity="center_horizontal"

@@ -142,6 +142,10 @@ public class ContractorTreeAdapter extends BaseAdapter {
 					n.setCheckBox(true);
 					this.notifyDataSetChanged();
 				}*/
+
+				//n.isLeaf()
+				setExpandLevel(n.getLevel());
+
 				Intent intent = new Intent();
 				intent.putExtra("nodeId", n.getUserId());
 				intent.setClass(mContext,ContractorDetailsActivity.class);

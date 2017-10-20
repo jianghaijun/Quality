@@ -13,7 +13,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
-        app:layout_heightPercent="70%h"
+        app:layout_heightPercent="80%h"
         app:layout_widthPercent="101%w">
 
         <RelativeLayout
@@ -21,17 +21,17 @@
             android:layout_height="0dp"
             android:background="@color/prompt_dialog_reminder_bg"
             android:padding="1dp"
-            app:layout_heightPercent="25%">
+            app:layout_heightPercent="17%">
 
             <TextView
                 android:id="@+id/txtTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="left|center"
-                android:text="@string/file_info"
                 android:paddingLeft="10dp"
-                android:textSize="@dimen/twenty_sp"
-                android:textColor="@color/black" />
+                android:text="@string/file_info"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twenty_sp" />
         </RelativeLayout>
 
         <LinearLayout
@@ -39,7 +39,7 @@
             android:layout_height="0dp"
             android:background="@color/white"
             android:orientation="vertical"
-            app:layout_heightPercent="45%">
+            app:layout_heightPercent="60%">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                 android:padding="1dp">
 
                 <TextView
-                    android:id="@+id/txtFileName"
+                    android:id="@+id/txtName1"
                     android:layout_width="@dimen/one_hundred_dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -57,10 +57,10 @@
                     android:textSize="@dimen/twenty_sp" />
 
                 <EditText
-                    android:id="@+id/edtFileName"
+                    android:id="@+id/edtName1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/txtFileName"
+                    android:layout_toRightOf="@+id/txtName1"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_name"
@@ -75,7 +75,7 @@
                 android:padding="1dp">
 
                 <TextView
-                    android:id="@+id/txtFileDescription"
+                    android:id="@+id/txtName2"
                     android:layout_width="@dimen/one_hundred_dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -83,13 +83,67 @@
                     android:textSize="@dimen/twenty_sp" />
 
                 <EditText
-                    android:id="@+id/edtFileDescription"
+                    android:id="@+id/edtName2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/txtFileDescription"
+                    android:layout_toRightOf="@+id/txtName2"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_description"
+                    android:paddingLeft="@dimen/ten_dp"
+                    android:textSize="@dimen/twenty_sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/five_dp"
+                android:layout_weight="1"
+                android:padding="1dp">
+
+                <TextView
+                    android:id="@+id/txtName3"
+                    android:layout_width="@dimen/one_hundred_dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/file_name"
+                    android:textSize="@dimen/twenty_sp" />
+
+                <EditText
+                    android:id="@+id/edtName3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/txtName3"
+                    android:background="@drawable/search_bg"
+                    android:gravity="left|center"
+                    android:hint="@string/input_file_name"
+                    android:paddingLeft="@dimen/ten_dp"
+                    android:textSize="@dimen/twenty_sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/five_dp"
+                android:layout_weight="1"
+                android:padding="1dp">
+
+                <TextView
+                    android:id="@+id/txtName4"
+                    android:layout_width="@dimen/one_hundred_dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/file_name"
+                    android:textSize="@dimen/twenty_sp" />
+
+                <EditText
+                    android:id="@+id/edtName4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/txtName4"
+                    android:background="@drawable/search_bg"
+                    android:gravity="left|center"
+                    android:hint="@string/input_file_name"
                     android:paddingLeft="@dimen/ten_dp"
                     android:textSize="@dimen/twenty_sp" />
             </RelativeLayout>
@@ -100,16 +154,15 @@
             android:layout_height="0dp"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:padding="10dp"
-            app:layout_heightPercent="30%">
-
-
+            android:padding="5dp"
+            app:layout_heightPercent="23%">
 
             <Button
                 android:id="@+id/btnCancel"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/twenty_dp"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_yellow"
@@ -123,6 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/five_dp"
+                android:layout_marginRight="@dimen/twenty_dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_yellow"
                 android:text="@string/up_load_now"

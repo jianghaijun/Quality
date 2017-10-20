@@ -2,14 +2,18 @@ package com.sx.quality.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.SpUtil;
@@ -32,7 +36,27 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * 登录界面
+ *                     _ooOoo_
+ *                    o8888888o
+ *                    88" . "88
+ *                    (| -_- |)
+ *                    O\  =  /O
+ *                 ____/`---'\____
+ *               .'  \\|     |//  `.
+ *              /  \\|||  :  |||//  \
+ *             /  _||||| -:- |||||-  \
+ *             |   | \\\  -  /// |   |
+ *             | \_|  ''\---/''  |   |
+ *             \  .-\__  `-`  ___/-. /
+ *           ___`. .'  /--.--\  `. . __
+ *        ."" '<  `.___\_<|>_/___.'  >'"".
+ *       | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *       \  \ `-.   \_ __\ /__ _/   .-` /  /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ *                     `=---='
+ * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * 			   佛祖保佑       永无BUG
+ *       Created by dell on 2017/10/20 14:13
  */
 public class LoginActivity extends BaseActivity {
     @ViewInject(R.id.edtUserName)
@@ -40,6 +64,10 @@ public class LoginActivity extends BaseActivity {
     @ViewInject(R.id.edtUserPassWord)
     private EditText edtUserPassWord;
     private Context mContext;
+    @ViewInject(R.id.imgLogo)
+    private ImageView imgLogo;
+
+    private boolean isLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +75,9 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         x.view().inject(this);
         mContext = this;
+
+        RequestOptions options = new RequestOptions().circleCrop();
+        Glide.with(this).load(R.drawable.add).apply(options).into(imgLogo);
     }
 
     @Event(R.id.btnLogin)
@@ -58,7 +89,10 @@ public class LoginActivity extends BaseActivity {
                 } else if (TextUtils.isEmpty(edtUserPassWord.getText().toString().trim())) {
                     ToastUtil.showShort(this, getString(R.string.please_input_user_password));
                 } else {
-                    Login();
+                    if (!isLogin) {
+                        isLogin = true;
+                        Login ();
+                    }
                 }
                 break;
         }
@@ -73,8 +107,8 @@ public class LoginActivity extends BaseActivity {
         OkHttpClient client = new OkHttpClient();
         JSONObject object = new JSONObject();
         try {
-            object.put("userName", edtUserName.getText().toString().trim());
-            object.put("userPassword", edtUserPassWord.getText().toString().trim());
+            object.put("name", edtUserName.getText().toString().trim());
+            object.put("password", edtUserPassWord.getText().toString().trim());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -89,23 +123,40 @@ public class LoginActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isLogin = false;
                         LoadingUtils.hideLoading();
-                        ToastUtil.showLong(mContext, getString(R.string.server_exception));
+                        ToastUtil.showShort(mContext, getString(R.string.server_exception));
                     }
                 });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                /*Gson gson = new Gson();
-                String jsonData = response.body().string().toString();*/
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        LoadingUtils.hideLoading();
-                        LoginSuccessful();
-                    }
-                });
+                Gson gson = new Gson();
+                String jsonData = response.body().string().toString();
+                Logger.addLogAdapter(new AndroidLogAdapter());
+                Logger.d(jsonData);
+
+                LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                if (loginModel.isSuccess()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LoadingUtils.hideLoading();
+                            LoginSuccessful();
+                            isLogin = false;
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            isLogin = false;
+                            LoadingUtils.hideLoading();
+                            ToastUtil.showShort(mContext, getString(R.string.login_error));
+                        }
+                    });
+                }
             }
         });
     }
