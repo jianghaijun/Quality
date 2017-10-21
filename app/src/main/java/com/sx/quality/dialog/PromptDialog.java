@@ -19,8 +19,8 @@ import com.sx.quality.listener.ChoiceListener;
 
 public class PromptDialog extends Dialog implements View.OnClickListener {
     private ChoiceListener choiceListener;
-    private Button btnLeft, btnRight;
-    private TextView txtTitle, txtContext;
+
+
     private String sTitle, sContext, sLeftText, sRightText;
 
     /**
@@ -47,11 +47,11 @@ public class PromptDialog extends Dialog implements View.OnClickListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_prompt);
 
-        btnRight = (Button) findViewById(R.id.query_setting_btn);
-        btnLeft = (Button) findViewById(R.id.close_setting_btn);
+        Button btnRight = (Button) findViewById(R.id.query_setting_btn);
+        Button btnLeft = (Button) findViewById(R.id.close_setting_btn);
 
-        txtTitle = (TextView) findViewById(R.id.txtTitle);
-        txtContext = (TextView) findViewById(R.id.txtContext);
+        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
+        TextView txtContext = (TextView) findViewById(R.id.txtContext);
 
         txtTitle.setText(sTitle);
         txtContext.setText(sContext);

@@ -6,5 +6,5 @@ package com.sx.quality.listener;
  */
 
 public interface FileInfoListener {
-    void fileInfo(String fileName, String fileDescription, boolean isUploadNow);
+    void fileInfo(String engineeringName, String rootNodeName, String parentNodeName, String nodeName, boolean isUploadNow);
 }

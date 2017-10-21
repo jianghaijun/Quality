@@ -17,8 +17,6 @@ import com.sx.quality.listener.ChoiceListener;
  * @author JiangHaiJun
  */
 public class SelectPhotoWayDialog extends Dialog implements View.OnClickListener {
-	private Button btnCancel;
-	private TextView txtPhotograph, txtAlbum;
 	private ChoiceListener selectListener;
 	
 	public SelectPhotoWayDialog(Context context, ChoiceListener selectListener) {
@@ -32,10 +30,10 @@ public class SelectPhotoWayDialog extends Dialog implements View.OnClickListener
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.dialog_select_photos_way);
 
-		btnCancel = (Button) findViewById(R.id.btnCancel);
+        Button btnCancel = (Button) findViewById(R.id.btnCancel);
 
-		txtAlbum = (TextView) findViewById(R.id.txtAlbum);
-		txtPhotograph = (TextView) findViewById(R.id.txtPhotograph);
+        TextView txtAlbum = (TextView) findViewById(R.id.txtAlbum);
+        TextView txtPhotograph = (TextView) findViewById(R.id.txtPhotograph);
 
 		btnCancel.setOnClickListener(this);
 		txtAlbum.setOnClickListener(this);

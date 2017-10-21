@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/prompt_dialog_bg"
-    android:orientation="vertical">
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:background="@color/prompt_dialog_bg"
+                                                     android:orientation="vertical">
 
     <com.zhy.android.percent.support.PercentLinearLayout
         android:layout_width="0dp"
@@ -31,7 +31,7 @@
                 android:paddingLeft="10dp"
                 android:text="@string/file_info"
                 android:textColor="@color/black"
-                android:textSize="@dimen/twenty_sp" />
+                android:textSize="@dimen/twenty_sp"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -54,18 +54,19 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/file_name"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
 
                 <EditText
                     android:id="@+id/edtName1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/ten_dp"
                     android:layout_toRightOf="@+id/txtName1"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_name"
                     android:paddingLeft="@dimen/ten_dp"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -80,18 +81,19 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/file_description"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
 
                 <EditText
                     android:id="@+id/edtName2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/ten_dp"
                     android:layout_toRightOf="@+id/txtName2"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_description"
                     android:paddingLeft="@dimen/ten_dp"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -107,18 +109,19 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/file_name"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
 
                 <EditText
                     android:id="@+id/edtName3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/ten_dp"
                     android:layout_toRightOf="@+id/txtName3"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_name"
                     android:paddingLeft="@dimen/ten_dp"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -134,18 +137,19 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/file_name"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
 
                 <EditText
                     android:id="@+id/edtName4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/ten_dp"
                     android:layout_toRightOf="@+id/txtName4"
                     android:background="@drawable/search_bg"
                     android:gravity="left|center"
                     android:hint="@string/input_file_name"
                     android:paddingLeft="@dimen/ten_dp"
-                    android:textSize="@dimen/twenty_sp" />
+                    android:textSize="@dimen/twenty_sp"/>
             </RelativeLayout>
         </LinearLayout>
 
@@ -168,7 +172,7 @@
                 android:background="@drawable/btn_yellow"
                 android:text="@string/temporarily_reserved"
                 android:textColor="@color/white"
-                android:textSize="@dimen/twenty_sp" />
+                android:textSize="@dimen/twenty_sp"/>
 
             <Button
                 android:id="@+id/btnQuery"
@@ -181,7 +185,7 @@
                 android:background="@drawable/btn_yellow"
                 android:text="@string/up_load_now"
                 android:textColor="@color/white"
-                android:textSize="@dimen/twenty_sp" />
+                android:textSize="@dimen/twenty_sp"/>
         </LinearLayout>
     </com.zhy.android.percent.support.PercentLinearLayout>
 

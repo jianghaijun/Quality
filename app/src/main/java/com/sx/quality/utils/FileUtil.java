@@ -114,13 +114,13 @@ public class FileUtil {
         int imgHeight = image.getHeight();
 
         // 压缩图片到1280*960
-        /*if (imgWidth < 960) {
+        if (imgWidth < 960) {
             imgWidth = 960;
         }
 
         if (imgHeight < 1280) {
             imgHeight = 1280;
-        }*/
+        }
 
         // 压缩Bitmap到对应尺寸
         Bitmap result = Bitmap.createBitmap(imgWidth / ratio, imgHeight / ratio, Bitmap.Config.ARGB_8888);

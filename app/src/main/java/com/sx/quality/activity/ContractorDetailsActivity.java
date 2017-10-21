@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -93,7 +94,7 @@ public class ContractorDetailsActivity extends BaseActivity {
     private Uri uri = null;
     private String fileUrlName;
 
-    private String nodeId;
+    private String nodeId, rootNodeName, parentNodeName, nodeName;
     private boolean uploadNow = false;
     private ContractorListPhotosBean addPhotoBean;
     private List<ContractorListPhotosBean> upLoadNowList;
@@ -115,9 +116,12 @@ public class ContractorDetailsActivity extends BaseActivity {
         }
 
         nodeId = getIntent().getStringExtra("nodeId");
+        rootNodeName = getIntent().getStringExtra("rootNodeName");
+        parentNodeName = getIntent().getStringExtra("parentNodeName");
+        nodeName = getIntent().getStringExtra("nodeName");
 
         imgBtnLeft.setVisibility(View.VISIBLE);
-        imgBtnLeft.setImageDrawable(getResources().getDrawable(R.drawable.back_btn));
+        imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.show_photo);
         /*txtRight.setVisibility(View.VISIBLE);
         txtRight.setText(R.string.choice_type);*/
@@ -396,7 +400,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
                     // 填写图片信息
-                    FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, fileInfoListener);
+                    FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, parentNodeName, nodeName, fileInfoListener);
                     fileDescriptionDialog.show();
                     break;
                 default:
@@ -408,14 +412,14 @@ public class ContractorDetailsActivity extends BaseActivity {
     /**
      * 将照片存储到SD卡
      */
-    private class StorageTask extends AsyncTask<Void, Void, Void> {
+    private class StorageTask extends AsyncTask<String, Void, Void> {
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             Bitmap bitmap = BitmapFactory.decodeFile(FileUtil.getRealFilePath(mContext, uri));
             // 压缩图片
             bitmap = FileUtil.compressBitmap(bitmap);
             // 在图片上添加水印
-            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, addPhotoBean.getPictureNameNoSuffix(), addPhotoBean.getPictureDesc(), addPhotoBean.getPictureDesc(), addPhotoBean.getCreatetime());
+            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[0], params[1], params[2], params[3], addPhotoBean.getCreatetime());
             // 保存到SD卡指定文件夹下
             saveBitmapFile(bitmap, fileUrlName);
             return null;
@@ -438,6 +442,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                 upLoadNow.setCanceledOnTouchOutside(false);
                 upLoadNow.show();
             } else {
+                LoadingUtils.hideLoading();
                 if (null != adapter) {
                     adapter.notifyDataSetChanged();
                 }
@@ -450,28 +455,26 @@ public class ContractorDetailsActivity extends BaseActivity {
      */
     private FileInfoListener fileInfoListener = new FileInfoListener() {
         @Override
-        public void fileInfo(String fileName, String fileDescription, boolean isUploadNow) {
+        public void fileInfo(String engineeringName, String rootNodeName, String parentNodeName, String nodeName, boolean isUploadNow) {
+            LoadingUtils.showLoading(mContext);
             // 向LitePal数据库中添加一条数据
             addPhotoBean = new ContractorListPhotosBean();
             addPhotoBean.setPictureAddress(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setNodeId(nodeId);
             addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
-            addPhotoBean.setPictureDesc(fileDescription);
-            addPhotoBean.setPictureNameNoSuffix(fileName);
-            fileName = fileName + ".png";
-            addPhotoBean.setPictureName(fileName);
+            addPhotoBean.setPictureDesc(nodeName); //描述换成nodeName
+            addPhotoBean.setPictureName(fileUrlName);
             addPhotoBean.setCreatetime(DataUtils.getCurrentData());
-
+            String[] strings = new String[]{engineeringName, rootNodeName, parentNodeName, nodeName};
             if (isUploadNow) {
                 upLoadNowList = new ArrayList<>();
                 upLoadNowList.add(addPhotoBean);
                 addPhotoBean.save();
                 // 添加图片按钮
                 listPhotosBeen.add(1, addPhotoBean);
-                LoadingUtils.showLoading(mContext);
                 uploadNow = true;
                 // 异步将图片存储到SD卡指定文件夹下
-                new StorageTask().execute();
+                new StorageTask().execute(strings);
             } else {
                 addPhotoBean.setIsToBeUpLoad(1);
                 addPhotoBean.save();
@@ -480,7 +483,7 @@ public class ContractorDetailsActivity extends BaseActivity {
 
                 uploadNow = false;
                 // 异步将图片存储到SD卡指定文件夹下
-                new StorageTask().execute();
+                new StorageTask().execute(strings);
             }
         }
     };

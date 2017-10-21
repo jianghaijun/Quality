@@ -51,8 +51,6 @@ public class ContractorActivity extends BaseActivity {
 
     private Context mContext;
 
-    private Node root;
-    private ContractorTreeAdapter ta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,14 +147,14 @@ public class ContractorActivity extends BaseActivity {
             // 添加节点
             if (contractorBean != null && listSize > 0) {
                 // 创建根节点
-                root = new Node("山西东二环高速公路", "000000");
+                Node root = new Node("山西东二环高速公路", "000000");
                 root.setUser(false);
 
                 for (int i = 0; i < listSize; i++) {
                     getNode(contractorBean.get(i), root);
                 }
 
-                ta = new ContractorTreeAdapter(this, root);
+                ContractorTreeAdapter ta = new ContractorTreeAdapter(this, root);
 				/* 设置展开和折叠时图标 */
                 ta.setExpandedCollapsedIcon(R.drawable.reduce, R.drawable.plus);
 				/* 设置默认展开级别 */

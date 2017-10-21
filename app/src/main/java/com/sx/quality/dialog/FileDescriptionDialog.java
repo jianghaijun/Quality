@@ -20,13 +20,18 @@ import com.sx.quality.utils.ToastUtil;
 
 public class FileDescriptionDialog extends Dialog implements View.OnClickListener {
     private EditText edtName1, edtName2, edtName3, edtName4;
+    private String rootNodeName, parentNodeName, nodeName;
+
     private Context mContext;
 
     private FileInfoListener fileInfoListener;
 
-    public FileDescriptionDialog(@NonNull Context mContext, FileInfoListener fileInfoListener) {
+    public FileDescriptionDialog(@NonNull Context mContext, String rootNodeName, String parentNodeName, String nodeName, FileInfoListener fileInfoListener) {
         super(mContext);
         this.mContext = mContext;
+        this.rootNodeName = rootNodeName;
+        this.parentNodeName = parentNodeName;
+        this.nodeName = nodeName;
         this.fileInfoListener = fileInfoListener;
     }
 
@@ -40,6 +45,11 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
         edtName2 = (EditText) findViewById(R.id.edtName2);
         edtName3 = (EditText) findViewById(R.id.edtName3);
         edtName4 = (EditText) findViewById(R.id.edtName4);
+
+        edtName1.setText("东二环高速公路");
+        edtName2.setText(rootNodeName);
+        edtName3.setText(parentNodeName);
+        edtName4.setText(nodeName);
 
         Button btnQuery = (Button) findViewById(R.id.btnQuery);
         Button btnCancel = (Button) findViewById(R.id.btnCancel);
@@ -63,7 +73,7 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
                     ToastUtil.showShort(mContext, "请输入Name4!");
                 } else {
                     dismiss();
-                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName1.getText().toString().trim(), true);
+                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName2.getText().toString().trim(), edtName3.getText().toString().trim(), edtName4.getText().toString().trim(), true);
                 }
                 break;
             case R.id.btnCancel:
@@ -77,7 +87,7 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
                     ToastUtil.showShort(mContext, "请输入Name4!");
                 } else {
                     dismiss();
-                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName1.getText().toString().trim(), false);
+                    fileInfoListener.fileInfo(edtName1.getText().toString().trim(), edtName2.getText().toString().trim(), edtName3.getText().toString().trim(), edtName4.getText().toString().trim(), false);
                 }
                 break;
         }

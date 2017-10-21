@@ -24,8 +24,8 @@ public class ImageUtil {
      * @param context
      * @param src
      */
-    public static Bitmap createWaterMaskLeftTop(Context context, Bitmap src, String level_1, String level_2, String level_3, String createTime) {
-        return createWaterMaskBitmap(src, context, level_1, level_2, level_3, createTime);
+    public static Bitmap createWaterMaskLeftTop(Context context, Bitmap src, String level_0, String level_1, String level_2, String level_3, String createTime) {
+        return createWaterMaskBitmap(src, context, level_0, level_1, level_2, level_3, createTime);
     }
 
     private static Bitmap createWaterMaskBitmap(Bitmap src, Bitmap watermark, int paddingLeft, int paddingTop) {
@@ -49,7 +49,7 @@ public class ImageUtil {
         return newBitmap;
     }
 
-    private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String level_1, String level_2, String level_3, String createTime) {
+    private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String level_0, String level_1, String level_2, String level_3, String createTime) {
         if (src == null) {
             return null;
         }
@@ -63,7 +63,7 @@ public class ImageUtil {
         canvas.drawColor(Color.rgb(1, 107, 94));
 
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "东二环高速", 20, Color.WHITE, 10, 10);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_0, 20, Color.WHITE, 10, 10);
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_1, 20, Color.WHITE, 10, 40);
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_2, 20, Color.WHITE, 10, 70);
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, level_3, 20, Color.WHITE, 10, 100);
