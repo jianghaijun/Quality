@@ -25,8 +25,8 @@
     <string name="up_load_now">立即上传</string>
     <string name="temporarily_reserved">暂时保留</string>
     <string name="search_condition">请输入检索条件</string>
-    <string name="file_name">文件名称:</string>
-    <string name="file_description">文件描述:</string>
+    <string name="file_name">工程描述:</string>
+    <string name="file_description">工序描述:</string>
     <string name="input_file_name">请输入文件名称</string>
     <string name="input_file_description">请描述文件</string>
     <string name="query">确认</string>

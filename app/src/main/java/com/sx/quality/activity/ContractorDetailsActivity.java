@@ -94,7 +94,7 @@ public class ContractorDetailsActivity extends BaseActivity {
     private Uri uri = null;
     private String fileUrlName;
 
-    private String nodeId, rootNodeName, parentNodeName, nodeName;
+    private String nodeId, rootNodeName; // , parentNodeName, nodeName;
     private boolean uploadNow = false;
     private ContractorListPhotosBean addPhotoBean;
     private List<ContractorListPhotosBean> upLoadNowList;
@@ -117,8 +117,8 @@ public class ContractorDetailsActivity extends BaseActivity {
 
         nodeId = getIntent().getStringExtra("nodeId");
         rootNodeName = getIntent().getStringExtra("rootNodeName");
-        parentNodeName = getIntent().getStringExtra("parentNodeName");
-        nodeName = getIntent().getStringExtra("nodeName");
+        /*parentNodeName = getIntent().getStringExtra("parentNodeName");
+        nodeName = getIntent().getStringExtra("nodeName");*/
 
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
@@ -400,7 +400,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
                     // 填写图片信息
-                    FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, parentNodeName, nodeName, fileInfoListener);
+                    FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();
                     break;
                 default:
@@ -419,7 +419,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             // 压缩图片
             bitmap = FileUtil.compressBitmap(bitmap);
             // 在图片上添加水印
-            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[0], params[1], params[2], params[3], addPhotoBean.getCreatetime());
+            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[0], params[1], addPhotoBean.getCreatetime());
             // 保存到SD卡指定文件夹下
             saveBitmapFile(bitmap, fileUrlName);
             return null;
@@ -462,10 +462,10 @@ public class ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setPictureAddress(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setNodeId(nodeId);
             addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
-            addPhotoBean.setPictureDesc(nodeName); //描述换成nodeName
+            addPhotoBean.setPictureDesc(rootNodeName); //描述换成rootNodeName
             addPhotoBean.setPictureName(fileUrlName);
             addPhotoBean.setCreatetime(DataUtils.getCurrentData());
-            String[] strings = new String[]{engineeringName, rootNodeName, parentNodeName, nodeName};
+            String[] strings = new String[]{engineeringName, rootNodeName};
             if (isUploadNow) {
                 upLoadNowList = new ArrayList<>();
                 upLoadNowList.add(addPhotoBean);

@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.tree.Node;
@@ -35,6 +37,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
 
     private List<Node> listNode = new ArrayList<>();
     private Node parentNode, rootNode;
+    private List<String> nodeName = new ArrayList<>();
 
     /**
      * @param mContext
@@ -182,6 +185,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
         if (rootNode.isRoot()) {
             rootNode = node;
         } else {
+            nodeName.add(rootNode.getRoleName());
             getNodeRootNode(rootNode);
         }
     }
@@ -223,19 +227,35 @@ public class ContractorTreeAdapter extends BaseAdapter {
                 }
                 this.notifyDataSetChanged();
             } else {
+                nodeName.clear();
+                nodeName.add(n.getRoleName());
                 getNodeRootNode(n);
-                getNodeParentNode(n);
+                StringBuffer sb = new StringBuffer();
+                int len = nodeName.size() - 1;
+                for (int i = len; i >= 0; i--) {
+                    String name = nodeName.get(i);
+                    if (name.contains("(")) {
+                        name = name.substring(0, name.indexOf("("));
+                    }
+                    if (i != 0) {
+                        sb.append(name + "→");
+                    } else {
+                        sb.append(name);
+                    }
+                }
+
+                //getNodeParentNode(n);
 
                 Intent intent = new Intent();
-                intent.putExtra("rootNodeName", null == rootNode.getRoleName() ? "" : rootNode.getRoleName());
-                String parentNodeId = parentNode.getUserId() == null ? "" : parentNode.getUserId();
+                intent.putExtra("rootNodeName", sb.toString());
+                /*String parentNodeId = parentNode.getUserId() == null ? "" : parentNode.getUserId();
                 if (parentNodeId.equals(n.getUserId())) {
                     intent.putExtra("parentNodeName", "");
                 } else {
                     intent.putExtra("parentNodeName", null == parentNode.getRoleName() ? "" : parentNode.getRoleName());
-                }
+                }*/
                 intent.putExtra("nodeId", n.getUserId());
-                intent.putExtra("nodeName", n.getParent().getRoleName());
+                /*intent.putExtra("nodeName", n.getParent().getRoleName());*/
 
                 intent.setClass(mContext, ContractorDetailsActivity.class);
                 mContext.startActivity(intent);

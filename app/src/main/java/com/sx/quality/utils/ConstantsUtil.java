@@ -6,7 +6,8 @@ package com.sx.quality.utils;
 
 public class ConstantsUtil {
     /** 基本路径 */
-    public static final String BASE_URL = "http://qyh.weidingplus.com/";
+    //public static final String BASE_URL = "http://qyh.weidingplus.com/";
+    public static final String BASE_URL = "http://sx.apih5.com:8088/";
 
     /** 是否登录成功 */
     public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";

@@ -60,7 +60,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/ImageBrowseTransitionTheme" />
-
+        <activity android:name=".PersonalSettingActivity"></activity>
     </application>
 
 </manifest>
