@@ -15,6 +15,16 @@
         android:layout_alignParentTop="true"
         app:layout_heightPercent="12%" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvContractorDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/upload_photos"
+        android:padding="@dimen/ten_dp"
+        android:scrollbars="none">
+
+    </android.support.v7.widget.RecyclerView>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/thirty"
@@ -42,13 +52,4 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvContractorDetails"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/upload_photos"
-        android:padding="@dimen/ten_dp"
-        android:scrollbars="none">
-
-    </android.support.v7.widget.RecyclerView>
 </com.zhy.android.percent.support.PercentLinearLayout>
