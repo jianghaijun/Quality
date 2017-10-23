@@ -252,7 +252,7 @@
                             android:background="@drawable/design_red_point"
                             android:gravity="center"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/eight_sp" />
+                            android:textSize="@dimen/ten_sp" />
                     </RelativeLayout>
 
                 </com.zhy.android.percent.support.PercentRelativeLayout>

@@ -134,14 +134,13 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Gson gson = new Gson();
                 String jsonData = response.body().string().toString();
-                Logger.addLogAdapter(new AndroidLogAdapter());
-                Logger.d(jsonData);
 
-                LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
                 if (loginModel.isSuccess()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
                             LoadingUtils.hideLoading();
                             LoginSuccessful();
                             isLogin = false;
