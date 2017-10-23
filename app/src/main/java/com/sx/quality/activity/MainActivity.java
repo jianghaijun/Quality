@@ -3,6 +3,7 @@ package com.sx.quality.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
+import com.sx.quality.utils.ScreenManagerUtil;
 
 import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.Event;
@@ -52,9 +54,11 @@ public class MainActivity extends BaseActivity {
         x.view().inject(this);
         mContext = this;
 
+        ScreenManagerUtil.pushActivity(this);
+
         txtTitle.setText(R.string.app_title);
-        imgBtnRight.setVisibility(View.VISIBLE);
-        imgBtnRight.setImageDrawable(getResources().getDrawable(R.drawable.sign_out_btn));
+        //imgBtnRight.setVisibility(View.VISIBLE);
+        imgBtnRight.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.sign_out));
     }
 
     @Override
@@ -70,6 +74,8 @@ public class MainActivity extends BaseActivity {
         switch (view.getId()) {
             // 个人设置
             case R.id.imgBtnPersonalSetting:
+                intent.setClass(mContext, PersonalSettingActivity.class);
+                startActivity(intent);
                 break;
             // 承包商
             case R.id.imgBtnContractor:
@@ -106,10 +112,20 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            signOut();
+            //signOut();
+            Intent home = new Intent(Intent.ACTION_MAIN);
+            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            home.addCategory(Intent.CATEGORY_HOME);
+            startActivity(home);
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

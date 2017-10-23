@@ -16,6 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
@@ -75,6 +76,8 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         x.view().inject(this);
         mContext = this;
+
+        ScreenManagerUtil.pushActivity(this);
 
         RequestOptions options = new RequestOptions().circleCrop();
         Glide.with(this).load(R.drawable.add).apply(options).into(imgLogo);
@@ -166,6 +169,12 @@ public class LoginActivity extends BaseActivity {
     private void LoginSuccessful () {
         SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
         startActivity(new Intent(this, MainActivity.class));
-        this.finish();
+        edtUserPassWord.setText("");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

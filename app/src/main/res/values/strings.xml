@@ -38,5 +38,14 @@
     <string name="please_input_user_name">请输入用户名</string>
     <string name="please_input_user_password">请输入密码</string>
     <string name="login_error">用户名或密码不正确!</string>
-
+    <string name="version_check">版本检查</string>
+    <string name="update_password">密码修改</string>
+    <string name="sign_out">注销</string>
+    <string name="old_password">原始密码</string>
+    <string name="new_password">新密码</string>
+    <string name="query_password">确认密码</string>
+    <string name="old_pswd_can_not_be_empty">原始密码不能为空!</string>
+    <string name="new_pswd_can_not_be_empty">新密码不能为空!</string>
+    <string name="two_pswd_are_not_consistent">两次输入密码不一致!</string>
+    <string name="new_pswd_can_not_be_the_same_as_old_pswd">新密码不能与原始密码一样!</string>
 </resources>

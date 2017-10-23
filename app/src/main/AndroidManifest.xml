@@ -60,7 +60,16 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/ImageBrowseTransitionTheme" />
-        <activity android:name=".PersonalSettingActivity"></activity>
+        <!-- 个人设置 -->
+        <activity
+            android:name=".PersonalSettingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape" />
+        <!-- 修改密码 -->
+        <activity
+            android:name=".UpdatePassWordActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

@@ -46,7 +46,7 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
         this.listener = listener;
         this.phoneListBean = phoneListBean;
         options = new RequestOptions()
-                .placeholder(R.drawable.rotate_pro)
+                .placeholder(R.drawable.rotate_pro_loading)
                 .error(R.drawable.error);
     }
 

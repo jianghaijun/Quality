@@ -32,7 +32,7 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
         this.mContext = mContext;
         this.upLoadPhoneList = upLoadPhoneList;
         options = new RequestOptions()
-                .placeholder(R.drawable.rotate_pro)
+                .placeholder(R.drawable.rotate_pro_loading)
                 .error(R.drawable.error);
     }
 

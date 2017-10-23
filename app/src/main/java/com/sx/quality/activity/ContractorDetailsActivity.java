@@ -268,7 +268,7 @@ public class ContractorDetailsActivity extends BaseActivity {
         }
 
         adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener);
-        rvContractorDetails.setLayoutManager(new GridLayoutManager(mContext, 3));
+        rvContractorDetails.setLayoutManager(new GridLayoutManager(mContext, 5));
         rvContractorDetails.setAdapter(adapter);
     }
 

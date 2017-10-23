@@ -76,7 +76,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
                 @Override
                 public void agree() {
                     adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-                    rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 3));
+                    rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
                     rvUpLoadPhone.setAdapter(adapter);
                 }
 

@@ -64,9 +64,9 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
             // 立即上传
             case R.id.btnQuery:
                 if (edtName1.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入Name1!");
+                    ToastUtil.showShort(mContext, "请输入工程描述!");
                 } else if (edtName2.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入Name2!");
+                    ToastUtil.showShort(mContext, "请输入工序描述!");
                 }/* else if (edtName3.getText().toString().trim().equals("")) {
                     ToastUtil.showShort(mContext, "请输入Name3!");
                 } else if (edtName4.getText().toString().trim().equals("")) {
@@ -78,9 +78,9 @@ public class FileDescriptionDialog extends Dialog implements View.OnClickListene
                 break;
             case R.id.btnCancel:
                 if (edtName1.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入Name1!");
+                    ToastUtil.showShort(mContext, "请输入工程描述!");
                 } else if (edtName2.getText().toString().trim().equals("")) {
-                    ToastUtil.showShort(mContext, "请输入Name2!");
+                    ToastUtil.showShort(mContext, "请输入工序描述!");
                 }/* else if (edtName3.getText().toString().trim().equals("")) {
                     ToastUtil.showShort(mContext, "请输入Name3!");
                 } else if (edtName4.getText().toString().trim().equals("")) {
