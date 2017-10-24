@@ -54,12 +54,6 @@
             android:name=".UpLoadPhotosActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-        <!-- 展示照片 -->
-        <activity
-            android:name=".ShowPhotoActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:theme="@style/ImageBrowseTransitionTheme" />
         <!-- 个人设置 -->
         <activity
             android:name=".PersonalSettingActivity"
@@ -68,6 +62,11 @@
         <!-- 修改密码 -->
         <activity
             android:name=".UpdatePassWordActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape" />
+        <!-- 图片展示 -->
+        <activity
+            android:name=".ShowPhotosActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
     </application>

@@ -63,7 +63,6 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
         anim.start();
 
         if (position == 0) {
-            //holder.ivUpLoadPhone.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.add));
             Glide.with(mContext).load(R.drawable.add).apply(options).into(holder.ivUpLoadPhone);
         } else {
             Glide.with(mContext)
@@ -80,7 +79,9 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
                 if (position == 0) {
                     listener.selectWayOrShowPhoto(true, "", "", 0);
                 } else {
-                    listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getThumbPath(), phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
+                    //listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getThumbPath(), phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
+                    // 图片浏览方式
+                    listener.selectWayOrShowPhoto(false, String.valueOf(position), "", phoneListBean.get(position).getIsToBeUpLoad());
                 }
             }
         });

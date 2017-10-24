@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.sx.quality.activity.R;
-import com.sx.quality.activity.ShowPhotoActivity;
+import com.sx.quality.activity.ShowPhotosActivity;
 import com.sx.quality.bean.ContractorListPhotosBean;
-import com.sx.quality.view.MLImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,10 +57,20 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
         holder.ivUpLoadPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ShowPhotoActivity.class);
+                /*Intent intent = new Intent(mContext, ShowPhotosActivity.class);
                 intent.putExtra("thumbUrl", upLoadPhoneList.get(position).getThumbPath());
                 intent.putExtra("photoUrl", upLoadPhoneList.get(position).getPictureAddress());
-                intent.putExtra("isUpload", upLoadPhoneList.get(position).getIsToBeUpLoad());
+                intent.putExtra("isUpload", upLoadPhoneList.get(position).getIsToBeUpLoad());*/
+                // 图片浏览
+                ArrayList<String> urls = new ArrayList<>();
+                int len = upLoadPhoneList.size();
+                for (int i = 0; i < len; i++) {
+                    urls.add(upLoadPhoneList.get(i).getPictureAddress());
+                }
+                Intent intent = new Intent(mContext, ShowPhotosActivity.class);
+                // 图片url,为了演示这里使用常量，一般从数据库中或网络中获取
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(position));
                 mContext.startActivity(intent);
             }
         });

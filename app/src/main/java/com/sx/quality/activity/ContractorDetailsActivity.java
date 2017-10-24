@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -285,10 +284,20 @@ public class ContractorDetailsActivity extends BaseActivity {
                 selectPhotoWayDialog.show();
             } else {
                 // 查看照片
-                Intent intent = new Intent(mContext, ShowPhotoActivity.class);
+                /*Intent intent = new Intent(mContext, ShowPhotoActivity.class);
                 intent.putExtra("thumbUrl", thumbUrl);
                 intent.putExtra("photoUrl", photoUrl);
-                intent.putExtra("isUpload", isUpLoad);
+                intent.putExtra("isUpload", isUpLoad);*/
+                // 图片浏览
+                ArrayList<String> urls = new ArrayList<>();
+                int len = listPhotosBeen.size();
+                for (int i = 1; i < len; i++) {
+                    urls.add(listPhotosBeen.get(i).getPictureAddress());
+                }
+                Intent intent = new Intent(mContext, ShowPhotosActivity.class);
+                // 图片url,为了演示这里使用常量，一般从数据库中或网络中获取
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(thumbUrl) - 1);
                 startActivity(intent);
             }
         }
