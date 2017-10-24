@@ -3,6 +3,7 @@ package com.sx.quality.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -298,10 +299,14 @@ public class ContractorTreeAdapter extends BaseAdapter {
             String roleName = n.getRoleName();
             holder.txtTitle.setText(roleName == null || "null".equals(roleName) ? "" : roleName);
             if (n.isLeaf() && n.isUser()) {
-                /* 是叶节点 不显示展开和折叠状态图标 */
+                /**
+                 * 是叶节点 不显示展开和折叠状态图标
+                 */
                 holder.imgViewState.setVisibility(View.GONE);
+                holder.imgViewNode.setVisibility(View.VISIBLE);
             } else {
                 holder.imgViewState.setVisibility(View.VISIBLE);
+                holder.imgViewNode.setVisibility(View.GONE);
             }
 
             /* 单击时控制子节点展开和折叠,状态图标改变  */
@@ -332,6 +337,9 @@ public class ContractorTreeAdapter extends BaseAdapter {
         // 展开收缩图标
         @ViewInject(R.id.imgViewState)
         private ImageView imgViewState;
+        @ViewInject(R.id.imgViewNode)
+        private ImageView imgViewNode;
+
         // 标题
         @ViewInject(R.id.txtTitle)
         private TextView txtTitle;

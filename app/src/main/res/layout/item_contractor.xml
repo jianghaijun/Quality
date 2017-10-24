@@ -2,22 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rlItemTree"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@null" >
+        android:background="@null">
 
-        <ImageView
-            android:id="@+id/imgViewState"
+        <RelativeLayout
+            android:id="@+id/rlNodeState"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:background="@null"
-            android:contentDescription="@null" />
+            android:background="@null">
+
+            <ImageView
+                android:id="@+id/imgViewState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:id="@+id/imgViewNode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/node"
+                android:contentDescription="@null"
+                android:visibility="gone" />
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/txtTitle"
@@ -26,7 +42,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_toRightOf="@+id/imgViewState"
+            android:layout_toRightOf="@+id/rlNodeState"
             android:gravity="left|center"
             android:textColor="@color/black"
             android:textSize="@dimen/fourteen_sp" />
