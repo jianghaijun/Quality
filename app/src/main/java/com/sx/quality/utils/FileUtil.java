@@ -105,27 +105,27 @@ public class FileUtil {
      * @param image
      */
     public static Bitmap compressBitmap(Bitmap image) {
-        // 最大图片大小 500KB
-        int maxSize = 500;
+        // 最大图片大小 1M
+        int maxSize = 1024;
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
 
-        int imgWidth = image.getWidth();
-        int imgHeight = image.getHeight();
+        int imgWidth = 1280;
+        int imgHeight = 960;
 
-        // 压缩图片到1280*960
+        /*// 压缩图片到1280*960
         if (imgWidth < 960) {
             imgWidth = 960;
         }
 
         if (imgHeight < 1280) {
             imgHeight = 1280;
-        }
+        }*/
 
         // 压缩Bitmap到对应尺寸
-        Bitmap result = Bitmap.createBitmap(imgWidth / ratio, imgHeight / ratio, Bitmap.Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(imgWidth, imgHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
-        Rect rect = new Rect(0, 0, imgWidth / ratio, imgHeight / ratio);
+        Rect rect = new Rect(0, 0, imgWidth, imgHeight);
         canvas.drawBitmap(image, null, rect, null);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

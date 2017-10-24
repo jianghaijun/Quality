@@ -1,10 +1,9 @@
 package com.sx.quality.activity;
 
 import android.animation.ObjectAnimator;
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,31 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *                     _ooOoo_
+ *                    o8888888o
+ *                    88" . "88
+ *                    (| -_- |)
+ *                    O\  =  /O
+ *                 ____/`---'\____
+ *               .'  \\|     |//  `.
+ *              /  \\|||  :  |||//  \
+ *             /  _||||| -:- |||||-  \
+ *             |   | \\\  -  /// |   |
+ *             | \_|  ''\---/''  |   |
+ *             \  .-\__  `-`  ___/-. /
+ *           ___`. .'  /--.--\  `. . __
+ *        ."" '<  `.___\_<|>_/___.'  >'"".
+ *       | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *       \  \ `-.   \_ __\ /__ _/   .-` /  /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ *                     `=---='
+ * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * 			   佛祖保佑       永无BUG
+ *       Created by dell on 2017/10/24 12:04
+ *
+ *       使用ViewPager展示照片
+ */
 public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPageChangeListener{
     @ViewInject(R.id.viewPagerPhoto)
     private ViewPager viewPagerPhoto;
