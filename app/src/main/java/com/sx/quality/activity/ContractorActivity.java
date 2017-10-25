@@ -74,6 +74,14 @@ public class ContractorActivity extends BaseActivity {
             }
         });
 
+        lvContractorList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ToastUtil.showShort(mContext, "嗨！你好！");
+                return true;
+            }
+        });
+
         if(JudgeNetworkIsAvailable.isNetworkAvailable(this)){
             getData();
         }else{

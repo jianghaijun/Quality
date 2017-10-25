@@ -38,29 +38,27 @@ public class ImageUtil {
         int height = src.getHeight();
 
         // 创建水印为原图三分之一w-1280*h-960画布 256*3=768
-        Bitmap watermarkBitmap = Bitmap.createBitmap(src.getWidth() / 5 * 3, src.getHeight() / 3, Bitmap.Config.ARGB_8888);
+        Bitmap watermarkBitmap = Bitmap.createBitmap(src.getWidth() / 5 * 3 + 3, src.getHeight() / 3, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(watermarkBitmap);
         canvas.drawColor(Color.rgb(1, 107, 94));
 
         level_1 = "工序描述：" + level_1;
-        int testSize = 14;
         int len = level_1.length();
-        int marginTopSize = 10;
 
         // 计算每行应该有多少内容
         List<String> list = new ArrayList<>();
-        int lenSize = 57;
-        for (int i = 0; i < level_1.length(); i++) {
+        int lenSize = 17*3; // 水印图上每行显示多少个字
+        for (int i = 0; i < len; i++) {
             int byteLen = level_1.substring(0, i).getBytes().length;
             if (list.size() > 0) {
-                byteLen-=list.size()*15;
+                byteLen-=15;
             }
 
             if (byteLen % lenSize == 0 || (byteLen + 1) % lenSize == 0 || (byteLen + 2) % lenSize == 0) {
                 if (i != 0 && (byteLen / lenSize == 1 || (byteLen + 1) / lenSize == 1) || (byteLen + 2) / lenSize == 1) {
                     list.add(level_1.substring(0, i));
-                    lenSize = 42;
-                } else if (i != 0) {
+                    lenSize = 12*3;
+                } else if (i != 0 && (byteLen / lenSize > 1 || (byteLen + 1) / lenSize > 1) || (byteLen + 2) / lenSize > 1) {
                     int otherLen = 0;
                     for (int j = 0; j < list.size(); j++) {
                         otherLen+=list.get(j).length();
@@ -78,6 +76,20 @@ public class ImageUtil {
 
         if (nowLen < len) {
             list.add(level_1.substring(nowLen));
+        }
+
+        int testSize = 14;
+        int marginTopSize = 4;
+        switch (list.size()) {
+            case 3:
+                marginTopSize = 2;
+                break;
+            case 2:
+                marginTopSize = 10;
+                break;
+            case 1:
+                marginTopSize = 20;
+                break;
         }
 
         // 添加文字

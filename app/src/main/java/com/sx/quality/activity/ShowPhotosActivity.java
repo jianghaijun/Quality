@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.sx.quality.view.CustomViewPage;
 
 import org.xutils.common.util.DensityUtil;
 import org.xutils.view.annotation.ViewInject;
@@ -48,7 +49,7 @@ import java.util.List;
  */
 public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPageChangeListener{
     @ViewInject(R.id.viewPagerPhoto)
-    private ViewPager viewPagerPhoto;
+    private CustomViewPage viewPagerPhoto;
     @ViewInject(R.id.llIndicator)
     private LinearLayout llIndicator;
 
