@@ -31,7 +31,7 @@ import java.util.List;
 public class ContractorTreeAdapter extends BaseAdapter {
     private LayoutInflater lif;
     private List<Node> allsCache = new ArrayList<Node>();
-    private List<Node> alls = new ArrayList<Node>();
+    public List<Node> alls = new ArrayList<Node>();
     private int expandedIcon = -1;
     private int collapsedIcon = -1;
     private Activity mContext;

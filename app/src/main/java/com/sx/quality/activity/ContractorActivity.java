@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.sx.quality.adapter.ContractorTreeAdapter;
 import com.sx.quality.bean.ContractorListBean;
+import com.sx.quality.dialog.EditNodeDialog;
+import com.sx.quality.dialog.PromptDialog;
+import com.sx.quality.listener.EditNodeListener;
 import com.sx.quality.model.ContractorListModel;
 import com.sx.quality.tree.Node;
 import com.sx.quality.utils.ConstantsUtil;
@@ -74,13 +77,17 @@ public class ContractorActivity extends BaseActivity {
             }
         });
 
-        lvContractorList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*lvContractorList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                ToastUtil.showShort(mContext, "嗨！你好！");
+                Node n = ((ContractorTreeAdapter) parent.getAdapter()).alls.get(position);
+                if (!n.isLeaf()) {
+                    EditNodeDialog editNodeDialog = new EditNodeDialog(mContext, editNodeListener);
+                    editNodeDialog.show();
+                }
                 return true;
             }
-        });
+        });*/
 
         if(JudgeNetworkIsAvailable.isNetworkAvailable(this)){
             getData();
@@ -214,6 +221,25 @@ public class ContractorActivity extends BaseActivity {
         }
         return null;
     }
+
+    /**
+     * 节点编辑监听
+     */
+    private EditNodeListener editNodeListener = new EditNodeListener() {
+        @Override
+        public void editNodeType(int type) {
+            switch (type) {
+                case 1:
+                    break;
+                case 2:
+                    PromptDialog promptDialog = new PromptDialog(mContext, null, "提示", "是否删除该节点及其下所有子节点?", "否", "是");
+                    promptDialog.show();
+                    break;
+                case 3:
+                    break;
+            }
+        }
+    };
 
     @Event({R.id.imgBtnLeft})
     private void onClick(View view){

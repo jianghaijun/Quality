@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">山西东二环高速公路</string>
     <string name="app_title">山西东二环高速公路</string>
-
     <string name="not_network">当前无可用网络!</string>
-
     <string name="person_setting">个人设置</string>
     <string name="contractor">承包商</string>
     <string name="owner">业主</string>
@@ -13,10 +11,8 @@
     <string name="show_photo">显示图片</string>
     <string name="up_load">上传</string>
     <string name="choice_type">选择分类</string>
-
     <string name="server_exception">服务器异常！</string>
     <string name="get_data_exception">获取数据失败！</string>
-
     <string name="upload_context">文件上传中…</string>
     <string name="picture_source">图片来源</string>
     <string name="photo_graph">拍照</string>
@@ -48,4 +44,10 @@
     <string name="new_pswd_can_not_be_empty">新密码不能为空!</string>
     <string name="two_pswd_are_not_consistent">两次输入密码不一致!</string>
     <string name="new_pswd_can_not_be_the_same_as_old_pswd">新密码不能与原始密码一样!</string>
+    <string name="edit_node">节点编辑</string>
+    <string name="add_node">增加节点</string>
+    <string name="delete_node">删除节点</string>
+    <string name="update_node">修改节点名称</string>
+    <string name="please_input_node_name">请输入节点名称</string>
+    <string name="node_name_can_not_be_empty">节点名称不能为空!</string>
 </resources>
