@@ -2,13 +2,18 @@ package com.sx.quality.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.request.transition.BitmapTransitionFactory;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.sx.quality.activity.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +41,14 @@ public class ImageUtil {
 
         int width = src.getWidth();
         int height = src.getHeight();
+        int watermarkWidth = src.getWidth() / 5 * 3 + 3;
+        int watermarkHeight = src.getHeight() / 3 + 40;
 
         // 创建水印为原图三分之一w-1280*h-960画布 256*3=768
-        Bitmap watermarkBitmap = Bitmap.createBitmap(src.getWidth() / 5 * 3 + 3, src.getHeight() / 3, Bitmap.Config.ARGB_8888);
+        Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(watermarkBitmap);
-        canvas.drawColor(Color.rgb(1, 107, 94));
-
-        level_1 = "工序描述：" + level_1;
+        canvas.drawColor(Color.argb(100 ,255, 255, 255));
+        level_1 = "工序部位：" + level_1;
         int len = level_1.length();
 
         // 计算每行应该有多少内容
@@ -78,36 +84,42 @@ public class ImageUtil {
             list.add(level_1.substring(nowLen));
         }
 
+        // 将Logo添加到底板中
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.watermark_logo);
+        canvas.drawBitmap(bitmap, dp2px(context, 10), 10, null);
+        // 添加文字
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", 18, Color.rgb(0, 97, 174), 50, 10);
+
         int testSize = 14;
         int marginTopSize = 4;
         switch (list.size()) {
             case 3:
-                marginTopSize = 2;
+                marginTopSize = 32;
                 break;
             case 2:
-                marginTopSize = 10;
+                marginTopSize = 40;
                 break;
             case 1:
-                marginTopSize = 20;
+                marginTopSize = 50;
                 break;
         }
 
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程描述：" + level_0, testSize, Color.WHITE, 10, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
         for (int i = 0; i < list.size(); i++) {
             marginTopSize+=18;
             if (i == 0) {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.WHITE, 10, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
             } else {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                    " + list.get(i), testSize, Color.WHITE, 10, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                    " + list.get(i), testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
             }
         }
 
         marginTopSize+=18;
         String userName = (String) SpUtil.get(context, "UserName", "");
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName, testSize, Color.WHITE, 10, marginTopSize);
-        marginTopSize+=18;
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传时间：" + createTime, testSize, Color.WHITE, 10, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
+//        marginTopSize+=18;
+//        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传时间：" + createTime, testSize, Color.WHITE, 10, marginTopSize);
 
         // 创建一个新的和SRC长度宽度一样的位图
         Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

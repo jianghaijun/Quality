@@ -42,4 +42,6 @@
     !-- 深灰色 -->
     <color name="search_color">#888888</color>
 
+    <color name="cover_color">#66ffffff</color>
+
 </resources>

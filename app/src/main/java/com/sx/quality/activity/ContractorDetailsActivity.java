@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.adapter.ContractorDetailsAdapter;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.dialog.FileDescriptionDialog;
@@ -37,6 +40,7 @@ import com.sx.quality.listener.FileInfoListener;
 import com.sx.quality.listener.PermissionListener;
 import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.model.ContractorDetailsModel;
+import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
@@ -312,7 +316,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             // 拍照
             if (trueOrFalse) {
                 if (Build.VERSION.SDK_INT >= 23) {
-                    requestAuthority(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
+                    requestAuthority(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, new PermissionListener() {
                         @Override
                         public void agree() {
                             takePictures();
@@ -356,7 +360,9 @@ public class ContractorDetailsActivity extends BaseActivity {
      * 拍照
      */
     private void takePictures(){
-        Uri imageUri = null;
+        Intent intent = new Intent();
+        intent.setClass(mContext, PhotographActivity.class);
+        /*Uri imageUri = null;
         String fileName = null;
         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -371,8 +377,8 @@ public class ContractorDetailsActivity extends BaseActivity {
 
         imageUri = Uri.parse(Uri.fromFile(imgFile) + "/" + fileName);
         // 指定照片保存路径（SD卡），image.png为一个临时文件，每次拍照后这个图片都会被替换
-        openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(openCameraIntent, 2);
+        openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);*/
+        startActivityForResult(intent, 1);
     }
 
     /**
@@ -388,7 +394,48 @@ public class ContractorDetailsActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
+            FileDescriptionDialog fileDescriptionDialog;
             switch (requestCode) {
+                case 1:
+                    if (data == null) {
+                        return;
+                    }
+
+                    Bundle extras = data.getExtras();
+                    if (extras != null) {
+                        String path = extras.getString("maxImgPath");
+                        if (path != null) {
+                            uri = Uri.parse(path);
+                            // 如果图像是旋转的，需要旋转后保存,目前只发现三星如此
+                            int degree = extras.getInt("degree");
+                            switch (degree) {
+                                case 0:
+                                    degree = 90;
+                                    break;
+                                case 90:
+                                    degree = 180;
+                                    break;
+                                case 180:
+                                    degree = 270;
+                                    break;
+                                case 270:
+                                    degree = 0;
+                                    break;
+                            }
+                            if (degree != 0) {
+                                Bitmap bitmap = rotaingImageView(degree, path);
+                                String newPath = saveBitmap(bitmap, ConstantsUtil.SAVE_PATH, System.currentTimeMillis()+"");
+                                uri = Uri.parse("file://" + newPath);
+                            }
+                        }
+                    }
+
+                    fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
+
+                    // 填写图片信息
+                    fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
+                    fileDescriptionDialog.show();
+                    break;
                 case 2:
                     if (data != null) {
                         uri = data.getData();
@@ -409,7 +456,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
                     // 填写图片信息
-                    FileDescriptionDialog fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
+                    fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();
                     break;
                 default:
@@ -469,6 +516,9 @@ public class ContractorDetailsActivity extends BaseActivity {
             // 向LitePal数据库中添加一条数据
             addPhotoBean = new ContractorListPhotosBean();
             addPhotoBean.setPictureAddress(ConstantsUtil.SAVE_PATH + fileUrlName);
+            Logger.addLogAdapter(new AndroidLogAdapter());
+            Logger.d("----------fileUrlName--------" + fileUrlName);
+            Logger.clearLogAdapters();
             addPhotoBean.setNodeId(nodeId);
             addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setPictureDesc(rootNodeName); //描述换成rootNodeName

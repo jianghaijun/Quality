@@ -105,8 +105,8 @@ public class FileUtil {
      * @param image
      */
     public static Bitmap compressBitmap(Bitmap image) {
-        // 最大图片大小 1M
-        int maxSize = 1024;
+        // 最大图片大小 2M
+        int maxSize = 1024 * 2;
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
 

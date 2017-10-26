@@ -89,7 +89,7 @@ public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPage
      */
     private void addIndicator(List<String> urls) {
         int paddingDp = DensityUtil.dip2px(4);
-        int pointSize = DensityUtil.dip2px(20);
+        int pointSize = DensityUtil.dip2px(15);
         for (int i = 0; i < urls.size(); i++) {
             ImageView child = new ImageView(this);
             child.setImageResource(R.drawable.point_grey);
