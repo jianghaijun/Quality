@@ -20,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -296,7 +297,11 @@ public class ContractorDetailsActivity extends BaseActivity {
                 ArrayList<String> urls = new ArrayList<>();
                 int len = listPhotosBeen.size();
                 for (int i = 1; i < len; i++) {
-                    urls.add(listPhotosBeen.get(i).getPictureAddress());
+                    String fileUrl = listPhotosBeen.get(i).getPictureAddress();
+                    if (!TextUtils.isEmpty(fileUrl) && !fileUrl.contains(ConstantsUtil.SAVE_PATH)) {
+                        fileUrl = ConstantsUtil.FILE_BASE_URL + fileUrl;
+                    }
+                    urls.add(fileUrl);
                 }
                 Intent intent = new Intent(mContext, ShowPhotosActivity.class);
                 // 图片url,为了演示这里使用常量，一般从数据库中或网络中获取

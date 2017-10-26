@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.sx.quality.activity.R;
 import com.sx.quality.activity.ShowPhotosActivity;
 import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.utils.ConstantsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,11 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
                 ArrayList<String> urls = new ArrayList<>();
                 int len = upLoadPhoneList.size();
                 for (int i = 0; i < len; i++) {
-                    urls.add(upLoadPhoneList.get(i).getPictureAddress());
+                    String fileUrl = upLoadPhoneList.get(i).getPictureAddress();
+                    if (!TextUtils.isEmpty(fileUrl) && !fileUrl.contains(ConstantsUtil.SAVE_PATH)) {
+                        fileUrl = ConstantsUtil.FILE_BASE_URL + fileUrl;
+                    }
+                    urls.add(fileUrl);
                 }
                 Intent intent = new Intent(mContext, ShowPhotosActivity.class);
                 // 图片url,为了演示这里使用常量，一般从数据库中或网络中获取

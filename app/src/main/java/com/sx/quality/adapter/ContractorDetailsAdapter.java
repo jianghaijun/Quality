@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.ShowPhotoListener;
+import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
 import com.sx.quality.view.MLImageView;
@@ -65,8 +67,13 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
         if (position == 0) {
             Glide.with(mContext).load(R.drawable.add).apply(options).into(holder.ivUpLoadPhone);
         } else {
+            String fileUrl = phoneListBean.get(position).getThumbPath();
+            if (!TextUtils.isEmpty(fileUrl) && !fileUrl.contains(ConstantsUtil.SAVE_PATH)) {
+                fileUrl = ConstantsUtil.FILE_BASE_URL + fileUrl;
+            }
+
             Glide.with(mContext)
-                    .load(phoneListBean.get(position).getThumbPath())
+                    .load(fileUrl)
                     .apply(options)
                     .thumbnail(0.1f)
                     .into(holder.ivUpLoadPhone);

@@ -72,7 +72,7 @@ public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPage
 
         options = new RequestOptions()
                 .placeholder(R.drawable.rotate_pro_loading)
-                .error(R.drawable.error);
+                .error(R.drawable.load_error);
 
         PhotosAdapter adapter = new PhotosAdapter();
         viewPagerPhoto.setAdapter(adapter);

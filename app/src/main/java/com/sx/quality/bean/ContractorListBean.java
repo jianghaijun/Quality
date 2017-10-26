@@ -10,10 +10,19 @@ import java.util.List;
 public class ContractorListBean {
     private String nodeId;
     private String nodeName;
+    private String nodeTitle;
     private List<ContractorListBean> sxZlNodeList;
 
+    public String getNodeTitle() {
+        return nodeTitle;
+    }
+
+    public void setNodeTitle(String nodeTitle) {
+        this.nodeTitle = nodeTitle;
+    }
+
     public String getNodeId() {
-        return nodeId == null || nodeId.equals("null")  ? "" : nodeId;
+        return nodeId == null || nodeId.equals("null") ? "" : nodeId;
     }
 
     public void setNodeId(String nodeId) {
