@@ -113,13 +113,12 @@ public class FileUtil {
         int imgWidth = image.getWidth();
         int imgHeight = image.getHeight();
 
-        // 压缩图片到1280*960
-        if (imgWidth < 1280) {
+        if (imgWidth == imgHeight) {
+            imgWidth = imgWidth / 16 * 16;
+            imgHeight = imgWidth / 16 * 12;
+        } else if (imgWidth < 1280 && imgHeight < 720) {
             imgWidth = 1280;
-        }
-
-        if (imgHeight < 960) {
-            imgHeight = 960;
+            imgHeight = 720;
         }
 
         // 压缩Bitmap到对应尺寸

@@ -432,6 +432,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                                 String newPath = saveBitmap(bitmap, ConstantsUtil.SAVE_PATH, System.currentTimeMillis() + ".png");
                                 uri = Uri.parse("file://" + newPath);
                             }
+                            LoadingUtils.hideLoading();
                         }
                     }
 
@@ -521,9 +522,6 @@ public class ContractorDetailsActivity extends BaseActivity {
             // 向LitePal数据库中添加一条数据
             addPhotoBean = new ContractorListPhotosBean();
             addPhotoBean.setPictureAddress(ConstantsUtil.SAVE_PATH + fileUrlName);
-            Logger.addLogAdapter(new AndroidLogAdapter());
-            Logger.d("----------fileUrlName--------" + fileUrlName);
-            Logger.clearLogAdapters();
             addPhotoBean.setNodeId(nodeId);
             addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setPictureDesc(rootNodeName); //描述换成rootNodeName
@@ -613,7 +611,7 @@ public class ContractorDetailsActivity extends BaseActivity {
     public static Bitmap rotaingImageView(int angle, String path) {
         BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
         // 此处采样，导致分辨率降到1/4,否则会报OOM
-        bitmapOptions.inSampleSize = 4;
+        bitmapOptions.inSampleSize = 1;
         Bitmap cameraBitmap = BitmapFactory.decodeFile(path, bitmapOptions);
         // 旋转图片 动作
         Matrix matrix = new Matrix();

@@ -58,7 +58,7 @@ public class ImageUtil {
         Canvas canvas = new Canvas(watermarkBitmap);
         canvas.drawColor(Color.argb(100 ,255, 255, 255));
 
-        level_1 = "工序部位：" + level_1;
+        level_1 = "施工部位：" + level_1;
         int len = level_1.length();
 
         // 计算一个14sp中文所占像素
@@ -69,7 +69,7 @@ public class ImageUtil {
         int oneSize = rect.width();
 
         // 水印图上每行显示多少个字
-        int lenSize = (watermarkWidth - DensityUtil.dip2px(15)) / oneSize * 3;
+        int lenSize = (watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSize * 3;
         // 水印图上文字大小
         int testSize = DensityUtil.px2dip(14 * widthMultiple);
 
@@ -84,27 +84,27 @@ public class ImageUtil {
         }
 
         // 第二行显示多少个字
-        lenSize = ((watermarkWidth - DensityUtil.dip2px(15)) / oneSize - 5) * 3;
+        lenSize = ((watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSize - 5) * 3;
         rows(level_1, lenSize);
 
         // 将Logo添加到底板中
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
-        canvas.drawBitmap(bitmap, dp2px(context, 5), 1, null);
+        canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * widthMultiple, null);
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20), Color.rgb(0, 97, 174), 20, 3);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * widthMultiple), Color.rgb(0, 97, 174), (int) (20 * widthMultiple), (int) (2* widthMultiple));
 
-        int marginTopSize = (int) (4 * widthMultiple);
-        switch (list.size()) {
+        int marginTopSize = (int) (10 * widthMultiple);
+        /*switch (list.size()) {
             case 3:
-                marginTopSize = (int) (12 * widthMultiple);
+                marginTopSize = (int) (8 * widthMultiple);
                 break;
             case 2:
-                marginTopSize = (int) (16 * widthMultiple);
+                marginTopSize = (int) (12 * widthMultiple);
                 break;
             case 1:
-                marginTopSize = (int) (20 * widthMultiple);
+                marginTopSize = (int) (16 * widthMultiple);
                 break;
-        }
+        }*/
 
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
@@ -113,7 +113,7 @@ public class ImageUtil {
             if (i == 0) {
                 watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
             } else {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                  " + list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                    " + list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
             }
         }
 
