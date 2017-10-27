@@ -297,6 +297,10 @@ public class ContractorTreeAdapter extends BaseAdapter {
         if (n != null) {
             // 显示文本
             String roleName = n.getRoleName();
+            if (n.isLeaf()) {
+                roleName = roleName.substring(0, roleName.indexOf("("));
+            }
+
             holder.txtTitle.setText(roleName == null || "null".equals(roleName) ? "" : roleName);
             if (n.isLeaf() && n.isUser()) {
                 /**

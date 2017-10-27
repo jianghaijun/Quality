@@ -110,17 +110,17 @@ public class FileUtil {
         // 获取尺寸压缩倍数
         int ratio = getRatioSize(image.getWidth(), image.getHeight());
 
-        int imgWidth = 1280;
-        int imgHeight = 960;
+        int imgWidth = image.getWidth();
+        int imgHeight = image.getHeight();
 
-        /*// 压缩图片到1280*960
-        if (imgWidth < 960) {
-            imgWidth = 960;
+        // 压缩图片到1280*960
+        if (imgWidth < 1280) {
+            imgWidth = 1280;
         }
 
-        if (imgHeight < 1280) {
-            imgHeight = 1280;
-        }*/
+        if (imgHeight < 960) {
+            imgHeight = 960;
+        }
 
         // 压缩Bitmap到对应尺寸
         Bitmap result = Bitmap.createBitmap(imgWidth, imgHeight, Bitmap.Config.ARGB_8888);

@@ -15,14 +15,19 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.R;
 
+import org.xutils.common.util.DensityUtil;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Created by jack on 2017/10/16.
  */
 
 public class ImageUtil {
+    // 计算每行应该有多少内容
+    private static List<String> list = new ArrayList<>();
 
     /**
      * 设置水印图片在左上角
@@ -39,87 +44,82 @@ public class ImageUtil {
             return null;
         }
 
+        // 原图尺寸
         int width = src.getWidth();
         int height = src.getHeight();
-        int watermarkWidth = src.getWidth() / 5 * 3 + 3;
-        int watermarkHeight = src.getHeight() / 3 + 40;
+        // 水印尺寸
+        float widthMultiple = Float.valueOf(width) / Float.valueOf(1280);
+        float heightMultiple = Float.valueOf(height) / Float.valueOf(960);
+        int watermarkWidth = (int) (350 *  widthMultiple);
+        int watermarkHeight = (int) (140 *  heightMultiple);
 
-        // 创建水印为原图三分之一w-1280*h-960画布 256*3=768
+        // 创建水印画布
         Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(watermarkBitmap);
         canvas.drawColor(Color.argb(100 ,255, 255, 255));
+
         level_1 = "工序部位：" + level_1;
         int len = level_1.length();
 
-        // 计算每行应该有多少内容
-        List<String> list = new ArrayList<>();
-        int lenSize = 17*3; // 水印图上每行显示多少个字
+        // 计算一个14sp中文所占像素
+        Paint pFont = new Paint();
+        Rect rect = new Rect();
+        pFont.setTextSize(14 * widthMultiple);
+        pFont.getTextBounds("豆", 0, 1, rect);
+        int oneSize = rect.width();
+
+        // 水印图上每行显示多少个字
+        int lenSize = (watermarkWidth - DensityUtil.dip2px(15)) / oneSize * 3;
+        // 水印图上文字大小
+        int testSize = DensityUtil.px2dip(14 * widthMultiple);
+
+        list.clear();
         for (int i = 0; i < len; i++) {
             int byteLen = level_1.substring(0, i).getBytes().length;
-            if (list.size() > 0) {
-                byteLen-=15;
-            }
-
-            if (byteLen % lenSize == 0 || (byteLen + 1) % lenSize == 0 || (byteLen + 2) % lenSize == 0) {
-                if (i != 0 && (byteLen / lenSize == 1 || (byteLen + 1) / lenSize == 1) || (byteLen + 2) / lenSize == 1) {
-                    list.add(level_1.substring(0, i));
-                    lenSize = 12*3;
-                } else if (i != 0 && (byteLen / lenSize > 1 || (byteLen + 1) / lenSize > 1) || (byteLen + 2) / lenSize > 1) {
-                    int otherLen = 0;
-                    for (int j = 0; j < list.size(); j++) {
-                        otherLen+=list.get(j).length();
-                    }
-                    list.add(level_1.substring(otherLen, i));
-                }
+            if (byteLen > lenSize) {
+                list.add(level_1.substring(0, i-1));
+                level_1 = level_1.substring(i-1);
+                break;
             }
         }
 
-        // 判断是否还有一行
-        int nowLen = 0;
-        for (String s : list) {
-            nowLen+=s.length();
-        }
-
-        if (nowLen < len) {
-            list.add(level_1.substring(nowLen));
-        }
+        // 第二行显示多少个字
+        lenSize = ((watermarkWidth - DensityUtil.dip2px(15)) / oneSize - 5) * 3;
+        rows(level_1, lenSize);
 
         // 将Logo添加到底板中
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.watermark_logo);
-        canvas.drawBitmap(bitmap, dp2px(context, 10), 10, null);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
+        canvas.drawBitmap(bitmap, dp2px(context, 5), 1, null);
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", 18, Color.rgb(0, 97, 174), 50, 10);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20), Color.rgb(0, 97, 174), 20, 3);
 
-        int testSize = 14;
-        int marginTopSize = 4;
+        int marginTopSize = (int) (4 * widthMultiple);
         switch (list.size()) {
             case 3:
-                marginTopSize = 32;
+                marginTopSize = (int) (12 * widthMultiple);
                 break;
             case 2:
-                marginTopSize = 40;
+                marginTopSize = (int) (16 * widthMultiple);
                 break;
             case 1:
-                marginTopSize = 50;
+                marginTopSize = (int) (20 * widthMultiple);
                 break;
         }
 
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
         for (int i = 0; i < list.size(); i++) {
-            marginTopSize+=18;
+            marginTopSize+= (int) (6 * widthMultiple);
             if (i == 0) {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
             } else {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                    " + list.get(i), testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                  " + list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
             }
         }
 
-        marginTopSize+=18;
+        marginTopSize+=(int) (6 * widthMultiple);
         String userName = (String) SpUtil.get(context, "UserName", "");
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 97, 174), 10, marginTopSize);
-//        marginTopSize+=18;
-//        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传时间：" + createTime, testSize, Color.WHITE, 10, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
 
         // 创建一个新的和SRC长度宽度一样的位图
         Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -179,5 +179,29 @@ public class ImageUtil {
     public static int dp2px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
+    }
+
+    /**
+     * 截取level_1
+     * @param level_1
+     * @param lenSize
+     */
+    private static void rows(String level_1, int lenSize){
+        int len = level_1.length();
+
+        for (int i = 0; i < len; i++) {
+            int byteLen = level_1.substring(0, i).getBytes().length;
+            if (byteLen > lenSize) {
+                list.add(level_1.substring(0, i-1));
+                level_1 = level_1.substring(i-1);
+                break;
+            }
+        }
+
+        if (level_1.getBytes().length > lenSize) {
+            rows(level_1, lenSize);
+        } else {
+            list.add(level_1);
+        }
     }
 }

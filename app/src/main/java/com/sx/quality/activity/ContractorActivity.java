@@ -190,7 +190,7 @@ public class ContractorActivity extends BaseActivity {
      */
     private Node getNode(ContractorListBean contractorListBean, Node root) {
         try {
-            String nodeName = contractorListBean.getNodeTitle();
+            String nodeName = contractorListBean.getNodeTitle() + "(" + contractorListBean.getProcessNum() + "道工序)";
             String nodeId = contractorListBean.getNodeId();
             // 创建子节点
             Node n = new Node(nodeName, "1");

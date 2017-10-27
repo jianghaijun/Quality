@@ -429,7 +429,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                             }
                             if (degree != 0) {
                                 Bitmap bitmap = rotaingImageView(degree, path);
-                                String newPath = saveBitmap(bitmap, ConstantsUtil.SAVE_PATH, System.currentTimeMillis()+"");
+                                String newPath = saveBitmap(bitmap, ConstantsUtil.SAVE_PATH, System.currentTimeMillis() + ".png");
                                 uri = Uri.parse("file://" + newPath);
                             }
                         }
@@ -642,7 +642,7 @@ public class ContractorDetailsActivity extends BaseActivity {
         File f2 = new File(path);
         try {
             FileOutputStream out = new FileOutputStream(f2);
-            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+            bm.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
             return path;

@@ -11,7 +11,16 @@ public class ContractorListBean {
     private String nodeId;
     private String nodeName;
     private String nodeTitle;
+    private int processNum;
     private List<ContractorListBean> sxZlNodeList;
+
+    public int getProcessNum() {
+        return processNum;
+    }
+
+    public void setProcessNum(int processNum) {
+        this.processNum = processNum;
+    }
 
     public String getNodeTitle() {
         return nodeTitle;

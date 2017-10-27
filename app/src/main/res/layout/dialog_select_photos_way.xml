@@ -10,7 +10,7 @@
     <com.zhy.android.percent.support.PercentLinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_heightPercent="50%h"
+        app:layout_heightPercent="40%h"
         app:layout_widthPercent="90%w"
         android:background="@null"
         android:orientation="vertical" >
@@ -18,7 +18,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_heightPercent="20%"
+            app:layout_heightPercent="25%"
             android:background="@color/prompt_dialog_reminder_bg"
             android:padding="1dp" >
 
@@ -36,7 +36,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_heightPercent="50%"
+            app:layout_heightPercent="40%"
             android:background="@color/white" >
 
             <TextView
@@ -55,6 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_centerVertical="true"
+                android:visibility="gone"
                 android:background="@color/dark_grey" />
 
             <TextView
@@ -64,6 +65,7 @@
                 android:layout_below="@+id/view"
                 android:gravity="left|center"
                 android:paddingLeft="10dp"
+                android:visibility="gone"
                 android:text="@string/album"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fourteen_sp" />
@@ -72,7 +74,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_heightPercent="30%"
+            app:layout_heightPercent="35%"
             android:background="@color/white"
             android:orientation="horizontal"
             android:paddingBottom="5dp"
