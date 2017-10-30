@@ -14,7 +14,7 @@ import com.sx.quality.utils.Constants;
 import org.xutils.common.util.DensityUtil;
 
 
-public class FinderView extends View {
+public class FinderVerticalView extends View {
     // 上、下、左、右矩阵
     private Rect topRect = new Rect();
     private Rect bottomRect = new Rect();
@@ -59,12 +59,12 @@ public class FinderView extends View {
      */
     private int leftWidth;
 
-    public FinderView(Context context) {
+    public FinderVerticalView(Context context) {
         super(context);
         init(context);
     }
 
-    public FinderView(Context context, AttributeSet attrs) {
+    public FinderVerticalView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
@@ -84,16 +84,13 @@ public class FinderView extends View {
         }
 
         /**左边线*/
-        //canvas.drawLine(leftWidth, topHeight, leftWidth, topHeight + middleHeight, linerPaint);
         canvas.drawLine(50, 40, 50, DensityUtil.getScreenWidth() - 100, linerPaint);
         /**右边线*/
-        //canvas.drawLine(leftWidth, topHeight + middleHeight, measureedWidth - leftWidth, topHeight + middleHeight, linerPaint);
-        canvas.drawLine(DensityUtil.getScreenHeight() - 50, 40, DensityUtil.getScreenHeight() - 50, DensityUtil.getScreenWidth() - 100, linerPaint);
+        canvas.drawLine((float) (DensityUtil.getScreenHeight()*0.8 - 50), 40, (float) (DensityUtil.getScreenHeight()*0.8 - 50), DensityUtil.getScreenWidth() - 100, linerPaint);
         /**上边线*/
-        //canvas.drawLine(leftWidth, topHeight, measureedWidth - leftWidth, topHeight, linerPaint);
-        canvas.drawLine(50, 40, DensityUtil.getScreenHeight() - 50, 40, linerPaint);
+        canvas.drawLine(50, 40, (float) (DensityUtil.getScreenHeight()*0.8 - 50), 40, linerPaint);
         /**下边线*/
-        canvas.drawLine(50, DensityUtil.getScreenWidth() - 100, DensityUtil.getScreenHeight() - 50, DensityUtil.getScreenWidth() - 100, linerPaint);//左边线
+        canvas.drawLine(50, DensityUtil.getScreenWidth() - 100, (float) (DensityUtil.getScreenHeight() * 0.8 - 50), DensityUtil.getScreenWidth() - 100, linerPaint);//左边线
     }
 
     private void init(Context context) {
@@ -171,28 +168,25 @@ public class FinderView extends View {
         /**
          * 中间矩形对焦框
          */
-        //middleRect.set(leftWidth, topHeight, measureedWidth - leftWidth, topHeight + middleHeight);
-        middleRect.set(50, 49, DensityUtil.getScreenHeight()-50, DensityUtil.getScreenWidth()-101);
+        middleRect.set(50, 49, (int) (DensityUtil.getScreenHeight()*0.8-50), DensityUtil.getScreenWidth()-101);
         /**
          * 上面半透明矩形框
          */
         //topRect.set(Constants.FOCUS_FRAME_ZERO, Constants.FOCUS_FRAME_ZERO, measureedWidth, topHeight);
-        topRect.set(50, 0, DensityUtil.getScreenHeight() -50, 50);
+        topRect.set(50, 0, (int) (DensityUtil.getScreenHeight()*0.8 -50), 50);
         /**
          * 左边半透明矩形框
          */
         //leftRect.set(Constants.FOCUS_FRAME_ZERO, topHeight, leftWidth, topHeight + middleHeight);
-        leftRect.set(0, 0, 50, DensityUtil.getScreenHeight());
+        leftRect.set(0, 0, 50, (int) (DensityUtil.getScreenHeight()*0.8));
 
         /**
          * 右边半透明矩形框
          */
-        //rightRect.set(measureedWidth - leftWidth, topHeight, measureedWidth, topHeight + middleHeight);
-        rightRect.set(DensityUtil.getScreenHeight() - 50, 0, DensityUtil.getScreenHeight(), DensityUtil.getScreenWidth());
+        rightRect.set((int) (DensityUtil.getScreenHeight()*0.8 - 50), 0, (int) (DensityUtil.getScreenHeight() * 0.8), DensityUtil.getScreenWidth());
         /**
          * 下边半透明矩形框
          */
-        //bottomRect.set(Constants.FOCUS_FRAME_ZERO, topHeight + middleHeight, measureedWidth, measureedHeight);
-        bottomRect.set(50, DensityUtil.getScreenWidth(), DensityUtil.getScreenHeight()-50, DensityUtil.getScreenWidth()-100);
+        bottomRect.set(50, DensityUtil.getScreenWidth(), (int) (DensityUtil.getScreenHeight() * 0.8-50), DensityUtil.getScreenWidth()-100);
     }
 }

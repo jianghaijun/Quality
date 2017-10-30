@@ -51,13 +51,10 @@ public class ImageUtil {
         float widthMultiple = Float.valueOf(width) / Float.valueOf(1280);
         float heightMultiple = Float.valueOf(height) / Float.valueOf(960);
         int watermarkWidth = (int) (350 *  widthMultiple);
-        int watermarkHeight = (int) (140 *  heightMultiple);
+        int watermarkHeight = (int) (145 *  heightMultiple);
 
-        // 创建水印画布
-        Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(watermarkBitmap);
-        canvas.drawColor(Color.argb(100 ,255, 255, 255));
-
+        // logo所占高度
+        int logoHeight = (int) (16 * heightMultiple) + (int) (5 * heightMultiple);
         level_1 = "施工部位：" + level_1;
         int len = level_1.length();
 
@@ -66,10 +63,10 @@ public class ImageUtil {
         Rect rect = new Rect();
         pFont.setTextSize(14 * widthMultiple);
         pFont.getTextBounds("豆", 0, 1, rect);
-        int oneSize = rect.width();
-
+        int oneSizeWidth = rect.width();
+        int oneSizeHeight = rect.height();
         // 水印图上每行显示多少个字
-        int lenSize = (watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSize * 3;
+        int lenSize = (watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSizeWidth * 3;
         // 水印图上文字大小
         int testSize = DensityUtil.px2dip(14 * widthMultiple);
 
@@ -84,32 +81,35 @@ public class ImageUtil {
         }
 
         // 第二行显示多少个字
-        lenSize = ((watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSize - 5) * 3;
+        lenSize = ((watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSizeWidth - 5) * 3;
         rows(level_1, lenSize);
+
+        int marginTop = 5;
+        // 设置水印高度 上下距离+(行高+行距) * 行数 + logo高度
+        int marginSum = (int) ((10 + (oneSizeHeight + marginTop) * (list.size() + 1) + logoHeight)  * heightMultiple);
+        if (marginSum > watermarkHeight) {
+            watermarkHeight = marginSum;
+        }
+
+        // 创建水印画布
+        Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(watermarkBitmap);
+        canvas.drawColor(Color.argb(100 ,255, 255, 255));
 
         // 将Logo添加到底板中
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
-        canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * widthMultiple, null);
-        // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * widthMultiple), Color.rgb(0, 97, 174), (int) (20 * widthMultiple), (int) (2* widthMultiple));
+        canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * heightMultiple, null);
 
-        int marginTopSize = (int) (10 * widthMultiple);
-        /*switch (list.size()) {
-            case 3:
-                marginTopSize = (int) (8 * widthMultiple);
-                break;
-            case 2:
-                marginTopSize = (int) (12 * widthMultiple);
-                break;
-            case 1:
-                marginTopSize = (int) (16 * widthMultiple);
-                break;
-        }*/
+        // 添加文字
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * heightMultiple), Color.rgb(0, 97, 174), (int) (20 * widthMultiple), (int) (2 * heightMultiple));
+
+        int marginTopSize = DensityUtil.px2dip(logoHeight + 10 * heightMultiple);
 
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+
         for (int i = 0; i < list.size(); i++) {
-            marginTopSize+= (int) (6 * widthMultiple);
+            marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
             if (i == 0) {
                 watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
             } else {
@@ -117,7 +117,7 @@ public class ImageUtil {
             }
         }
 
-        marginTopSize+=(int) (6 * widthMultiple);
+        marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
         String userName = (String) SpUtil.get(context, "UserName", "");
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
 
