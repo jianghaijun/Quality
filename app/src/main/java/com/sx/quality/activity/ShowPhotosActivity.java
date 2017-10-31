@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.view.CustomViewPage;
 
 import org.xutils.common.util.DensityUtil;
@@ -66,6 +67,7 @@ public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_photos);
         x.view().inject(this);
+        ScreenManagerUtil.pushActivity(this);
 
         pagerPosition = getIntent().getIntExtra(EXTRA_IMAGE_INDEX, 0);
         imgUrlList = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
@@ -194,5 +196,11 @@ public class ShowPhotosActivity extends BaseActivity implements ViewPager.OnPage
             View view = (View) object;
             container.removeView(view);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

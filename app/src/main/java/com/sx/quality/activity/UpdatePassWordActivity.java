@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.xutils.view.annotation.Event;
@@ -55,6 +56,7 @@ public class UpdatePassWordActivity extends BaseActivity {
         setContentView(R.layout.activity_update_pass_word);
 
         x.view().inject(this);
+        ScreenManagerUtil.pushActivity(this);
 
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
@@ -91,5 +93,11 @@ public class UpdatePassWordActivity extends BaseActivity {
         } else {
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

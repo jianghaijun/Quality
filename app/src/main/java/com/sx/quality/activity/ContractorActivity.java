@@ -20,6 +20,7 @@ import com.sx.quality.tree.Node;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SetListHeight;
 import com.sx.quality.utils.ToastUtil;
 
@@ -62,6 +63,7 @@ public class ContractorActivity extends BaseActivity {
 
         mContext = this;
         x.view().inject(this);
+        ScreenManagerUtil.pushActivity(this);
 
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(getResources().getDrawable(R.drawable.back_btn));
@@ -248,5 +250,11 @@ public class ContractorActivity extends BaseActivity {
                 this.finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

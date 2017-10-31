@@ -36,6 +36,7 @@ import com.sx.quality.dialog.FileDescriptionDialog;
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SensorUtil;
 import com.sx.quality.utils.SoundUtils;
 import com.sx.quality.view.FinderView;
@@ -105,6 +106,8 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
         //初始化界面
         init();
         Monitor();
+
+        ScreenManagerUtil.pushActivity(this);
 
         // 屏幕方向监听
         mAlbumOrientationEventListener = new AlbumOrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL);
@@ -637,6 +640,7 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
     protected void onDestroy() {
         super.onDestroy();
         mAlbumOrientationEventListener.disable();
+        ScreenManagerUtil.popActivity(this);
     }
 
     @Override

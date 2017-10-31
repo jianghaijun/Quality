@@ -48,6 +48,7 @@ import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.json.JSONException;
@@ -112,6 +113,7 @@ public class ContractorDetailsActivity extends BaseActivity {
 
         mContext = this;
         x.view().inject(this);
+        ScreenManagerUtil.pushActivity(this);
 
         strFilePath = mContext.getExternalCacheDir().getAbsolutePath() + "/";
         imgFile = new File(strFilePath);
@@ -660,5 +662,11 @@ public class ContractorDetailsActivity extends BaseActivity {
                 this.finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
     }
 }

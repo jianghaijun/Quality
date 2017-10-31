@@ -18,6 +18,7 @@ import com.sx.quality.dialog.UpLoadPhotosDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.PermissionListener;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.litepal.crud.DataSupport;
@@ -55,6 +56,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
 
         mContext = this;
         x.view().inject(this);
+        ScreenManagerUtil.pushActivity(this);
 
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(getResources().getDrawable(R.drawable.back_btn));
@@ -173,4 +175,10 @@ public class UpLoadPhotosActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ScreenManagerUtil.popActivity(this);
+    }
 }

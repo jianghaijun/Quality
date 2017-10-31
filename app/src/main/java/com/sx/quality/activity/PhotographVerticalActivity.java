@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SensorUtil;
 import com.sx.quality.utils.SoundUtils;
 import com.sx.quality.view.FinderVerticalView;
@@ -103,6 +105,7 @@ public class PhotographVerticalActivity extends AppCompatActivity implements Sur
         //初始化界面
         init();
         Monitor();
+        ScreenManagerUtil.pushActivity(this);
 
         // 屏幕方向监听
         mAlbumOrientationEventListener = new AlbumOrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL);
@@ -520,6 +523,7 @@ public class PhotographVerticalActivity extends AppCompatActivity implements Sur
     protected void onDestroy() {
         super.onDestroy();
         mAlbumOrientationEventListener.disable();
+        ScreenManagerUtil.popActivity(this);
     }
 
     /**
@@ -564,5 +568,15 @@ public class PhotographVerticalActivity extends AppCompatActivity implements Sur
             e.printStackTrace();
         }
         return jpegName;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ScreenManagerUtil.popAllActivityExceptOne(ContractorDetailsActivity.class);
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }
