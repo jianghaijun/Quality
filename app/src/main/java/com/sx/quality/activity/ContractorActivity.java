@@ -23,6 +23,7 @@ import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SetListHeight;
 import com.sx.quality.utils.ToastUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -30,6 +31,7 @@ import org.xutils.x;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -103,14 +105,20 @@ public class ContractorActivity extends BaseActivity {
      */
     private void getData() {
         LoadingUtils.showLoading(mContext);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(30000L, TimeUnit.MILLISECONDS)
+                .readTimeout(30000L, TimeUnit.MILLISECONDS)
+                .build();
+        //OkHttpUtils.initClient(okHttpClient);
+
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(JSON, "");
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.CONTRACTOR_LIST)
                 .post(requestBody)
                 .build();
-        client.newCall(request).enqueue(callback);
+        okHttpClient.newCall(request).enqueue(callback);
     }
 
     /**

@@ -63,7 +63,7 @@ public class PersonalSettingActivity extends BaseActivity {
         txtVersion.setText("当前版本" + AppInfoUtil.getVersion(this));
     }
 
-    @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword})
+    @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword, R.id.imgViewCheckVersion })
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.imgBtnLeft:
@@ -76,7 +76,17 @@ public class PersonalSettingActivity extends BaseActivity {
             case R.id.imgViewUpdatePassword:
                 startActivity(new Intent(this, UpdatePassWordActivity.class));
                 break;
+            case R.id.imgViewCheckVersion:
+                checkVersion();
+                break;
         }
+    }
+
+    /**
+     * 版本检查
+     */
+    private void checkVersion() {
+
     }
 
     @Override

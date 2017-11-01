@@ -220,12 +220,14 @@ public class ContractorTreeAdapter extends BaseAdapter {
             /* 是否叶节点,即没有子节点的节点 */
             if (!n.isLeaf()) {
                 // 如果展开状态则折叠---如果折叠状态则展开全部子节点
-                if (n.isExpanded()) {
+                /*if (n.isExpanded()) {
                     n.setExpanded(!n.isExpanded());
                     filterNode();
                 } else {
                     showNodeUnderAllNodes(n);
-                }
+                }*/
+                n.setExpanded(!n.isExpanded());
+                filterNode();
                 this.notifyDataSetChanged();
             } else {
                 nodeName.clear();
