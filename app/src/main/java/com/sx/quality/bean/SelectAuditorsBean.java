@@ -21,13 +21,21 @@ package com.sx.quality.bean;
  *                     `=---='
  * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  * 			   佛祖保佑       永无BUG
- *       Created by dell on 2017/10/23 12:07
+ *       Created by HaiJun on 2017/11/9 17:29
  */
 
-public class LoginBean {
-    private String realName;
+public class SelectAuditorsBean {
     private String userId;
     private String userName;
+    private boolean isSelect = false;
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
 
     public String getUserName() {
         return userName;
@@ -43,13 +51,5 @@ public class LoginBean {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getRealName() {
-        return realName == null ? "" : realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
     }
 }

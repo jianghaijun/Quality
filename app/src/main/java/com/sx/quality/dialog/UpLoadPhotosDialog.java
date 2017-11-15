@@ -9,11 +9,13 @@ import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.listener.ChoiceListener;
+import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
@@ -98,11 +100,16 @@ public class UpLoadPhotosDialog extends Dialog{
 				.addParams("nodeId", upLoadPhotosBeenList.get(upLoadNum).getNodeId())
 				.addParams("pictureDesc", upLoadPhotosBeenList.get(upLoadNum).getPictureDesc())
 				.addParams("pictureName", upLoadPhotosBeenList.get(upLoadNum).getPictureName())
+				.addParams("userId", ConstantsUtil.USER_ID)
 				.url(ConstantsUtil.BASE_URL + ConstantsUtil.UP_LOAD_PHOTOS)
 				.build()
 				.execute(new com.zhy.http.okhttp.callback.Callback() {
 					@Override
 					public Object parseNetworkResponse(Response response, int id) throws Exception {
+						Gson gson = new Gson();
+						String jsonData = response.body().string().toString();
+						LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+						upLoadPhotosBeenList.get(upLoadNum).setPictureId(loginModel.getPictureId());
 						upLoadNum++;
 						if (upLoadNum < upLoadPhotosBeenList.size()) {
 							UpLoadPhotos();

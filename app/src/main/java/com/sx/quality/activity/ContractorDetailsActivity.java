@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -15,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,10 +27,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 import com.sx.quality.adapter.ContractorDetailsAdapter;
 import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.bean.PictureBean;
 import com.sx.quality.dialog.FileDescriptionDialog;
 import com.sx.quality.dialog.SelectPhotoWayDialog;
 import com.sx.quality.dialog.UpLoadPhotosDialog;
@@ -41,7 +38,7 @@ import com.sx.quality.listener.FileInfoListener;
 import com.sx.quality.listener.PermissionListener;
 import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.model.ContractorDetailsModel;
-import com.sx.quality.utils.Constants;
+import com.sx.quality.popwindow.CustomPopupWindow;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
@@ -106,6 +103,11 @@ public class ContractorDetailsActivity extends BaseActivity {
 
     private List<ContractorListPhotosBean> listPhotosBeen = new ArrayList<>();
 
+    // 是否可选择
+    public static boolean isCanSelect = false;
+
+    public static List<PictureBean> beanList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +131,8 @@ public class ContractorDetailsActivity extends BaseActivity {
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.show_photo);
-        /*txtRight.setVisibility(View.VISIBLE);
-        txtRight.setText(R.string.choice_type);*/
+        txtRight.setVisibility(View.VISIBLE);
+        txtRight.setText(R.string.reported);
 
         // 将添加图片按钮保存到数据库
         ContractorListPhotosBean contractorListPhotosBean = new ContractorListPhotosBean();
@@ -145,7 +147,7 @@ public class ContractorDetailsActivity extends BaseActivity {
         /**
          * 搜索条件监听
          */
-        edtSearch.addTextChangedListener(new TextWatcher() {
+        /*edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -162,7 +164,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                 // 添加图片按钮
                 listPhotosBeen.add(0, new ContractorListPhotosBean());
 
-                adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener);
+                adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener, isCanSelect);
                 rvContractorDetails.setLayoutManager(new GridLayoutManager(mContext, 3));
                 rvContractorDetails.setAdapter(adapter);
             }
@@ -171,7 +173,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
 
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             getData(nodeId);
@@ -286,9 +288,26 @@ public class ContractorDetailsActivity extends BaseActivity {
         public void selectWayOrShowPhoto(boolean isShowPhoto, String thumbUrl, String photoUrl, int isUpLoad) {
             // 点击添加按钮--->选择照片
             if (isShowPhoto) {
-                SelectPhotoWayDialog selectPhotoWayDialog = new SelectPhotoWayDialog(mContext, selectPhotosWayListener);
+                /*SelectPhotoWayDialog selectPhotoWayDialog = new SelectPhotoWayDialog(mContext, selectPhotosWayListener);
                 selectPhotoWayDialog.setCanceledOnTouchOutside(false);
-                selectPhotoWayDialog.show();
+                selectPhotoWayDialog.show();*/
+                if (Build.VERSION.SDK_INT >= 23) {
+                    requestAuthority(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, new PermissionListener() {
+                        @Override
+                        public void agree() {
+                            takePictures();
+                        }
+
+                        @Override
+                        public void refuse(List<String> refusePermission) {
+                            for (String refuse : refusePermission) {
+                                ToastUtil.showLong(mContext, "您已拒绝：" + refuse + "权限!");
+                            }
+                        }
+                    });
+                } else {
+                    takePictures();
+                }
             } else {
                 // 查看照片
                 /*Intent intent = new Intent(mContext, ShowPhotoActivity.class);
@@ -467,6 +486,22 @@ public class ContractorDetailsActivity extends BaseActivity {
                     fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();
                     break;
+                case 3:
+                    // 上报成功修改状态
+                    txtRight.setText("上报");
+                    for (ContractorListPhotosBean bean : listPhotosBeen) {
+                        bean.setCanSelect(false);
+                        for (PictureBean picBean : beanList) {
+                            if (bean.getPictureId().equals(picBean.getPictureId())) {
+                                bean.setCheckFlag("1");
+                            }
+                        }
+                    }
+                    isCanSelect = !isCanSelect;
+                    if (null != adapter) {
+                        adapter.notifyDataSetChanged();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -528,6 +563,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setThumbPath(ConstantsUtil.SAVE_PATH + fileUrlName);
             addPhotoBean.setPictureDesc(rootNodeName); //描述换成rootNodeName
             addPhotoBean.setPictureName(fileUrlName);
+            addPhotoBean.setCheckFlag("-1");
             addPhotoBean.setCreatetime(DataUtils.getCurrentData());
             String[] strings = new String[]{engineeringName, rootNodeName};
             if (isUploadNow) {
@@ -655,18 +691,80 @@ public class ContractorDetailsActivity extends BaseActivity {
 
     }
 
-    @Event({R.id.imgBtnLeft})
+    @Event({R.id.imgBtnLeft, R.id.txtRight})
     private void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgBtnLeft:
                 this.finish();
                 break;
+            case R.id.txtRight:
+                if (isCanSelect) {
+                    CustomPopupWindow pop = new CustomPopupWindow(this, isReported);
+                    pop.showAtDropDownRight(view);
+                } else {
+                    txtRight.setText("操作");
+                    isCanSelect = !isCanSelect;
+                    if (null != adapter) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+                break;
         }
+    }
+
+    /**
+     * 是否上报监听
+     */
+    private ChoiceListener isReported = new ChoiceListener() {
+        @Override
+        public void returnTrueOrFalse(boolean trueOrFalse) {
+            if (trueOrFalse) {
+                /*JSONObject obj = new JSONObject();*/
+
+                for (ContractorListPhotosBean phoneListBean : listPhotosBeen) {
+                    if (phoneListBean.isCanSelect()) {
+                        PictureBean bean = new PictureBean();
+                        bean.setPictureId(phoneListBean.getPictureId());
+                        beanList.add(bean);
+                        /*try {
+                            obj.put("pictureId", phoneListBean.getPictureId());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                    }
+                }
+
+
+
+                if (beanList.size() > 0) {
+                    // 上报
+                    reported();
+                } else {
+                    ToastUtil.showShort(mContext, "请选择需要审核的图片！");
+                }
+            } else {
+                txtRight.setText("上报");
+                isCanSelect = !isCanSelect;
+                if (null != adapter) {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+    };
+
+    /**
+     * 上报
+     */
+    private void reported() {
+        Intent intent = new Intent(mContext, SelectAuditorsActivity.class);
+        //intent.putExtra("sxZlPictureList", pictureList);
+        startActivityForResult(intent, 3);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isCanSelect = false;
         ScreenManagerUtil.popActivity(this);
     }
 }

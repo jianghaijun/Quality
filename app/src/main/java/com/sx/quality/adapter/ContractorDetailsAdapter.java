@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -21,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.listener.ChoiceListener;
@@ -28,6 +30,7 @@ import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
+import com.sx.quality.utils.ToastUtil;
 import com.sx.quality.view.MLImageView;
 
 import java.util.List;
@@ -66,10 +69,39 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
 
         if (position == 0) {
             Glide.with(mContext).load(R.drawable.add).apply(options).into(holder.ivUpLoadPhone);
+            holder.txtStatus.setVisibility(View.GONE);
+            holder.txtStatus.setText("");
+            holder.ivIsChoose.setVisibility(View.GONE);
         } else {
             String fileUrl = phoneListBean.get(position).getThumbPath();
             if (!TextUtils.isEmpty(fileUrl) && !fileUrl.contains(ConstantsUtil.SAVE_PATH)) {
                 fileUrl = ConstantsUtil.FILE_BASE_URL + fileUrl;
+            }
+
+            if (phoneListBean.get(position).isCanSelect()) {
+                holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_select));
+            } else {
+                holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_un_select));
+            }
+
+            if (ContractorDetailsActivity.isCanSelect) {
+                holder.ivIsChoose.setVisibility(View.VISIBLE);
+            } else {
+                holder.ivIsChoose.setVisibility(View.GONE);
+            }
+
+            holder.txtStatus.setVisibility(View.VISIBLE);
+
+            if (phoneListBean.get(position).getCheckFlag().equals("0")) {
+                holder.txtStatus.setText("待审核");
+            } else if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2") || phoneListBean.get(position).getCheckFlag().equals("3")) {
+                holder.txtStatus.setText("审核中");
+            } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
+                holder.txtStatus.setText("审核通过");
+            } else if (phoneListBean.get(position).getCheckFlag().equals("5")) {
+                holder.txtStatus.setText("审核未通过");
+            } else {
+                holder.txtStatus.setText("未上传");
             }
 
             Glide.with(mContext)
@@ -92,6 +124,30 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
                 }
             }
         });
+
+        holder.ivIsChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
+                    ToastUtil.showShort(mContext, "未上传的照片不能进行审核操作，请先上传照片。");
+                } else {
+                    if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2") || phoneListBean.get(position).getCheckFlag().equals("3")) {
+                        ToastUtil.showShort(mContext, "照片正在审核中，不能再次提交审核！");
+                    } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
+                        ToastUtil.showShort(mContext, "照片已审核通过，不能再次提交审核！");
+                    } else if (phoneListBean.get(position).getCheckFlag().equals("5")) {
+                        ToastUtil.showShort(mContext, "照片审核未通过，不能再次提交审核！");
+                    } else {
+                        if (phoneListBean.get(position).isCanSelect()) {
+                            holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_un_select));
+                        } else {
+                            holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_select));
+                        }
+                        phoneListBean.get(position).setCanSelect(!phoneListBean.get(position).isCanSelect());
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -101,10 +157,14 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
 
     public class ContractorDetailsHolder extends RecyclerView.ViewHolder {
         private ImageView ivUpLoadPhone;
+        private ImageView ivIsChoose;
+        private TextView txtStatus;
 
         public ContractorDetailsHolder(View itemView) {
             super(itemView);
             ivUpLoadPhone = (ImageView) itemView.findViewById(R.id.ivUpLoadPhone);
+            ivIsChoose = (ImageView) itemView.findViewById(R.id.ivIsChoose);
+            txtStatus = (TextView) itemView.findViewById(R.id.txtStatus);
         }
     }
 

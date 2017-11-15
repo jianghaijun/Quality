@@ -11,8 +11,17 @@ public class ContractorListBean {
     private String nodeId;
     private String nodeName;
     private String nodeTitle;
+    private String folderFlag;
     private int processNum;
     private List<ContractorListBean> sxZlNodeList;
+
+    public String getFolderFlag() {
+        return folderFlag;
+    }
+
+    public void setFolderFlag(String folderFlag) {
+        this.folderFlag = folderFlag;
+    }
 
     public int getProcessNum() {
         return processNum;

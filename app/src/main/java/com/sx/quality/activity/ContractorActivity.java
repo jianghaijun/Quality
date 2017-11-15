@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.adapter.ContractorTreeAdapter;
 import com.sx.quality.bean.ContractorListBean;
 import com.sx.quality.dialog.EditNodeDialog;
@@ -140,7 +142,8 @@ public class ContractorActivity extends BaseActivity {
         public void onResponse(Call call, Response response) throws IOException {
             Gson gson = new Gson();
             String jsonData = response.body().string().toString();
-            jsonData = null == jsonData || jsonData.equals("null") || jsonData.equals("") ? "{}" : jsonData;
+            jsonData = (null == jsonData) || jsonData.equals("null") || jsonData.equals("") ? "{}" : jsonData;
+
             final ContractorListModel model = gson.fromJson(jsonData, ContractorListModel.class);
 
             if (model.isSuccess()) {
@@ -202,6 +205,7 @@ public class ContractorActivity extends BaseActivity {
         try {
             String nodeName = contractorListBean.getNodeTitle() + "(" + contractorListBean.getProcessNum() + "道工序)";
             String nodeId = contractorListBean.getNodeId();
+            String folderFlag = contractorListBean.getFolderFlag();
             // 创建子节点
             Node n = new Node(nodeName, "1");
             n.setParent(root);
@@ -217,6 +221,7 @@ public class ContractorActivity extends BaseActivity {
             }
             n.setUserId(nodeId);
             n.setRoleName(nodeName);
+            n.setTel(folderFlag);
             n.setExpanded(false);
 
             root.add(n);

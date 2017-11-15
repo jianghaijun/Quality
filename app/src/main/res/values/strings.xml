@@ -50,4 +50,8 @@
     <string name="update_node">修改节点名称</string>
     <string name="please_input_node_name">请输入节点名称</string>
     <string name="node_name_can_not_be_empty">节点名称不能为空!</string>
+    <string name="reported">上报</string>
+    <string name="query_reported">确认上报</string>
+    <string name="cancel_reported">取消上报</string>
+    <string name="auditors">审核人员</string>
 </resources>

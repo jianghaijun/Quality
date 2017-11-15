@@ -20,6 +20,24 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
     private String pictureName;
     private String pictureNameNoSuffix;
     private String pictureAddress;
+    private boolean isCanSelect = false;
+    private String checkFlag;
+
+    public String getCheckFlag() {
+        return checkFlag == null || "".equals(checkFlag) ? "0" : checkFlag;
+    }
+
+    public void setCheckFlag(String checkFlag) {
+        this.checkFlag = checkFlag;
+    }
+
+    public boolean isCanSelect() {
+        return isCanSelect;
+    }
+
+    public void setCanSelect(boolean canSelect) {
+        isCanSelect = canSelect;
+    }
 
     public String getThumbPath() {
         return thumbPath;

@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.model.LoginModel;
+import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
@@ -28,6 +29,7 @@ import org.xutils.x;
 
 import java.io.IOException;
 
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -69,6 +71,7 @@ public class LoginActivity extends BaseActivity {
     private ImageView imgLogo;
 
     private boolean isLogin = false;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,9 +147,15 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void run() {
                             SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
-                            LoadingUtils.hideLoading();
+                            userId = loginModel.getData().getUserId();
+
+                            ConstantsUtil.USER_ID = userId;
+
+                            // 设置极光别名
+                            int sequence = (int) System.currentTimeMillis();
+                            JPushInterface.setAlias(mContext, sequence, userId);
+
                             LoginSuccessful();
-                            isLogin = false;
                         }
                     });
                 } else {
@@ -167,14 +176,68 @@ public class LoginActivity extends BaseActivity {
      * 登录成功
      */
     private void LoginSuccessful () {
-        SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
-        startActivity(new Intent(this, MainActivity.class));
-        edtUserPassWord.setText("");
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        JSONObject object = new JSONObject();
+        try {
+            object.put("userId", userId);
+            object.put("alias", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody requestBody = RequestBody.create(JSON, object.toString());
+        Request request = new Request.Builder()
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.SUBMIT_ALIAS)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        isLogin = false;
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showShort(mContext, "别名上传失败！");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Gson gson = new Gson();
+                String jsonData = response.body().string().toString();
+
+                final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                if (loginModel.isSuccess()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LoadingUtils.hideLoading();
+                            isLogin = false;
+
+                            SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
+                            startActivity(new Intent(mContext, MainActivity.class));
+                            edtUserPassWord.setText("");
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            isLogin = false;
+                            LoadingUtils.hideLoading();
+                            ToastUtil.showShort(mContext, "别名上传失败！");
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ScreenManagerUtil.popActivity(this);
+        //ScreenManagerUtil.popActivity(this);
     }
 }

@@ -42,6 +42,19 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.sx.quality.activity"
+
+        ndk {
+            // 选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: applicationId,
+                JPUSH_APPKEY : "427374ed061f0645b378569d", //JPush上注册的包名对应的appkey.
+                JPUSH_CHANNEL: "developer-default", // 暂时填写默认值即可.
+        ]
+
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
@@ -80,6 +93,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    // 此处以JPush 3.0.9 版本为例。
+    // 此处以JCore 1.1.7 版本为例。
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.zhy:percent-support-extends:1.1.1'
@@ -93,5 +108,7 @@ dependencies {
     compile 'com.zyao89:zloading:1.0.8'
     compile 'org.litepal.android:core:1.6.0'
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
+    compile 'cn.jiguang.sdk:jpush:3.0.9'
+    compile 'cn.jiguang.sdk:jcore:1.1.7'
     testCompile 'junit:junit:4.12'
 }

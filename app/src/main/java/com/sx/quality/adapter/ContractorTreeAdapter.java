@@ -17,6 +17,7 @@ import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.tree.Node;
+import com.sx.quality.utils.ToastUtil;
 
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -229,6 +230,8 @@ public class ContractorTreeAdapter extends BaseAdapter {
                 n.setExpanded(!n.isExpanded());
                 filterNode();
                 this.notifyDataSetChanged();
+            } else if (n.getTel().equals("1") && n.isLeaf()) {
+                ToastUtil.showShort(mContext, "无法对空根目录进行操作!");
             } else {
                 nodeName.clear();
                 nodeName.add(n.getRoleName());

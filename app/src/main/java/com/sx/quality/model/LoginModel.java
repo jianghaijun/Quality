@@ -10,7 +10,16 @@ public class LoginModel {
     private boolean success;
     private String message;
     private int errcode;
+    private String pictureId;
     private LoginBean data;
+
+    public String getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(String pictureId) {
+        this.pictureId = pictureId;
+    }
 
     public LoginBean getData() {
         return data;
