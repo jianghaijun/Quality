@@ -54,4 +54,6 @@
     <string name="query_reported">确认上报</string>
     <string name="cancel_reported">取消上报</string>
     <string name="auditors">审核人员</string>
+    <string name="json_error">JSON数据格式不正确！</string>
+    <string name="download_context">文件下载</string>
 </resources>

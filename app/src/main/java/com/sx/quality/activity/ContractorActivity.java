@@ -20,6 +20,7 @@ import com.sx.quality.listener.EditNodeListener;
 import com.sx.quality.model.ContractorListModel;
 import com.sx.quality.tree.Node;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
@@ -142,26 +143,34 @@ public class ContractorActivity extends BaseActivity {
         public void onResponse(Call call, Response response) throws IOException {
             Gson gson = new Gson();
             String jsonData = response.body().string().toString();
-            jsonData = (null == jsonData) || jsonData.equals("null") || jsonData.equals("") ? "{}" : jsonData;
-
-            final ContractorListModel model = gson.fromJson(jsonData, ContractorListModel.class);
-
-            if (model.isSuccess()) {
+            if (!JsonUtils.isGoodJson(jsonData)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setContractorNode(model.getData());
                         LoadingUtils.hideLoading();
+                        ToastUtil.showLong(mContext, getString(R.string.json_error));
                     }
                 });
             } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        LoadingUtils.hideLoading();
-                        ToastUtil.showLong(mContext, getString(R.string.get_data_exception));
-                    }
-                });
+                final ContractorListModel model = gson.fromJson(jsonData, ContractorListModel.class);
+
+                if (model.isSuccess()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setContractorNode(model.getData());
+                            LoadingUtils.hideLoading();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LoadingUtils.hideLoading();
+                            ToastUtil.showLong(mContext, getString(R.string.get_data_exception));
+                        }
+                    });
+                }
             }
         }
     };

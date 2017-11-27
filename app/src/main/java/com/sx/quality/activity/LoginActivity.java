@@ -16,6 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
@@ -140,31 +141,41 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Gson gson = new Gson();
                 String jsonData = response.body().string().toString();
+                if (JsonUtils.isGoodJson(jsonData)) {
+                    final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                    if (loginModel.isSuccess()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
+                                userId = loginModel.getData().getUserId();
 
-                final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
-                if (loginModel.isSuccess()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
-                            userId = loginModel.getData().getUserId();
+                                ConstantsUtil.USER_ID = userId;
 
-                            ConstantsUtil.USER_ID = userId;
+                                // 设置极光别名
+                                int sequence = (int) System.currentTimeMillis();
+                                JPushInterface.setAlias(mContext, sequence, userId);
 
-                            // 设置极光别名
-                            int sequence = (int) System.currentTimeMillis();
-                            JPushInterface.setAlias(mContext, sequence, userId);
-
-                            LoginSuccessful();
-                        }
-                    });
+                                LoginSuccessful();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                isLogin = false;
+                                LoadingUtils.hideLoading();
+                                ToastUtil.showShort(mContext, getString(R.string.login_error));
+                            }
+                        });
+                    }
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             isLogin = false;
                             LoadingUtils.hideLoading();
-                            ToastUtil.showShort(mContext, getString(R.string.login_error));
+                            ToastUtil.showShort(mContext, getString(R.string.json_error));
                         }
                     });
                 }
