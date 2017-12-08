@@ -43,18 +43,28 @@
         app:layout_widthPercent="15%" />
 
     <Button
-        android:id="@+id/txtRight"
-        android:layout_width="@dimen/zero_dp"
-        android:layout_height="@dimen/zero_dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:id="@+id/btnRightOne"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/five_dp"
+        android:layout_toLeftOf="@+id/txtRight"
         android:background="@drawable/action_bar_bg"
-        android:contentDescription="@null"
-        android:textColor="@color/white"
-        android:textSize="@dimen/twenty_sp"
         android:gravity="center"
         android:src="@null"
-        android:visibility="gone"
-        app:layout_heightPercent="100%"
-        app:layout_widthPercent="15%" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/txtRight"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/five_dp"
+        android:background="@drawable/action_bar_bg"
+        android:gravity="center"
+        android:src="@null"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="invisible" />
 </com.zhy.android.percent.support.PercentRelativeLayout>

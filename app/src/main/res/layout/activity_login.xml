@@ -15,7 +15,7 @@
         android:layout_width="@dimen/one_hundred_dp"
         android:layout_height="@dimen/one_hundred_dp"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/logo"
         app:layout_marginTopPercent="15%" />
 
     <LinearLayout

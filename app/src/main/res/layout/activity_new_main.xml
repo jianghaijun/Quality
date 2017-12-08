@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.MainActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="12%" />
+
+    <com.zhy.android.percent.support.PercentLinearLayout
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        app:layout_widthPercent="90%w">
+
+        <RelativeLayout
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            app:layout_heightPercent="90%h"
+            app:layout_widthPercent="30%w">
+
+            <ImageButton
+                android:id="@+id/imgBtnPersonalSetting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/personal_setting_bg" />
+
+            <com.zhy.android.percent.support.PercentRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/llUserInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/twenty_dp">
+
+                    <!--<RelativeLayout
+                        android:id="@+id/rlDepartment"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/thirty">
+
+                        <TextView
+                            android:id="@+id/userDepartment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/department"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fourteen_sp" />
+
+                        <TextView
+                            android:id="@+id/txtUserDepartment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/userDepartment"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fourteen_sp" />
+                    </RelativeLayout>-->
+
+                    <!--<RelativeLayout
+                        android:id="@+id/rlRealName"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/thirty">
+
+                        <TextView
+                            android:id="@+id/realName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/real_name"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fourteen_sp" />
+
+                        <TextView
+                            android:id="@+id/txtRealName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/realName"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fourteen_sp" />
+                    </RelativeLayout>-->
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgViewPersonSetting"
+                    android:layout_width="@dimen/zero_dp"
+                    android:layout_height="@dimen/zero_dp"
+                    android:layout_below="@+id/llUserInfo"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/personal_setting"
+                    app:layout_heightPercent="40%w"
+                    app:layout_widthPercent="40%w" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgViewPersonSetting"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:gravity="center"
+                    android:text="@string/person_setting"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twenty_sp" />
+            </com.zhy.android.percent.support.PercentRelativeLayout>
+        </RelativeLayout>
+
+        <com.zhy.android.percent.support.PercentLinearLayout
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_heightPercent="90%h"
+            app:layout_widthPercent="70%w">
+
+            <com.zhy.android.percent.support.PercentLinearLayout
+                android:layout_width="@dimen/zero_dp"
+                android:layout_height="@dimen/zero_dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_heightPercent="47.5%h"
+                app:layout_marginBottomPercent="2.5%h"
+                app:layout_widthPercent="100%w">
+
+
+                <RelativeLayout
+                    android:id="@+id/rlQuality"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    app:layout_marginLeftPercent="2.5%w">
+
+                    <ImageButton
+                        android:id="@+id/imgBtnQuality"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/owner_bg" />
+
+                    <com.zhy.android.percent.support.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imgViewQuality"
+                            android:layout_width="@dimen/zero_dp"
+                            android:layout_height="@dimen/zero_dp"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/owner"
+                            app:layout_heightPercent="50%h"
+                            app:layout_widthPercent="50%h" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/imgViewQuality"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:gravity="center"
+                            android:text="@string/quality"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/twenty_sp" />
+                    </com.zhy.android.percent.support.PercentRelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlSecurity"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    app:layout_marginLeftPercent="2.5%w">
+
+                    <ImageButton
+                        android:id="@+id/imgBtnSecurity"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/contractor_bg" />
+
+                    <com.zhy.android.percent.support.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imgViewSecurity"
+                            android:layout_width="@dimen/zero_dp"
+                            android:layout_height="@dimen/zero_dp"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/contractor"
+                            app:layout_heightPercent="50%h"
+                            app:layout_widthPercent="50%h" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/imgViewSecurity"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:gravity="center"
+                            android:text="@string/security"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/twenty_sp" />
+                    </com.zhy.android.percent.support.PercentRelativeLayout>
+                </RelativeLayout>
+            </com.zhy.android.percent.support.PercentLinearLayout>
+
+            <com.zhy.android.percent.support.PercentLinearLayout
+                android:layout_width="@dimen/zero_dp"
+                android:layout_height="@dimen/zero_dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_heightPercent="50%h"
+                app:layout_widthPercent="100%w">
+
+                <RelativeLayout
+                    android:id="@+id/rlUseHelp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    app:layout_marginLeftPercent="2.5%w"
+                    app:layout_marginTopPercent="2.5%h">
+
+                    <ImageButton
+                        android:id="@+id/imgBtnUseHelp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/supervision_bg" />
+
+                    <com.zhy.android.percent.support.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imgViewUseHelp"
+                            android:layout_width="@dimen/zero_dp"
+                            android:layout_height="@dimen/zero_dp"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/supervision"
+                            app:layout_heightPercent="50%h"
+                            app:layout_widthPercent="50%h" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/imgViewUseHelp"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:gravity="center"
+                            android:text="@string/supervision"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/twenty_sp" />
+                    </com.zhy.android.percent.support.PercentRelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    app:layout_marginLeftPercent="2.5%w"
+                    app:layout_marginTopPercent="2.5%h">
+
+                    <ImageButton
+                        android:id="@+id/imgBtnToUploadPhotos"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/to_upload_photos_bg" />
+
+                    <com.zhy.android.percent.support.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imgViewToUploadPhotos"
+                            android:layout_width="@dimen/zero_dp"
+                            android:layout_height="@dimen/zero_dp"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/to_upload_photos"
+                            app:layout_heightPercent="50%h"
+                            app:layout_widthPercent="50%h" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/imgViewToUploadPhotos"
+                            android:layout_marginTop="@dimen/five_dp"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/txtSubmitPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/to_upload_photos"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/twenty_sp" />
+
+                            <TextView
+                                android:id="@+id/txtSubmitPhotosNum"
+                                android:layout_width="@dimen/twenty_dp"
+                                android:layout_height="@dimen/twenty_dp"
+                                android:layout_marginLeft="@dimen/two_dp"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:layout_toRightOf="@+id/txtSubmitPhone"
+                                android:background="@drawable/design_red_point"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/ten_sp" />
+                        </RelativeLayout>
+
+                    </com.zhy.android.percent.support.PercentRelativeLayout>
+
+                </RelativeLayout>
+            </com.zhy.android.percent.support.PercentLinearLayout>
+        </com.zhy.android.percent.support.PercentLinearLayout>
+    </com.zhy.android.percent.support.PercentLinearLayout>
+</com.zhy.android.percent.support.PercentLinearLayout>

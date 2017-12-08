@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
+import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
@@ -84,7 +86,10 @@ public class LoginActivity extends BaseActivity {
         ScreenManagerUtil.pushActivity(this);
 
         RequestOptions options = new RequestOptions().circleCrop();
-        Glide.with(this).load(R.drawable.add).apply(options).into(imgLogo);
+        Glide.with(this).load(R.mipmap.logo).apply(options).into(imgLogo);
+
+        String userName = (String) SpUtil.get(this, "user", "");
+        edtUserName.setText(userName);
     }
 
     @Event(R.id.btnLogin)
@@ -96,9 +101,13 @@ public class LoginActivity extends BaseActivity {
                 } else if (TextUtils.isEmpty(edtUserPassWord.getText().toString().trim())) {
                     ToastUtil.showShort(this, getString(R.string.please_input_user_password));
                 } else {
-                    if (!isLogin) {
-                        isLogin = true;
-                        Login ();
+                    if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                        if (!isLogin) {
+                            isLogin = true;
+                            Login ();
+                        }
+                    } else {
+                        ToastUtil.showShort(this, getString(R.string.not_network));
                     }
                 }
                 break;
@@ -148,9 +157,11 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
+                                SpUtil.put(mContext, "user", edtUserName.getText().toString().trim());
+                                SpUtil.put(mContext, ConstantsUtil.USER_ID, loginModel.getData().getUserId());
+                                // 用户部门
+                                //SpUtil.put(mContext, ConstantsUtil.USER_DEPARTMENT, TextUtils.isEmpty(loginModel.getData().getDepartment()) ? "" : loginModel.getData().getDepartment());
                                 userId = loginModel.getData().getUserId();
-
-                                ConstantsUtil.USER_ID = userId;
 
                                 // 设置极光别名
                                 int sequence = (int) System.currentTimeMillis();
@@ -218,27 +229,42 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Gson gson = new Gson();
                 String jsonData = response.body().string().toString();
+                if (JsonUtils.isGoodJson(jsonData)) {
+                    final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                    if (loginModel.isSuccess()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LoadingUtils.hideLoading();
+                                isLogin = false;
 
-                final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
-                if (loginModel.isSuccess()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LoadingUtils.hideLoading();
-                            isLogin = false;
+                                SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
+                                SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, loginModel.getData().getUserType());
 
-                            SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
-                            startActivity(new Intent(mContext, MainActivity.class));
-                            edtUserPassWord.setText("");
-                        }
-                    });
+                                // 2017/11/27 更换为新主界面
+                                //startActivity(new Intent(mContext, MainActivity.class));
+                                startActivity(new Intent(mContext, NewMainActivity.class));
+                                LoginActivity.this.finish();
+                                edtUserPassWord.setText("");
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                isLogin = false;
+                                LoadingUtils.hideLoading();
+                                ToastUtil.showShort(mContext, "别名上传失败！");
+                            }
+                        });
+                    }
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             isLogin = false;
                             LoadingUtils.hideLoading();
-                            ToastUtil.showShort(mContext, "别名上传失败！");
+                            ToastUtil.showShort(mContext, getString(R.string.json_error));
                         }
                     });
                 }
@@ -249,6 +275,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //ScreenManagerUtil.popActivity(this);
+        ScreenManagerUtil.popActivity(this);
     }
 }

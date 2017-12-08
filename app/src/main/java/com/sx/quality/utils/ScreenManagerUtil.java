@@ -5,6 +5,9 @@ import java.util.Stack;
 import android.app.Activity;
 import android.util.Log;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+
 /**
  * Activity堆栈管理
  *

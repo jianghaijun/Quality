@@ -29,6 +29,16 @@
             android:layout_marginLeft="@dimen/ten_dp"
             android:background="@drawable/user_avatar" />
 
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/ten_dp"
+            android:layout_toRightOf="@+id/imgViewUserAvatar"
+            android:gravity="center"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/twenty_sp" />
+
         <Button
             android:id="@+id/btnSignOut"
             android:layout_width="wrap_content"

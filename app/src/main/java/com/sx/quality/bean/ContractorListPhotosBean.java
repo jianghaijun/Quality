@@ -12,16 +12,26 @@ import java.io.Serializable;
 
 public class ContractorListPhotosBean extends DataSupport implements Serializable {
     private int isToBeUpLoad = -1;
+    private String userId;
     private String pictureId;
     private String pictureDesc;
     private String thumbPath;
     private String createtime;
     private String nodeId;
     private String pictureName;
+    private String pictureType;
     private String pictureNameNoSuffix;
     private String pictureAddress;
     private boolean isCanSelect = false;
     private String checkFlag;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getCheckFlag() {
         return checkFlag == null || "".equals(checkFlag) ? "0" : checkFlag;
@@ -109,5 +119,13 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
 
     public void setPictureAddress(String pictureAddress) {
         this.pictureAddress = pictureAddress;
+    }
+
+    public String getPictureType() {
+        return pictureType;
+    }
+
+    public void setPictureType(String pictureType) {
+        this.pictureType = pictureType;
     }
 }

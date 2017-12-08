@@ -16,6 +16,7 @@ import com.sx.quality.model.CheckVersionModel;
 import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
+import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
@@ -63,6 +64,8 @@ public class PersonalSettingActivity extends BaseActivity {
 
     @ViewInject(R.id.txtVersion)
     private TextView txtVersion;
+    @ViewInject(R.id.txtUserName)
+    private TextView txtUserName;
 
     private Context mContext;
     private Long fileLength;
@@ -81,6 +84,7 @@ public class PersonalSettingActivity extends BaseActivity {
         txtTitle.setText(getString(R.string.person_setting));
 
         txtVersion.setText("当前版本" + AppInfoUtil.getVersion(this));
+        txtUserName.setText((String) SpUtil.get(this, "UserName", ""));
     }
 
     @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword, R.id.imgViewCheckVersion })
@@ -91,13 +95,19 @@ public class PersonalSettingActivity extends BaseActivity {
                 break;
             case R.id.btnSignOut:
                 SpUtil.put(this, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
-                ScreenManagerUtil.popAllActivityExceptOne(LoginActivity.class);
+                ScreenManagerUtil.popAllActivityExceptOne();
+                //ScreenManagerUtil.popAllActivityExceptOne(LoginActivity.class);
+                startActivity(new Intent(mContext, LoginActivity.class));
                 break;
             case R.id.imgViewUpdatePassword:
                 startActivity(new Intent(this, UpdatePassWordActivity.class));
                 break;
             case R.id.imgViewCheckVersion:
-                checkVersion();
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                    checkVersion();
+                } else {
+                    ToastUtil.showShort(this, getString(R.string.not_network));
+                }
                 break;
         }
     }

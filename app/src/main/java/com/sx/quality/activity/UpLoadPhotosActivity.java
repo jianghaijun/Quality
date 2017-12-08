@@ -17,8 +17,10 @@ import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.dialog.UpLoadPhotosDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.PermissionListener;
+import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.ScreenManagerUtil;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.litepal.crud.DataSupport;
@@ -71,7 +73,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
      * 初始化数据
      */
     private void initData() {
-        upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 order by createtime desc").find(ContractorListPhotosBean.class);
+        // 获取当前登录人员需要上传的图片
+        upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createtime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
 
         if (Build.VERSION.SDK_INT >= 23) {
             requestAuthority(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
@@ -91,7 +94,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
             });
         } else {
             adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-            rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 3));
+            rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
             rvUpLoadPhone.setAdapter(adapter);
         }
     }
@@ -101,17 +104,21 @@ public class UpLoadPhotosActivity extends BaseActivity {
         switch (view.getId()) {
             // 上传图片
             case R.id.txtRight:
-                if (upLoadPhotosBeenList.size() > 0) {
-                    if (!JudgeNetworkIsAvailable.GetNetworkType(this).equals("WIFI")) {
-                        PromptDialog promptDialog = new PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
-                        promptDialog.setCancelable(false);
-                        promptDialog.setCanceledOnTouchOutside(false);
-                        promptDialog.show();
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                    if (upLoadPhotosBeenList.size() > 0) {
+                        if (!JudgeNetworkIsAvailable.GetNetworkType(this).equals("WIFI")) {
+                            PromptDialog promptDialog = new PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
+                            promptDialog.setCancelable(false);
+                            promptDialog.setCanceledOnTouchOutside(false);
+                            promptDialog.show();
+                        } else {
+                            upLoadPhoto();
+                        }
                     } else {
-                        upLoadPhoto();
+                        ToastUtil.showLong(mContext, "暂无可上传照片!");
                     }
                 } else {
-                    ToastUtil.showLong(mContext, "暂无可上传照片!");
+                    ToastUtil.showLong(mContext, getString(R.string.not_network));
                 }
                 break;
             case R.id.imgBtnLeft:
@@ -168,9 +175,9 @@ public class UpLoadPhotosActivity extends BaseActivity {
         @Override
         public void returnTrueOrFalse(boolean trueOrFalse) {
             if (trueOrFalse) {
-                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 order by createtime desc").find(ContractorListPhotosBean.class);
+                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createtime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
                 adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-                rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 3));
+                rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
                 rvUpLoadPhone.setAdapter(adapter);
             }
         }

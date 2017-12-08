@@ -2,6 +2,7 @@ package com.sx.quality.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.adapter.ContractorTreeAdapter;
 import com.sx.quality.bean.ContractorListBean;
+import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.dialog.EditNodeDialog;
 import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.listener.EditNodeListener;
@@ -25,9 +27,11 @@ import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SetListHeight;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -99,7 +103,13 @@ public class ContractorActivity extends BaseActivity {
         if(JudgeNetworkIsAvailable.isNetworkAvailable(this)){
             getData();
         }else{
-            ToastUtil.showLong(this, getString(R.string.not_network));
+            //ToastUtil.showLong(this, getString(R.string.not_network));
+            String jsonData = (String) SpUtil.get(mContext, "JSON", "");
+            if (!TextUtils.isEmpty(jsonData)){
+                Gson gson = new Gson();
+                ContractorListModel model = gson.fromJson(jsonData, ContractorListModel.class);
+                setContractorNode(model.getData());
+            }
         }
     }
 
@@ -152,6 +162,8 @@ public class ContractorActivity extends BaseActivity {
                     }
                 });
             } else {
+                SpUtil.put(mContext, "JSON", jsonData);
+
                 final ContractorListModel model = gson.fromJson(jsonData, ContractorListModel.class);
 
                 if (model.isSuccess()) {

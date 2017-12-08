@@ -262,7 +262,6 @@ public class ContractorTreeAdapter extends BaseAdapter {
                 }*/
                 intent.putExtra("nodeId", n.getUserId());
                 /*intent.putExtra("nodeName", n.getParent().getRoleName());*/
-
                 intent.setClass(mContext, ContractorDetailsActivity.class);
                 mContext.startActivity(intent);
             }

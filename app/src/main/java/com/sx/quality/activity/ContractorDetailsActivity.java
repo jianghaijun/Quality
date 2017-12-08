@@ -27,25 +27,32 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.adapter.ContractorDetailsAdapter;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.bean.PictureBean;
 import com.sx.quality.dialog.FileDescriptionDialog;
+import com.sx.quality.dialog.ReportDialog;
 import com.sx.quality.dialog.SelectPhotoWayDialog;
 import com.sx.quality.dialog.UpLoadPhotosDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.FileInfoListener;
 import com.sx.quality.listener.PermissionListener;
+import com.sx.quality.listener.ReportListener;
 import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.model.ContractorDetailsModel;
+import com.sx.quality.model.PictureModel;
 import com.sx.quality.popwindow.CustomPopupWindow;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
+import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.json.JSONException;
@@ -62,6 +69,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -81,6 +89,8 @@ public class ContractorDetailsActivity extends BaseActivity {
     private TextView txtTitle;
     @ViewInject(R.id.txtRight)
     private Button txtRight;
+    @ViewInject(R.id.btnRightOne)
+    private Button btnRightOne;
     @ViewInject(R.id.edtSearch)
     private EditText edtSearch;
 
@@ -131,7 +141,10 @@ public class ContractorDetailsActivity extends BaseActivity {
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.show_photo);
+        btnRightOne.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.btn_blue));
+        btnRightOne.setText("确认");
         txtRight.setVisibility(View.VISIBLE);
+        txtRight.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.btn_blue));
         txtRight.setText(R.string.reported);
 
         // 将添加图片按钮保存到数据库
@@ -178,7 +191,13 @@ public class ContractorDetailsActivity extends BaseActivity {
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             getData(nodeId);
         } else {
-            ToastUtil.showLong(mContext, getString(R.string.not_network));
+            //ToastUtil.showLong(mContext, getString(R.string.not_network));
+            // 添加待上传的照片
+            List<ContractorListPhotosBean> toUploadList = DataSupport.where("nodeId = ? AND isToBeUpLoad = 1 AND pictureType = ? AND userId = ? order by createtime desc", nodeId, (String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
+            for (ContractorListPhotosBean toUploadBean : toUploadList) {
+                listPhotosBeen.add(toUploadBean);
+            }
+            initData();
         }
     }
 
@@ -191,9 +210,12 @@ public class ContractorDetailsActivity extends BaseActivity {
         LoadingUtils.showLoading(mContext);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         OkHttpClient client = new OkHttpClient();
+
         JSONObject object = new JSONObject();
         try {
             object.put("nodeId", nodeId);
+            object.put("userId", SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
+            object.put("pictureType", SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -225,15 +247,14 @@ public class ContractorDetailsActivity extends BaseActivity {
             Gson gson = new Gson();
             String jsonData = response.body().string().toString();
             jsonData = null == jsonData || jsonData.equals("null") ? "{}" : jsonData;
-            try {
+            if (JsonUtils.isGoodJson(jsonData)) {
                 final ContractorDetailsModel model = gson.fromJson(jsonData, ContractorDetailsModel.class);
-
                 if (model.isSuccess()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // 添加待上传的照片
-                            List<ContractorListPhotosBean> toUploadList = DataSupport.where("nodeId = ? AND isToBeUpLoad = 1 order by createtime desc", nodeId).find(ContractorListPhotosBean.class);
+                            List<ContractorListPhotosBean> toUploadList = DataSupport.where("nodeId = ? AND isToBeUpLoad = 1 AND pictureType = ? AND userId = ? order by createtime desc", nodeId, (String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
                             for (ContractorListPhotosBean toUploadBean : toUploadList) {
                                 listPhotosBeen.add(toUploadBean);
                             }
@@ -254,11 +275,15 @@ public class ContractorDetailsActivity extends BaseActivity {
                         }
                     });
                 }
-            } catch (Exception e) {
-                e.getMessage();
-                ToastUtil.showShort(mContext, getString(R.string.data_error));
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showLong(mContext, getString(R.string.json_error));
+                    }
+                });
             }
-
         }
     };
 
@@ -291,23 +316,28 @@ public class ContractorDetailsActivity extends BaseActivity {
                 /*SelectPhotoWayDialog selectPhotoWayDialog = new SelectPhotoWayDialog(mContext, selectPhotosWayListener);
                 selectPhotoWayDialog.setCanceledOnTouchOutside(false);
                 selectPhotoWayDialog.show();*/
-                if (Build.VERSION.SDK_INT >= 23) {
-                    requestAuthority(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, new PermissionListener() {
-                        @Override
-                        public void agree() {
-                            takePictures();
-                        }
-
-                        @Override
-                        public void refuse(List<String> refusePermission) {
-                            for (String refuse : refusePermission) {
-                                ToastUtil.showLong(mContext, "您已拒绝：" + refuse + "权限!");
+                //String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+                //if (!TextUtils.isEmpty(userLevel)) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        requestAuthority(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, new PermissionListener() {
+                            @Override
+                            public void agree() {
+                                takePictures();
                             }
-                        }
-                    });
-                } else {
-                    takePictures();
-                }
+
+                            @Override
+                            public void refuse(List<String> refusePermission) {
+                                for (String refuse : refusePermission) {
+                                    ToastUtil.showLong(mContext, "您已拒绝：" + refuse + "权限!");
+                                }
+                            }
+                        });
+                    } else {
+                        takePictures();
+                    }
+                //} else {
+                //    ToastUtil.showShort(mContext, "当前职位不可上传照片！");
+                //}
             } else {
                 // 查看照片
                 /*Intent intent = new Intent(mContext, ShowPhotoActivity.class);
@@ -533,6 +563,10 @@ public class ContractorDetailsActivity extends BaseActivity {
                     public void returnTrueOrFalse(boolean trueOrFalse) {
                         LoadingUtils.hideLoading();
                         if (null != adapter) {
+                            for (ContractorListPhotosBean bean : upLoadNowList) {
+                                bean.setCheckFlag("0");
+                            }
+
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -564,17 +598,24 @@ public class ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setPictureDesc(rootNodeName); //描述换成rootNodeName
             addPhotoBean.setPictureName(fileUrlName);
             addPhotoBean.setCheckFlag("-1");
+            addPhotoBean.setUserId((String) SpUtil.get(mContext,ConstantsUtil.USER_ID, ""));
+            addPhotoBean.setPictureType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
             addPhotoBean.setCreatetime(DataUtils.getCurrentData());
             String[] strings = new String[]{engineeringName, rootNodeName};
             if (isUploadNow) {
-                upLoadNowList = new ArrayList<>();
-                upLoadNowList.add(addPhotoBean);
-                addPhotoBean.save();
-                // 添加图片按钮
-                listPhotosBeen.add(1, addPhotoBean);
-                uploadNow = true;
-                // 异步将图片存储到SD卡指定文件夹下
-                new StorageTask().execute(strings);
+                if (JudgeNetworkIsAvailable.isNetworkAvailable((Activity) mContext)) {
+                    upLoadNowList = new ArrayList<>();
+                    upLoadNowList.add(addPhotoBean);
+                    addPhotoBean.save();
+                    // 添加图片按钮
+                    listPhotosBeen.add(1, addPhotoBean);
+                    uploadNow = true;
+                    // 异步将图片存储到SD卡指定文件夹下
+                    new StorageTask().execute(strings);
+                } else {
+                    LoadingUtils.hideLoading();
+                    ToastUtil.showShort(mContext, getString(R.string.not_network));
+                }
             } else {
                 addPhotoBean.setIsToBeUpLoad(1);
                 addPhotoBean.save();
@@ -606,6 +647,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
+
             bos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -691,22 +733,40 @@ public class ContractorDetailsActivity extends BaseActivity {
 
     }
 
-    @Event({R.id.imgBtnLeft, R.id.txtRight})
+    @Event({R.id.imgBtnLeft, R.id.txtRight, R.id.btnRightOne})
     private void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgBtnLeft:
                 this.finish();
                 break;
             case R.id.txtRight:
-                if (isCanSelect) {
-                    CustomPopupWindow pop = new CustomPopupWindow(this, isReported);
-                    pop.showAtDropDownRight(view);
+                if (txtRight.getText().toString().equals("取消")){
+                    btnRightOne.setVisibility(View.INVISIBLE);
+                    txtRight.setText("上报");
                 } else {
-                    txtRight.setText("操作");
-                    isCanSelect = !isCanSelect;
-                    if (null != adapter) {
-                        adapter.notifyDataSetChanged();
+                    btnRightOne.setVisibility(View.VISIBLE);
+                    txtRight.setText("取消");
+                }
+
+                isCanSelect = !isCanSelect;
+                if (null != adapter) {
+                    adapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.btnRightOne:
+                for (ContractorListPhotosBean phoneListBean : listPhotosBeen) {
+                    if (phoneListBean.isCanSelect()) {
+                        PictureBean bean = new PictureBean();
+                        bean.setPictureId(phoneListBean.getPictureId());
+                        beanList.add(bean);
                     }
+                }
+
+                if (beanList.size() > 0) {
+                    // 上报
+                    reported();
+                } else {
+                    ToastUtil.showShort(mContext, "请选择需要审核的图片！");
                 }
                 break;
         }
@@ -734,8 +794,6 @@ public class ContractorDetailsActivity extends BaseActivity {
                     }
                 }
 
-
-
                 if (beanList.size() > 0) {
                     // 上报
                     reported();
@@ -756,15 +814,91 @@ public class ContractorDetailsActivity extends BaseActivity {
      * 上报
      */
     private void reported() {
-        Intent intent = new Intent(mContext, SelectAuditorsActivity.class);
+        /*Intent intent = new Intent(mContext, SelectAuditorsActivity.class);
         //intent.putExtra("sxZlPictureList", pictureList);
-        startActivityForResult(intent, 3);
+        startActivityForResult(intent, 3);*/
+
+        ReportDialog reportDialog = new ReportDialog(mContext, new ReportListener() {
+            @Override
+            public void returnUserId(String userId) {
+                submitReported(userId);
+            }
+        });
+        reportDialog.show();
+    }
+
+    /**
+     * 上报
+     */
+    private void submitReported(String userId) {
+        LoadingUtils.showLoading(mContext);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(30000L, TimeUnit.MILLISECONDS)
+                .readTimeout(30000L, TimeUnit.MILLISECONDS)
+                .build();
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+        PictureModel model = new PictureModel();
+        model.setSelectUserId(userId);
+        model.setSxZlPictureList(ContractorDetailsActivity.beanList);
+
+        Gson gson = new Gson();
+        Logger.addLogAdapter(new AndroidLogAdapter());
+        Logger.d(gson.toJson(model));
+        Logger.clearLogAdapters();
+
+        RequestBody requestBody = RequestBody.create(JSON, gson.toJson(model).toString());
+        Request request = new Request.Builder()
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.SUBMIT_AUDITORS_PICTURE)
+                .post(requestBody)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.showShort(mContext, "上报失败!");
+                        LoadingUtils.hideLoading();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showShort(mContext, "上报成功!");
+                        // 上报成功修改状态
+                        txtRight.setText("上报");
+                        btnRightOne.setVisibility(View.INVISIBLE);
+                        for (ContractorListPhotosBean bean : listPhotosBeen) {
+                            bean.setCanSelect(false);
+                            for (PictureBean picBean : beanList) {
+                                if (bean.getPictureId().equals(picBean.getPictureId())) {
+                                    bean.setCheckFlag("1");
+                                }
+                            }
+                        }
+                        isCanSelect = !isCanSelect;
+                        if (null != adapter) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         isCanSelect = false;
+        ContractorDetailsActivity.beanList.clear();
         ScreenManagerUtil.popActivity(this);
     }
 }

@@ -8,16 +8,24 @@ import okhttp3.MediaType;
 
 public class ConstantsUtil {
     /** 基本路径 */
-    //public static final String BASE_URL = "http://qyh.weidingplus.com/";
-    public static final String BASE_URL = "http://qyh.apih5.com/";
+    public static final String BASE_URL = "http://sx.apih5.com:8088/";
+    //public static final String BASE_URL = "http://qyh.apih5.com/";
+    //public static final String BASE_URL = "http://192.168.1.155:8080/wdplus-web/";
     /**文件基本路径*/
-    public static final String FILE_BASE_URL = "http://qyh.apih5.com/";
+    public static final String FILE_BASE_URL = "http://sx.apih5.com:8088/";
+    //public static final String FILE_BASE_URL = "http://192.168.1.155:8080/wdplus-web/";
 
     /**参数格式*/
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     /** 用户id */
-    public static String USER_ID = "";
+    public static String USER_ID = "USER_ID";
+    /** 用户等级 */
+    public static String USER_LEVEL = "USER_LEVEL";
+    /** 用户类型 */
+    public static String USER_TYPE = "USER_TYPE";
+    /** 用户类型 */
+    public static String USER_DEPARTMENT = "USER_DEPARTMENT";
 
     /** 是否登录成功 */
     public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";
@@ -29,7 +37,7 @@ public class ConstantsUtil {
     /** 承包商列表 */
     public static final String CONTRACTOR_LIST = "getAllSxZlNodeList";
     /** 获取图片列表 */
-    public static final String GET_PHONE_LIST = "getPictureListByNodeId";
+    public static final String GET_PHONE_LIST = "appGetPictureListByNodeId";
     /** 图片上传 */
     public static final String UP_LOAD_PHOTOS = "appUploadPicture";
     /** 审核人员 */

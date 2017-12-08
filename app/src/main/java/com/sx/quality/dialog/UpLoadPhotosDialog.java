@@ -66,7 +66,7 @@ public class UpLoadPhotosDialog extends Dialog{
 					case 100:
 						txtNum.setText("已上传：" + msg.what + "%  (" + (upLoadNum+1) + "/" + upLoadPhotosBeenList.size() + ")");
 						// 移除已经上传的照片
-						DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress());
+						DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
 						if (upLoadNum == upLoadPhotosBeenList.size() - 1) {
 							UpLoadPhotosDialog.this.dismiss();
 							choiceListener.returnTrueOrFalse(true);
@@ -100,7 +100,8 @@ public class UpLoadPhotosDialog extends Dialog{
 				.addParams("nodeId", upLoadPhotosBeenList.get(upLoadNum).getNodeId())
 				.addParams("pictureDesc", upLoadPhotosBeenList.get(upLoadNum).getPictureDesc())
 				.addParams("pictureName", upLoadPhotosBeenList.get(upLoadNum).getPictureName())
-				.addParams("userId", ConstantsUtil.USER_ID)
+				.addParams("pictureType", upLoadPhotosBeenList.get(upLoadNum).getPictureType())
+				.addParams("userId", (String) SpUtil.get(mContext,ConstantsUtil.USER_ID, ""))
 				.url(ConstantsUtil.BASE_URL + ConstantsUtil.UP_LOAD_PHOTOS)
 				.build()
 				.execute(new com.zhy.http.okhttp.callback.Callback() {

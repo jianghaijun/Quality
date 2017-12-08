@@ -28,6 +28,16 @@ public class LoginBean {
     private String realName;
     private String userId;
     private String userName;
+    private String userType;
+    private String department;
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     public String getUserName() {
         return userName;
@@ -51,5 +61,13 @@ public class LoginBean {
 
     public void setRealName(String realName) {
         this.realName = realName;
+    }
+
+    public String getUserType() {
+        return userType == null ? "" : userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }
