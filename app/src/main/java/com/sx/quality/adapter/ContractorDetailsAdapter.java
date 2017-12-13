@@ -25,13 +25,17 @@ import com.bumptech.glide.request.target.Target;
 import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.bean.NewContractorListBean;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 import com.sx.quality.view.MLImageView;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
@@ -45,10 +49,12 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
     private ShowPhotoListener listener;
     private List<ContractorListPhotosBean> phoneListBean;
     private RequestOptions options;
+    private String nodeId;
 
-    public ContractorDetailsAdapter(Context mContext, List<ContractorListPhotosBean> phoneListBean, ShowPhotoListener listener) {
+    public ContractorDetailsAdapter(Context mContext, List<ContractorListPhotosBean> phoneListBean, ShowPhotoListener listener, String nodeId) {
         this.mContext = mContext;
         this.listener = listener;
+        this.nodeId = nodeId;
         this.phoneListBean = phoneListBean;
         options = new RequestOptions()
                 .placeholder(R.drawable.rotate_pro_loading)
@@ -98,6 +104,12 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
                 holder.txtStatus.setText("审核中");
             } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
                 holder.txtStatus.setText("审核通过");
+                // 如果有审核通过的就设置该工序为已完成状态
+                List<NewContractorListBean> bean = DataSupport.where("nodeId = ?", nodeId).find(NewContractorListBean.class);
+                if (bean != null && bean.size() != 0) {
+                    bean.get(0).setIsFinish("1");
+                    bean.get(0).saveOrUpdate("nodeId=?", nodeId);
+                }
             } else if (phoneListBean.get(position).getCheckFlag().equals("5")) {
                 holder.txtStatus.setText("审核未通过");
             } else {

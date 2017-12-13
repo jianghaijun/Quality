@@ -141,10 +141,10 @@ public class ContractorDetailsActivity extends BaseActivity {
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.show_photo);
-        btnRightOne.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.btn_blue));
+        btnRightOne.setBackgroundResource(R.drawable.btn_blue);
         btnRightOne.setText("确认");
         txtRight.setVisibility(View.VISIBLE);
-        txtRight.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.btn_blue));
+        txtRight.setBackgroundResource(R.drawable.btn_blue);
         txtRight.setText(R.string.reported);
 
         // 将添加图片按钮保存到数据库
@@ -300,7 +300,7 @@ public class ContractorDetailsActivity extends BaseActivity {
             }
         }
 
-        adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener);
+        adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener, nodeId);
         rvContractorDetails.setLayoutManager(new GridLayoutManager(mContext, 5));
         rvContractorDetails.setAdapter(adapter);
     }

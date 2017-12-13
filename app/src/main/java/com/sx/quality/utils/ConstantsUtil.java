@@ -26,6 +26,10 @@ public class ConstantsUtil {
     public static String USER_TYPE = "USER_TYPE";
     /** 用户类型 */
     public static String USER_DEPARTMENT = "USER_DEPARTMENT";
+    /** 已经加载的nodeId */
+    public static String NODE_ID = "NODE_ID";
+    /** 过期时间 */
+    public static String TIME_OUT = "TIME_OUT";
 
     /** 是否登录成功 */
     public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";
@@ -36,6 +40,7 @@ public class ConstantsUtil {
     public static final String SUBMIT_ALIAS = "appAddSxZlUserExtend";
     /** 承包商列表 */
     public static final String CONTRACTOR_LIST = "getAllSxZlNodeList";
+    public static final String NEW_CONTRACTOR_LIST = "getAppChildrenNodeList";
     /** 获取图片列表 */
     public static final String GET_PHONE_LIST = "appGetPictureListByNodeId";
     /** 图片上传 */

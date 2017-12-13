@@ -15,6 +15,7 @@ import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.model.CheckVersionModel;
 import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.GlideCatchUtil;
 import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.ScreenManagerUtil;
@@ -66,6 +67,8 @@ public class PersonalSettingActivity extends BaseActivity {
     private TextView txtVersion;
     @ViewInject(R.id.txtUserName)
     private TextView txtUserName;
+    @ViewInject(R.id.txtCachingSize)
+    private TextView txtCachingSize;
 
     private Context mContext;
     private Long fileLength;
@@ -85,9 +88,10 @@ public class PersonalSettingActivity extends BaseActivity {
 
         txtVersion.setText("当前版本" + AppInfoUtil.getVersion(this));
         txtUserName.setText((String) SpUtil.get(this, "UserName", ""));
+        txtCachingSize.setText(GlideCatchUtil.getCacheSize());
     }
 
-    @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword, R.id.imgViewCheckVersion })
+    @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword, R.id.imgViewCheckVersion, R.id.imgViewCleanUpCaching })
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.imgBtnLeft:
@@ -108,6 +112,12 @@ public class PersonalSettingActivity extends BaseActivity {
                 } else {
                     ToastUtil.showShort(this, getString(R.string.not_network));
                 }
+                break;
+            case R.id.imgViewCleanUpCaching:
+                // 清除已加载工序列表
+                SpUtil.put(mContext, ConstantsUtil.NODE_ID, "");
+                GlideCatchUtil.cleanCatchDisk();
+                txtCachingSize.setText(GlideCatchUtil.getCacheSize());
                 break;
         }
     }

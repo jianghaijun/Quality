@@ -12,18 +12,37 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
+import com.sx.quality.bean.NewContractorListBean;
+import com.sx.quality.listener.ContractorListener;
+import com.sx.quality.model.ContractorListModel;
 import com.sx.quality.tree.Node;
+import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.JsonUtils;
+import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ToastUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 树数据源构造器
@@ -40,13 +59,15 @@ public class ContractorTreeAdapter extends BaseAdapter {
     private List<Node> listNode = new ArrayList<>();
     private Node parentNode, rootNode;
     private List<String> nodeName = new ArrayList<>();
+    private ContractorListener listener;
 
     /**
      * @param mContext
      * @param rootNode
      */
-    public ContractorTreeAdapter(Activity mContext, Node rootNode) {
+    public ContractorTreeAdapter(Activity mContext, Node rootNode, ContractorListener listener) {
         this.mContext = mContext;
+        this.listener = listener;
         this.lif = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         addNode(rootNode);
     }
@@ -69,29 +90,13 @@ public class ContractorTreeAdapter extends BaseAdapter {
     }
 
     /**
-     * 获得选中节点
-     *
-     * @return
-     */
-    public List<Node> getSeletedNodes() {
-        List<Node> nodes = new ArrayList<Node>();
-        for (int i = 0; i < allsCache.size(); i++) {
-            Node n = allsCache.get(i);
-            if (n.isChecked()) {
-                nodes.add(n);
-            }
-        }
-        return nodes;
-    }
-
-    /**
      * 控制节点的展开和折叠
      */
     private void filterNode() {
         alls.clear();
         for (int i = 0; i < allsCache.size(); i++) {
             Node n = allsCache.get(i);
-            if (!n.isParentCollapsed() || n.isRoot()) {
+            if (!n.isParentCollapsed()) {
                 alls.add(n);
             }
         }
@@ -132,48 +137,6 @@ public class ContractorTreeAdapter extends BaseAdapter {
     }
 
     /**
-     * 展开节点下所有子节点
-     *
-     * @param node
-     */
-    private void showNodeUnderAllNodes(Node node) {
-        listNode.clear();
-        listNode.add(node);
-        getNodeUnderAllNodes(node);
-        alls.clear();
-        for (int i = 0; i < allsCache.size(); i++) {
-            Node n = allsCache.get(i);
-            for (int j = 0; j < listNode.size(); j++) {
-                if (n.getUserId().equals(listNode.get(j).getUserId())) {
-                    n.setExpanded(true);
-                }
-            }
-
-            if (!n.isParentCollapsed() || n.isRoot()) {
-                alls.add(n);
-            }
-        }
-    }
-
-    /**
-     * 获取节点下所有子节点
-     *
-     * @param node
-     * @return
-     */
-    private void getNodeUnderAllNodes(Node node) {
-        if (!node.isLeaf()) {
-            List<Node> nodeList = node.getChildren();
-            if (nodeList.size() != 0) {
-                for (Node n : nodeList) {
-                    listNode.add(n);
-                    getNodeUnderAllNodes(n);
-                }
-            }
-        }
-    }
-
-    /**
      * 获取节点的根节点
      * @param node
      * @return
@@ -193,24 +156,6 @@ public class ContractorTreeAdapter extends BaseAdapter {
     }
 
     /**
-     * 获取节点的父节点
-     * @param node
-     * @return
-     */
-    private void getNodeParentNode (Node node) {
-        parentNode = node.getParent();
-        if (rootNode == null || parentNode == null || parentNode.isRoot()) {
-            return;
-        }
-
-        if (parentNode.getUserId().equals(rootNode.getUserId())) {
-            parentNode = node;
-        } else {
-            getNodeParentNode(parentNode);
-        }
-    }
-
-    /**
      * 控制节点的展开和收缩
      *
      * @param position
@@ -218,20 +163,25 @@ public class ContractorTreeAdapter extends BaseAdapter {
     public void ExpandOrCollapse(int position) {
         Node n = alls.get(position);
         if (n != null) {
-            /* 是否叶节点,即没有子节点的节点 */
-            if (!n.isLeaf()) {
-                // 如果展开状态则折叠---如果折叠状态则展开全部子节点
-                /*if (n.isExpanded()) {
+            // 是否是文件夹（文件夹继续展开---工序进入上传照片界面）
+            if (n.getTel().equals("1")) {
+                // 是否处于展开状态
+                if (n.isExpanded()) {
+                    // 如果已经加载 展开已加载向
                     n.setExpanded(!n.isExpanded());
                     filterNode();
+                    this.notifyDataSetChanged();
                 } else {
-                    showNodeUnderAllNodes(n);
-                }*/
-                n.setExpanded(!n.isExpanded());
-                filterNode();
-                this.notifyDataSetChanged();
-            } else if (n.getTel().equals("1") && n.isLeaf()) {
-                ToastUtil.showShort(mContext, "无法对空根目录进行操作!");
+                    if (n.isChecked()) {
+                        // 如果已经加载 展开已加载向
+                        n.setExpanded(!n.isExpanded());
+                        filterNode();
+                        this.notifyDataSetChanged();
+                    } else {
+                        // 加载该节点下的工序
+                        listener.returnData(allsCache, alls, position, alls.get(position).getUserId());
+                    }
+                }
             } else {
                 nodeName.clear();
                 nodeName.add(n.getRoleName());
@@ -249,19 +199,9 @@ public class ContractorTreeAdapter extends BaseAdapter {
                         sb.append(name);
                     }
                 }
-
-                //getNodeParentNode(n);
-
                 Intent intent = new Intent();
                 intent.putExtra("rootNodeName", sb.toString());
-                /*String parentNodeId = parentNode.getUserId() == null ? "" : parentNode.getUserId();
-                if (parentNodeId.equals(n.getUserId())) {
-                    intent.putExtra("parentNodeName", "");
-                } else {
-                    intent.putExtra("parentNodeName", null == parentNode.getRoleName() ? "" : parentNode.getRoleName());
-                }*/
                 intent.putExtra("nodeId", n.getUserId());
-                /*intent.putExtra("nodeName", n.getParent().getRoleName());*/
                 intent.setClass(mContext, ContractorDetailsActivity.class);
                 mContext.startActivity(intent);
             }
@@ -301,12 +241,17 @@ public class ContractorTreeAdapter extends BaseAdapter {
         if (n != null) {
             // 显示文本
             String roleName = n.getRoleName();
-            if (n.isLeaf()) {
-                roleName = roleName.substring(0, roleName.indexOf("("));
+            // 去掉节点上该节点下有多少工序，是否已完成
+            if (!n.getTel().equals("1")) {
+                if (n.hasCheckBox()) {
+                    roleName = roleName.substring(0, roleName.indexOf("(")) + "(已完成)";
+                } else {
+                    roleName = roleName.substring(0, roleName.indexOf("(")) + "(未完成)";
+                }
             }
 
             holder.txtTitle.setText(roleName == null || "null".equals(roleName) ? "" : roleName);
-            if (n.isLeaf() && n.isUser()) {
+            if (!n.getTel().equals("1")) {
                 /**
                  * 是叶节点 不显示展开和折叠状态图标
                  */

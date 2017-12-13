@@ -26,6 +26,10 @@
         android:supportsRtl="true"
         android:theme="@style/Anim_fade">
 
+        <meta-data
+            android:name="com.sx.quality.utils.GlideConfiguration"
+            android:value="GlideModule" />
+
         <!-- 程序入口 -->
         <activity android:name=".SplashScreenActivity">
             <intent-filter>
