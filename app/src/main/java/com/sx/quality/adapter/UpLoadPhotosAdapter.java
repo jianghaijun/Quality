@@ -1,6 +1,7 @@
 package com.sx.quality.adapter;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -12,13 +13,31 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.sx.quality.activity.R;
 import com.sx.quality.activity.ShowPhotosActivity;
 import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.bean.PictureBean;
+import com.sx.quality.dialog.PromptDialog;
+import com.sx.quality.listener.ChoiceListener;
+import com.sx.quality.model.PictureModel;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.SpUtil;
+import com.sx.quality.utils.ToastUtil;
 
+import org.litepal.crud.DataSupport;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author Administrator
@@ -26,12 +45,12 @@ import java.util.List;
  */
 
 public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapter.UpLoadPhoneHolder> {
-    private Context mContext;
+    private Activity mContext;
     private RequestOptions options;
     private List<ContractorListPhotosBean> upLoadPhoneList;
 
     public UpLoadPhotosAdapter(Context mContext, List<ContractorListPhotosBean> upLoadPhoneList) {
-        this.mContext = mContext;
+        this.mContext = (Activity) mContext;
         this.upLoadPhoneList = upLoadPhoneList;
         options = new RequestOptions()
                 .placeholder(R.drawable.rotate_pro_loading)
@@ -78,6 +97,28 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
                 intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
                 intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(position));
                 mContext.startActivity(intent);
+            }
+        });
+
+        /**
+         * 长按事件
+         */
+        holder.ivUpLoadPhone.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                    @Override
+                    public void returnTrueOrFalse(boolean trueOrFalse) {
+                        if (trueOrFalse) {
+                            // 删除照片
+                            DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=?", upLoadPhoneList.get(position).getPictureAddress());
+                            upLoadPhoneList.remove(position);
+                            UpLoadPhotosAdapter.this.notifyDataSetChanged();
+                        }
+                    }
+                }, "提示", "是否删除此照片？", "否", "是");
+                promptDialog.show();
+                return true;
             }
         });
     }

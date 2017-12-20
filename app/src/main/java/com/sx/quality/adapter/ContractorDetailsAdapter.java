@@ -1,6 +1,7 @@
 package com.sx.quality.adapter;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,22 +23,41 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.ContractorDetailsActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.bean.NewContractorListBean;
+import com.sx.quality.bean.PictureBean;
+import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.ShowPhotoListener;
+import com.sx.quality.model.PictureModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
+import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 import com.sx.quality.view.MLImageView;
 
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.sx.quality.utils.ConstantsUtil.JSON;
 
 /**
  * @author Administrator
@@ -45,14 +65,14 @@ import java.util.List;
  */
 
 public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDetailsAdapter.ContractorDetailsHolder> {
-    private Context mContext;
+    private Activity mContext;
     private ShowPhotoListener listener;
     private List<ContractorListPhotosBean> phoneListBean;
     private RequestOptions options;
     private String nodeId;
 
     public ContractorDetailsAdapter(Context mContext, List<ContractorListPhotosBean> phoneListBean, ShowPhotoListener listener, String nodeId) {
-        this.mContext = mContext;
+        this.mContext = (Activity) mContext;
         this.listener = listener;
         this.nodeId = nodeId;
         this.phoneListBean = phoneListBean;
@@ -123,20 +143,75 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
                     .into(holder.ivUpLoadPhone);
         }
 
+        // 图片点击事件
         holder.ivUpLoadPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 调用相机或相册
-                if (position == 0) {
-                    listener.selectWayOrShowPhoto(true, "", "", 0);
+                if (ContractorDetailsActivity.isCanSelect) {
+                    if (position == 0) {
+                        listener.selectWayOrShowPhoto(true, "", "", 0);
+                    } else {
+                        if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
+                            ToastUtil.showShort(mContext, "未上传的照片不能进行审核操作，请先上传照片。");
+                        } else {
+                            if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2") || phoneListBean.get(position).getCheckFlag().equals("3")) {
+                                ToastUtil.showShort(mContext, "照片正在审核中，不能再次提交审核！");
+                            } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
+                                ToastUtil.showShort(mContext, "照片已审核通过，不能再次提交审核！");
+                            } else if (phoneListBean.get(position).getCheckFlag().equals("5")) {
+                                ToastUtil.showShort(mContext, "照片审核未通过，不能再次提交审核！");
+                            } else {
+                                if (phoneListBean.get(position).isCanSelect()) {
+                                    holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_un_select));
+                                } else {
+                                    holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_select));
+                                }
+                                phoneListBean.get(position).setCanSelect(!phoneListBean.get(position).isCanSelect());
+                            }
+                        }
+                    }
                 } else {
-                    //listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getThumbPath(), phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
-                    // 图片浏览方式
-                    listener.selectWayOrShowPhoto(false, String.valueOf(position), "", phoneListBean.get(position).getIsToBeUpLoad());
+                    // 调用相机或相册
+                    if (position == 0) {
+                        listener.selectWayOrShowPhoto(true, "", "", 0);
+                    } else {
+                        //listener.selectWayOrShowPhoto(false, phoneListBean.get(position).getThumbPath(), phoneListBean.get(position).getPictureAddress(), phoneListBean.get(position).getIsToBeUpLoad());
+                        // 图片浏览方式
+                        listener.selectWayOrShowPhoto(false, String.valueOf(position), "", phoneListBean.get(position).getIsToBeUpLoad());
+                    }
                 }
             }
         });
 
+        /**
+         * 长按事件
+         */
+        holder.ivUpLoadPhone.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (position != 0) {
+                    PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                        @Override
+                        public void returnTrueOrFalse(boolean trueOrFalse) {
+                            if (trueOrFalse) {
+                                // 删除照片
+                                if (1 == phoneListBean.get(position).getIsToBeUpLoad()) {
+                                    DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=?", phoneListBean.get(position).getPictureAddress());
+                                    phoneListBean.remove(position);
+                                    ContractorDetailsAdapter.this.notifyDataSetChanged();
+                                } else {
+                                    deletePhoto(phoneListBean.get(position), position);
+                                }
+                            }
+                        }
+                    }, "提示", "是否删除此照片？", "否", "是");
+                    promptDialog.show();
+                }
+                return true;
+            }
+        });
+
+        // 选择按钮点击事件
         holder.ivIsChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +235,61 @@ public class ContractorDetailsAdapter extends RecyclerView.Adapter<ContractorDet
                 }
             }
         });
+    }
+
+    /**
+     * 删除服务器上图片
+     * @param bean
+     * @param point
+     */
+    private void deletePhoto(final ContractorListPhotosBean bean, final int point) {
+        LoadingUtils.showLoading(mContext);
+        OkHttpClient client = new OkHttpClient();
+        // 参数
+        PictureModel model = new PictureModel();
+        model.setSelectUserId((String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
+        model.setRootNodeId(bean.getRootNodeId());
+        List<PictureBean> beanList = new ArrayList<>();
+        PictureBean picBean = new PictureBean();
+        picBean.setPictureId(bean.getPictureId());
+        beanList.add(picBean);
+        model.setSxZlPictureList(beanList);
+
+        Gson gson = new Gson();
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, gson.toJson(model).toString());
+
+        Request request = new Request.Builder()
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.DELETE_PHOTOS)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mContext.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showShort(mContext, mContext.getString(R.string.server_exception));
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                mContext.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showShort(mContext, "删除成功！");
+                        phoneListBean.remove(point);
+                        DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureId=?", bean.getPictureId());
+                        ContractorDetailsAdapter.this.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+
     }
 
     @Override

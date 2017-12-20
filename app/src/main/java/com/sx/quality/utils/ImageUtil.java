@@ -39,6 +39,15 @@ public class ImageUtil {
         return createWaterMaskBitmap(src, context, level_0, level_1, createTime);
     }
 
+    /**
+     * 给图片添加水印图和文字
+     * @param src
+     * @param context
+     * @param level_0
+     * @param level_1
+     * @param createTime
+     * @return
+     */
     private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String level_0, String level_1, String createTime) {
         if (src == null) {
             return null;
@@ -47,23 +56,24 @@ public class ImageUtil {
         // 原图尺寸
         int width = src.getWidth();
         int height = src.getHeight();
-        // 水印尺寸
+        // 原图与固定尺寸比
         float widthMultiple = Float.valueOf(width) / Float.valueOf(1280);
         float heightMultiple = Float.valueOf(height) / Float.valueOf(960);
+        // 水印尺寸
         int watermarkWidth = (int) (350 *  widthMultiple);
         int watermarkHeight = (int) (145 *  heightMultiple);
-
-        // logo所占高度
+        // Logo所占高度
         int logoHeight = (int) (16 * heightMultiple) + (int) (5 * heightMultiple);
+        // 施工部位
         level_1 = "施工部位：" + level_1;
+        // 施工部位所占长度
         int len = level_1.length();
-
         // 计算一个14sp中文所占像素
         Paint pFont = new Paint();
         Rect rect = new Rect();
         pFont.setTextSize(14 * widthMultiple);
         pFont.getTextBounds("豆", 0, 1, rect);
-        int oneSizeWidth = rect.width();
+        int oneSizeWidth = rect.width() + 5;
         int oneSizeHeight = rect.height();
         // 水印图上每行显示多少个字
         int lenSize = (watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSizeWidth * 3;
@@ -71,6 +81,7 @@ public class ImageUtil {
         int testSize = DensityUtil.px2dip(14 * widthMultiple);
 
         list.clear();
+        // 计算第一行文字个数
         for (int i = 0; i < len; i++) {
             int byteLen = level_1.substring(0, i).getBytes().length;
             if (byteLen > lenSize) {
@@ -108,6 +119,7 @@ public class ImageUtil {
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
 
+        // 循环向图片上添加文字
         for (int i = 0; i < list.size(); i++) {
             marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
             if (i == 0) {

@@ -52,6 +52,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
 
     private List<ContractorListPhotosBean> upLoadPhotosBeenList = new ArrayList<>();
 
+    private boolean isCanUpload = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,21 +108,26 @@ public class UpLoadPhotosActivity extends BaseActivity {
         switch (view.getId()) {
             // 上传图片
             case R.id.txtRight:
-                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
-                    if (upLoadPhotosBeenList.size() > 0) {
-                        if (!JudgeNetworkIsAvailable.GetNetworkType(this).equals("WIFI")) {
-                            PromptDialog promptDialog = new PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
-                            promptDialog.setCancelable(false);
-                            promptDialog.setCanceledOnTouchOutside(false);
-                            promptDialog.show();
+                if (!isCanUpload) {
+                    isCanUpload = true;
+                    if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                        if (upLoadPhotosBeenList.size() > 0) {
+                            if (!JudgeNetworkIsAvailable.GetNetworkType(this).equals("WIFI")) {
+                                PromptDialog promptDialog = new PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
+                                promptDialog.setCancelable(false);
+                                promptDialog.setCanceledOnTouchOutside(false);
+                                promptDialog.show();
+                            } else {
+                                upLoadPhoto();
+                            }
                         } else {
-                            upLoadPhoto();
+                            isCanUpload = false;
+                            ToastUtil.showLong(mContext, "暂无可上传照片!");
                         }
                     } else {
-                        ToastUtil.showLong(mContext, "暂无可上传照片!");
+                        isCanUpload = false;
+                        ToastUtil.showLong(mContext, getString(R.string.not_network));
                     }
-                } else {
-                    ToastUtil.showLong(mContext, getString(R.string.not_network));
                 }
                 break;
             case R.id.imgBtnLeft:
@@ -137,6 +144,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
         public void returnTrueOrFalse(boolean trueOrFalse) {
             if (trueOrFalse) {
                 upLoadPhoto();
+            } else {
+                isCanUpload = false;
             }
         }
     };
@@ -157,6 +166,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
 
                 @Override
                 public void refuse(List<String> refusePermission) {
+                    isCanUpload = false;
                     for (String refuse : refusePermission ) {
                         ToastUtil.showLong(mContext, "您已拒绝：" + refuse + "权限!");
                     }
@@ -176,6 +186,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
     private ChoiceListener choiceListener = new ChoiceListener() {
         @Override
         public void returnTrueOrFalse(boolean trueOrFalse) {
+            isCanUpload = false;
             if (trueOrFalse) {
                 upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createtime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
                 adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);

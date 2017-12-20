@@ -123,6 +123,7 @@ public class UpLoadPhotosDialog extends Dialog{
 						new Thread(new Runnable() {
 							@Override
 							public void run() {
+								choiceListener.returnTrueOrFalse(false);
 								UpLoadPhotosDialog.this.dismiss();
 							}
 						}).start();

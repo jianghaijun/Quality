@@ -10,6 +10,7 @@ import java.util.List;
 
 public class PictureModel {
     private String selectUserId;
+    private String rootNodeId;
     private List<PictureBean> sxZlPictureList;
 
     public String getSelectUserId() {
@@ -18,6 +19,14 @@ public class PictureModel {
 
     public void setSelectUserId(String selectUserId) {
         this.selectUserId = selectUserId;
+    }
+
+    public String getRootNodeId() {
+        return rootNodeId;
+    }
+
+    public void setRootNodeId(String rootNodeId) {
+        this.rootNodeId = rootNodeId;
     }
 
     public List<PictureBean> getSxZlPictureList() {

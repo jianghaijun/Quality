@@ -50,14 +50,13 @@ import okhttp3.Response;
  */
 public class ContractorTreeAdapter extends BaseAdapter {
     private LayoutInflater lif;
-    private List<Node> allsCache = new ArrayList<Node>();
-    public List<Node> alls = new ArrayList<Node>();
+    private List<Node> allsCache = new ArrayList<>();
+    public List<Node> alls = new ArrayList<>();
     private int expandedIcon = -1;
     private int collapsedIcon = -1;
     private Activity mContext;
 
-    private List<Node> listNode = new ArrayList<>();
-    private Node parentNode, rootNode;
+    private Node rootNode;
     private List<String> nodeName = new ArrayList<>();
     private ContractorListener listener;
 
@@ -96,7 +95,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
         alls.clear();
         for (int i = 0; i < allsCache.size(); i++) {
             Node n = allsCache.get(i);
-            if (!n.isParentCollapsed()) {
+            if (!n.isParentCollapsed() || n.isRoot()) {
                 alls.add(n);
             }
         }
@@ -160,7 +159,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
      *
      * @param position
      */
-    public void ExpandOrCollapse(int position) {
+    public void ExpandOrCollapse(final int position) {
         Node n = alls.get(position);
         if (n != null) {
             // 是否是文件夹（文件夹继续展开---工序进入上传照片界面）
@@ -179,6 +178,8 @@ public class ContractorTreeAdapter extends BaseAdapter {
                         this.notifyDataSetChanged();
                     } else {
                         // 加载该节点下的工序
+                        // 设置根节点的展开状态
+                        n.setExpanded(true);
                         listener.returnData(allsCache, alls, position, alls.get(position).getUserId());
                     }
                 }
@@ -252,9 +253,7 @@ public class ContractorTreeAdapter extends BaseAdapter {
 
             holder.txtTitle.setText(roleName == null || "null".equals(roleName) ? "" : roleName);
             if (!n.getTel().equals("1")) {
-                /**
-                 * 是叶节点 不显示展开和折叠状态图标
-                 */
+                // 是叶节点 不显示展开和折叠状态图标
                 holder.imgViewState.setVisibility(View.GONE);
                 holder.imgViewNode.setVisibility(View.VISIBLE);
             } else {

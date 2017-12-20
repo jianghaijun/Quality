@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -156,37 +157,6 @@ public class ContractorDetailsActivity extends BaseActivity {
 
         contractorListPhotosBean.saveOrUpdate("nodeId=-1");
         listPhotosBeen.add(contractorListPhotosBean);
-
-        /**
-         * 搜索条件监听
-         */
-        /*edtSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String search = edtSearch.getText().toString();
-                listPhotosBeen.clear();
-
-                listPhotosBeen = DataSupport.where("pictureName LIKE ? AND pictureAddress != '' AND nodeId = ? or pictureDesc like ? AND pictureAddress != '' AND nodeId = ?", "%" + search + "%", nodeId, "%" + search + "%", nodeId)
-                        .find(ContractorListPhotosBean.class);
-
-                // 添加图片按钮
-                listPhotosBeen.add(0, new ContractorListPhotosBean());
-
-                adapter = new ContractorDetailsAdapter(mContext, listPhotosBeen, listener, isCanSelect);
-                rvContractorDetails.setLayoutManager(new GridLayoutManager(mContext, 3));
-                rvContractorDetails.setAdapter(adapter);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });*/
 
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             getData(nodeId);
@@ -845,9 +815,6 @@ public class ContractorDetailsActivity extends BaseActivity {
         model.setSxZlPictureList(ContractorDetailsActivity.beanList);
 
         Gson gson = new Gson();
-        Logger.addLogAdapter(new AndroidLogAdapter());
-        Logger.d(gson.toJson(model));
-        Logger.clearLogAdapters();
 
         RequestBody requestBody = RequestBody.create(JSON, gson.toJson(model).toString());
         Request request = new Request.Builder()

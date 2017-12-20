@@ -10,10 +10,10 @@ public class ConstantsUtil {
     /** 基本路径 */
     public static final String BASE_URL = "http://sx.apih5.com:8088/";
     //public static final String BASE_URL = "http://qyh.apih5.com/";
-    //public static final String BASE_URL = "http://192.168.1.155:8080/wdplus-web/";
+    //public static final String BASE_URL = "http://192.168.1.103:8080/wdplus-web/";
     /**文件基本路径*/
     public static final String FILE_BASE_URL = "http://sx.apih5.com:8088/";
-    //public static final String FILE_BASE_URL = "http://192.168.1.155:8080/wdplus-web/";
+    //public static final String FILE_BASE_URL = "http://192.168.1.103:8080/wdplus-web/";
 
     /**参数格式*/
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -45,6 +45,8 @@ public class ConstantsUtil {
     public static final String GET_PHONE_LIST = "appGetPictureListByNodeId";
     /** 图片上传 */
     public static final String UP_LOAD_PHOTOS = "appUploadPicture";
+    /** 删除图片 */
+    public static final String DELETE_PHOTOS = "batchDeleteSxZlPicture";
     /** 审核人员 */
     public static final String GET_AUDITORS = "getSxZlCheckUserSelect";
     /** 提交审核照片 */

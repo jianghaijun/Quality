@@ -81,16 +81,11 @@ public class ContractorActivity extends BaseActivity {
         lvContractorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Logger.addLogAdapter(new AndroidLogAdapter());
-                Logger.d(position + "---position---");
-                Logger.clearLogAdapters();
-                // 这句话写在最后面
                 ((ContractorTreeAdapter) parent.getAdapter()).ExpandOrCollapse(position);
             }
         });
 
         String alreadyLoadNode = (String) SpUtil.get(mContext, ConstantsUtil.NODE_ID, "");
-
         if(JudgeNetworkIsAvailable.isNetworkAvailable(this) && !alreadyLoadNode.contains("&")){
             getData();
         }else{
@@ -357,10 +352,7 @@ public class ContractorActivity extends BaseActivity {
      * @param data
      * @param position
      */
-    private void setNodeInChildren(List<NewContractorListBean> data, int position) {
-        Logger.addLogAdapter(new AndroidLogAdapter());
-        Logger.d(position + "---position-position--");
-        Logger.clearLogAdapters();
+    private void setNodeInChildren(List<NewContractorListBean> data, final int position) {
         List<Node> nodes = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             String nodeName = data.get(i).getNodeTitle() + " (共" + data.get(i).getProcessNum() + "道工序/已完成" + data.get(i).getFinishedNum() + "道)";
@@ -379,17 +371,15 @@ public class ContractorActivity extends BaseActivity {
             nodes.add(n);
         }
 
-        // 设置根节点的展开状态
-        alls.get(position).setExpanded(true);
-        allsCache.get(position).setExpanded(true);
-
-        // 循环添加子节点到指定根节点下面
-        for (int i = 0; i < nodes.size(); i++) {
-            alls.add(position + 1, nodes.get(i));
-            allsCache.add(position + 1, nodes.get(i));
-        }
+        // 添加子节点到指定根节点下面
+        alls.addAll(position + 1, nodes);
+        // 需要放到此节点下
+        Node node = alls.get(position);
+        int point = allsCache.indexOf(node);
+        allsCache.addAll(point + 1, nodes);
 
         alls.get(position).setChildren(nodes);
+        alls.get(position).setChecked(true);
         allsCache.get(position).setChildren(nodes);
         allsCache.get(position).setChecked(true);
 

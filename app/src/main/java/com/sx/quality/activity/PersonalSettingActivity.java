@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.sx.quality.bean.NewContractorListBean;
 import com.sx.quality.dialog.DownloadApkDialog;
 import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
@@ -18,10 +19,12 @@ import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.GlideCatchUtil;
 import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
+import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
+import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -114,10 +117,18 @@ public class PersonalSettingActivity extends BaseActivity {
                 }
                 break;
             case R.id.imgViewCleanUpCaching:
+                LoadingUtils.showLoading(this);
                 // 清除已加载工序列表
                 SpUtil.put(mContext, ConstantsUtil.NODE_ID, "");
-                GlideCatchUtil.cleanCatchDisk();
+                DataSupport.deleteAll(NewContractorListBean.class);
+                boolean isClean = GlideCatchUtil.cleanCatchDisk();
                 txtCachingSize.setText(GlideCatchUtil.getCacheSize());
+                LoadingUtils.hideLoading();
+                if (isClean) {
+                    ToastUtil.showShort(this, "清理成功");
+                } else {
+                    ToastUtil.showShort(this, "清理失败");
+                }
                 break;
         }
     }

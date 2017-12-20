@@ -22,8 +22,17 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
     private String pictureType;
     private String pictureNameNoSuffix;
     private String pictureAddress;
+    private String rootNodeId;
     private boolean isCanSelect = false;
     private String checkFlag;
+
+    public String getRootNodeId() {
+        return rootNodeId;
+    }
+
+    public void setRootNodeId(String rootNodeId) {
+        this.rootNodeId = rootNodeId;
+    }
 
     public String getUserId() {
         return userId;
