@@ -851,6 +851,7 @@ public class ContractorDetailsActivity extends BaseActivity {
                                 }
                             }
                         }
+                        ContractorDetailsActivity.beanList.clear();
                         isCanSelect = !isCanSelect;
                         if (null != adapter) {
                             adapter.notifyDataSetChanged();

@@ -20,6 +20,7 @@ import org.xutils.common.util.DensityUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by jack on 2017/10/16.
@@ -62,40 +63,52 @@ public class ImageUtil {
         // 水印尺寸
         int watermarkWidth = (int) (350 *  widthMultiple);
         int watermarkHeight = (int) (145 *  heightMultiple);
-        // Logo所占高度
+        // Logo所占高度+距离上部分的距离
         int logoHeight = (int) (16 * heightMultiple) + (int) (5 * heightMultiple);
         // 施工部位
         level_1 = "施工部位：" + level_1;
         // 施工部位所占长度
         int len = level_1.length();
-        // 计算一个14sp中文所占像素
+        // 计算一个16sp中文所占像素
         Paint pFont = new Paint();
         Rect rect = new Rect();
-        pFont.setTextSize(14 * widthMultiple);
+        pFont.setTextSize(16 * widthMultiple);
         pFont.getTextBounds("豆", 0, 1, rect);
-        int oneSizeWidth = rect.width() + 5;
+        int oneSizeWidth = rect.width();
         int oneSizeHeight = rect.height();
-        // 水印图上每行显示多少个字
-        int lenSize = (watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSizeWidth * 3;
+        // 去掉左右间距所剩宽度
+        int lenWidth = watermarkWidth - DensityUtil.dip2px(15 * widthMultiple);
         // 水印图上文字大小
-        int testSize = DensityUtil.px2dip(14 * widthMultiple);
-
+        int testSize = DensityUtil.px2dip(16 * widthMultiple);
         list.clear();
         // 计算第一行文字个数
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        String txt = "";
+        int byteLen = 0;
         for (int i = 0; i < len; i++) {
-            int byteLen = level_1.substring(0, i).getBytes().length;
-            if (byteLen > lenSize) {
+            if (i == 0) {
+                txt = level_1.substring(0, i);
+            } else {
+                txt = level_1.substring(i-1, i);
+            }
+            Matcher m = p.matcher(txt);
+            if(m.matches()){
+                byteLen+=oneSizeWidth;
+            } else {
+                byteLen+=(oneSizeWidth / 2 + 1);
+            }
+            if (byteLen > lenWidth) {
                 list.add(level_1.substring(0, i-1));
                 level_1 = level_1.substring(i-1);
                 break;
             }
         }
 
-        // 第二行显示多少个字
-        lenSize = ((watermarkWidth - DensityUtil.dip2px(15 * widthMultiple)) / oneSizeWidth - 5) * 3;
-        rows(level_1, lenSize);
+        // 第二行显示文字实际宽度
+        lenWidth = lenWidth - oneSizeWidth * 5;
+        rows(level_1, lenWidth, oneSizeWidth);
 
-        int marginTop = 5;
+        int marginTop = 8;
         // 设置水印高度 上下距离+(行高+行距) * 行数 + logo高度
         int marginSum = (int) ((10 + (oneSizeHeight + marginTop) * (list.size() + 1) + logoHeight)  * heightMultiple);
         if (marginSum > watermarkHeight) {
@@ -105,33 +118,34 @@ public class ImageUtil {
         // 创建水印画布
         Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(watermarkBitmap);
-        canvas.drawColor(Color.argb(100 ,255, 255, 255));
+        // Color.argb(255 ,255, 255, 255) 白色不透明（0~255）
+        canvas.drawColor(Color.argb(255 ,255, 255, 255));
 
         // 将Logo添加到底板中
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
         canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * heightMultiple, null);
 
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * heightMultiple), Color.rgb(0, 97, 174), (int) (20 * widthMultiple), (int) (2 * heightMultiple));
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * heightMultiple), Color.rgb(0, 0, 0), (int) (20 * widthMultiple), (int) (2 * heightMultiple));
 
         int marginTopSize = DensityUtil.px2dip(logoHeight + 10 * heightMultiple);
 
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
 
         // 循环向图片上添加文字
         for (int i = 0; i < list.size(); i++) {
             marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
             if (i == 0) {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
             } else {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "                    " + list.get(i), testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 0, 0), DensityUtil.px2dip(oneSizeWidth) * 5 + 7, marginTopSize);
             }
         }
 
         marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
         String userName = (String) SpUtil.get(context, "UserName", "");
-        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 97, 174), 5, marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
 
         // 创建一个新的和SRC长度宽度一样的位图
         Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -198,11 +212,25 @@ public class ImageUtil {
      * @param level_1
      * @param lenSize
      */
-    private static void rows(String level_1, int lenSize){
+    static Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+    static String txt = "";
+    static int byteLen = 0;
+    private static void rows(String level_1, int lenSize, int oneSizeWidth){
+        byteLen = 0;
         int len = level_1.length();
 
         for (int i = 0; i < len; i++) {
-            int byteLen = level_1.substring(0, i).getBytes().length;
+            if (i == 0) {
+                txt = level_1.substring(0, i);
+            } else {
+                txt = level_1.substring(i-1, i);
+            }
+            Matcher m = p.matcher(txt);
+            if(m.matches()){
+                byteLen+=oneSizeWidth;
+            } else {
+                byteLen+=(oneSizeWidth / 2 + 1);
+            }
             if (byteLen > lenSize) {
                 list.add(level_1.substring(0, i-1));
                 level_1 = level_1.substring(i-1);
@@ -211,7 +239,7 @@ public class ImageUtil {
         }
 
         if (level_1.getBytes().length > lenSize) {
-            rows(level_1, lenSize);
+            rows(level_1, lenSize, oneSizeWidth);
         } else {
             list.add(level_1);
         }

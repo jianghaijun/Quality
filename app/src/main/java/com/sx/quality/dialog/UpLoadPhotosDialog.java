@@ -65,9 +65,9 @@ public class UpLoadPhotosDialog extends Dialog{
 				switch (msg.what) {
 					case 100:
 						txtNum.setText("已上传：" + msg.what + "%  (" + (upLoadNum+1) + "/" + upLoadPhotosBeenList.size() + ")");
-						// 移除已经上传的照片
-						DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
 						if (upLoadNum == upLoadPhotosBeenList.size() - 1) {
+							// 移除已经上传的照片
+							DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
 							UpLoadPhotosDialog.this.dismiss();
 							choiceListener.returnTrueOrFalse(true);
 							ToastUtil.showShort(mContext, "文件上传成功！");
@@ -111,6 +111,8 @@ public class UpLoadPhotosDialog extends Dialog{
 						String jsonData = response.body().string().toString();
 						LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
 						upLoadPhotosBeenList.get(upLoadNum).setPictureId(loginModel.getPictureId());
+						// 移除已经上传的照片
+						DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
 						upLoadNum++;
 						if (upLoadNum < upLoadPhotosBeenList.size()) {
 							UpLoadPhotos();

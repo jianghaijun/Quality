@@ -56,25 +56,27 @@
             android:orientation="horizontal"
             app:layout_heightPercent="20%">
 
-            <Button
-                android:id="@+id/btnQuery"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/five_dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_yellow"
-                android:text="@string/query"
-                android:textColor="@color/white"
-                android:textSize="@dimen/fourteen_sp" />
+
 
             <Button
                 android:id="@+id/btnCancel"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/five_dp"
+                android:layout_marginRight="@dimen/five_dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_yellow"
                 android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnQuery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/five_dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_yellow"
+                android:text="@string/query"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fourteen_sp" />
         </LinearLayout>

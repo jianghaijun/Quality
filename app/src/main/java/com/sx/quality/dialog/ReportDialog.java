@@ -127,7 +127,7 @@ public class ReportDialog extends Dialog {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject json = new JSONObject();
         try {
-            json.put("roleFlag", "1");
+            json.put("roleFlag", "2");
         } catch (JSONException e) {
             e.printStackTrace();
         }

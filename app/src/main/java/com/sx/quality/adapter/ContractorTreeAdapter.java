@@ -195,9 +195,9 @@ public class ContractorTreeAdapter extends BaseAdapter {
                         name = name.substring(0, name.indexOf("("));
                     }
                     if (i != 0) {
-                        sb.append(name + "→");
+                        sb.append(name.trim() + "→");
                     } else {
-                        sb.append(name);
+                        sb.append(name.trim());
                     }
                 }
                 Intent intent = new Intent();

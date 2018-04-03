@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">山西东二环高速公路</string>
-    <string name="app_title">山西东二环高速公路</string>
+    <!--<string name="app_name">长临高速机电工程</string>
+    <string name="app_title">长临高速机电工程项目部</string>-->
+    <string name="app_name">东二环高速公路</string>
+    <string name="app_title">东二环高速公路</string>
     <string name="not_network">当前无可用网络!</string>
     <string name="person_setting">个人设置</string>
     <string name="contractor">承包商</string>
