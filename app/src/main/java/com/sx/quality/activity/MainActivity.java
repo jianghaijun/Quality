@@ -56,6 +56,9 @@ public class MainActivity extends BaseActivity {
         x.view().inject(this);
         mContext = this;
 
+        // v2.0
+
+
         ScreenManagerUtil.pushActivity(this);
 
         txtTitle.setText(R.string.app_title);
