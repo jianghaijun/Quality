@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 import com.sx.quality.utils.ConstantsUtil;
-import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 
 /**
@@ -36,7 +33,7 @@ public class SplashScreenActivity extends BaseActivity {
     private void startNextActivity() {
         boolean isLoginFlag = (boolean) SpUtil.get(this, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
         if (isLoginFlag) {
-            startActivity(new Intent(this, NewMainActivity.class));
+            startActivity(new Intent(this, V_2MainActivity.class));
         } else {
             startActivity(new Intent(this, LoginActivity.class));
         }

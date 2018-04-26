@@ -31,7 +31,7 @@ import java.util.List;
 public class SelectAuditorsModel {
     private boolean success;
     private String message;
-    private int errcode;
+    private int code;
     private List<SelectAuditorsBean> data;
 
     public boolean isSuccess() {
@@ -50,12 +50,12 @@ public class SelectAuditorsModel {
         this.message = message;
     }
 
-    public int getErrcode() {
-        return errcode;
+    public int getCode() {
+        return code;
     }
 
-    public void setErrcode(int errcode) {
-        this.errcode = errcode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public List<SelectAuditorsBean> getData() {

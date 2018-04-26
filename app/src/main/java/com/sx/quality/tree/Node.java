@@ -1,5 +1,7 @@
 package com.sx.quality.tree;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,286 +9,203 @@ import java.util.List;
  * 树节点
  */
 public class Node {
-	private Node parent;// 父节点
-	private List<Node> children = new ArrayList<Node>();// 子节点
-	private String text;// 节点显示的文字
-	private String value;// 节点的值
-	private String tel;// 节点的值
-	private String userId;
-	private String roleName;
-	private int icon = -1;// 是否显示小图标,-1表示隐藏图标
-	private boolean isChecked = false;// 是否处于选中状态
-	private boolean isExpanded = true;// 是否处于展开状态
-	private boolean hasCheckBox = true;// 是否拥有复选框
-	private boolean isUser = true;// 是否是用户
+    private Node parent;// 父节点
+    private List<Node> children = new ArrayList<>();    // 子节点
+    private String levelName;                           // 层级名称
+    private String levelId;                             // 层级ID
+    private String parentId;                            // 父ID
+    private String folderFlag;                          // 是否是文件夹flag 0:不是文件夹 1：是文件夹
+    private String isFinish;                            // 是否已完成
+    private boolean isLoading = false;                  // 是否已经加载
+    private boolean isExpanded = true;                  // 是否处于展开状态
 
-	/**
-	 * Node构造函数
-	 * @param text 节点显示的文字
-	 * @param tel 节点的值
-	 */
-	public Node(String text, String tel) {
-		this.text = text;
-		this.tel = tel;
-	}
+    public String getIsFinish() {
+        return TextUtils.isEmpty(isFinish) ? "" : isFinish;
+    }
 
-	/**
-	 * 设置父节点
-	 * @param node
-	 */
-	public void setParent(Node node) {
-		this.parent = node;
-	}
+    public void setIsFinish(String isFinish) {
+        this.isFinish = isFinish;
+    }
 
-	/**
-	 * 获得父节点
-	 * @return
-	 */
-	public Node getParent() {
-		return this.parent;
-	}
+    public String getLevelName() {
+        return levelName;
+    }
 
-	/**
-	 * 设置节点文本
-	 * @param text
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
 
-	/**
-	 * 获得节点文本
-	 *
-	 * @return
-	 */
-	public String getText() {
-		return this.text;
-	}
+    public String getLevelId() {
+        return levelId;
+    }
 
-	/**
-	 * 设置节点值
-	 *
-	 * @param value
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
 
-	/**
-	 * 获得节点值
-	 *
-	 * @return
-	 */
-	public String getValue() {
-		return this.value;
-	}
+    public String getFolderFlag() {
+        return folderFlag;
+    }
 
-	/**
-	 * 设置节点图标文件
-	 *
-	 * @param icon
-	 */
-	public void setIcon(int icon) {
-		this.icon = icon;
-	}
+    public void setFolderFlag(String folderFlag) {
+        this.folderFlag = folderFlag;
+    }
 
-	/**
-	 * 获得图标文件
-	 *
-	 * @return
-	 */
-	public int getIcon() {
-		return icon;
-	}
+    public String getParentId() {
+        return parentId;
+    }
 
-	public String getTel() {
-		return tel;
-	}
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
-	public void setTel(String tel) {
-		this.tel = tel;
-	}
+    /**
+     * 设置父节点
+     *
+     * @param node
+     */
+    public void setParent(Node node) {
+        this.parent = node;
+    }
 
-	public boolean isUser() {
-		return isUser;
-	}
+    /**
+     * 获得父节点
+     *
+     * @return
+     */
+    public Node getParent() {
+        return this.parent;
+    }
 
-	public void setUser(boolean isUser) {
-		this.isUser = isUser;
-	}
 
-	public String getUserId() {
-		return userId;
-	}
+    public void setChildren(List<Node> children) {
+        this.children = children;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    /**
+     * 是否根节点
+     *
+     * @return
+     */
+    public boolean isRoot() {
+        return parent == null ? true : false;
+    }
 
-	public String getRoleName() {
-		return roleName;
-	}
+    /**
+     * 获得子节点
+     *
+     * @return
+     */
+    public List<Node> getChildren() {
+        return this.children;
+    }
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
+    /**
+     * 添加子节点
+     *
+     * @param node
+     */
+    public void add(Node node) {
+        if (!children.contains(node)) {
+            children.add(node);
+        }
+    }
 
-	public void setChildren(List<Node> children) {
-		this.children = children;
-	}
+    /**
+     * 清除所有子节点
+     */
+    public void clear() {
+        children.clear();
+    }
 
-	/**
-	 * 是否根节点
-	 *
-	 * @return
-	 */
-	public boolean isRoot() {
-		return parent == null ? true : false;
-	}
+    /**
+     * 删除一个子节点
+     *
+     * @param node
+     */
+    public void remove(Node node) {
+        if (!children.contains(node)) {
+            children.remove(node);
+        }
+    }
 
-	/**
-	 * 获得子节点
-	 *
-	 * @return
-	 */
-	public List<Node> getChildren() {
-		return this.children;
-	}
+    /**
+     * 删除指定位置的子节点
+     *
+     * @param location
+     */
+    public void remove(int location) {
+        children.remove(location);
+    }
 
-	/**
-	 * 添加子节点
-	 *
-	 * @param node
-	 */
-	public void add(Node node) {
-		if (!children.contains(node)) {
-			children.add(node);
-		}
-	}
+    /**
+     * 获得节点的级数,根节点为0
+     *
+     * @return
+     */
+    public int getLevel() {
+        return parent == null ? 0 : parent.getLevel() + 1;
+    }
 
-	/**
-	 * 清除所有子节点
-	 */
-	public void clear() {
-		children.clear();
-	}
+    public boolean isLoading() {
+        return isLoading;
+    }
 
-	/**
-	 * 删除一个子节点
-	 *
-	 * @param node
-	 */
-	public void remove(Node node) {
-		if (!children.contains(node)) {
-			children.remove(node);
-		}
-	}
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
 
-	/**
-	 * 删除指定位置的子节点
-	 *
-	 * @param location
-	 */
-	public void remove(int location) {
-		children.remove(location);
-	}
+    /**
+     * 是否叶节点,即没有子节点的节点
+     *
+     * @return
+     */
+    public boolean isLeaf() {
+        return children.size() < 1 ? true : false;
+    }
 
-	/**
-	 * 获得节点的级数,根节点为0
-	 *
-	 * @return
-	 */
-	public int getLevel() {
-		return parent == null ? 0 : parent.getLevel() + 1;
-	}
+    /**
+     * 当前节点是否处于展开状态
+     *
+     * @return
+     */
+    public boolean isExpanded() {
+        return isExpanded;
+    }
 
-	/**
-	 * 设置节点选中状态
-	 *
-	 * @param isChecked
-	 */
-	public void setChecked(boolean isChecked) {
-		this.isChecked = isChecked;
-	}
+    /**
+     * 设置节点展开状态
+     *
+     * @return
+     */
+    public void setExpanded(boolean isExpanded) {
+        this.isExpanded = isExpanded;
+    }
 
-	/**
-	 * 获得节点选中状态
-	 *
-	 * @return
-	 */
-	public boolean isChecked() {
-		return isChecked;
-	}
+    /**
+     * 递归判断父节点是否处于折叠状态,有一个父节点折叠则认为是折叠状态
+     *
+     * @return
+     */
+    public boolean isParentCollapsed() {
+        if (parent == null)
+            return !isExpanded;
+        if (!parent.isExpanded())
+            return true;
+        return parent.isParentCollapsed();
+    }
 
-	/**
-	 * 设置是否拥有复选框
-	 *
-	 * @param hasCheckBox
-	 */
-	public void setCheckBox(boolean hasCheckBox) {
-		this.hasCheckBox = hasCheckBox;
-	}
-
-	/**
-	 * 是否拥有复选框
-	 *
-	 * @return
-	 */
-	public boolean hasCheckBox() {
-		return hasCheckBox;
-	}
-
-	/**
-	 * 是否叶节点,即没有子节点的节点
-	 *
-	 * @return
-	 */
-	public boolean isLeaf() {
-		return children.size() < 1 ? true : false;
-	}
-
-	/**
-	 * 当前节点是否处于展开状态
-	 *
-	 * @return
-	 */
-	public boolean isExpanded() {
-		return isExpanded;
-	}
-
-	/**
-	 * 设置节点展开状态
-	 *
-	 * @return
-	 */
-	public void setExpanded(boolean isExpanded) {
-		this.isExpanded = isExpanded;
-	}
-
-	/**
-	 * 递归判断父节点是否处于折叠状态,有一个父节点折叠则认为是折叠状态
-	 *
-	 * @return
-	 */
-	public boolean isParentCollapsed() {
-		if (parent == null)
-			return !isExpanded;
-		if (!parent.isExpanded())
-			return true;
-		return parent.isParentCollapsed();
-	}
-
-	/**
-	 * 递归判断所给的节点是否当前节点的父节点
-	 *
-	 * @param node 所给节点
-	 * @return
-	 */
-	public boolean isParent(Node node) {
-		if (parent == null)
-			return false;
-		if (node.equals(parent))
-			return true;
-		return parent.isParent(node);
-	}
+    /**
+     * 递归判断所给的节点是否当前节点的父节点
+     *
+     * @param node 所给节点
+     * @return
+     */
+    public boolean isParent(Node node) {
+        if (parent == null)
+            return false;
+        if (node.equals(parent))
+            return true;
+        return parent.isParent(node);
+    }
 }

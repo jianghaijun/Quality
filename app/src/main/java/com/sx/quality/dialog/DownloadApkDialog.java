@@ -12,10 +12,12 @@ import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.R;
 import com.sx.quality.listener.DownloadProgressListener;
 import com.sx.quality.utils.ConstantsUtil;
-import com.sx.quality.utils.DownloadFileTaskUtil;
+import com.sx.quality.utils.DownloadUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import java.io.File;
@@ -24,18 +26,19 @@ import java.io.File;
  * 下载dialog
  */
 public class DownloadApkDialog extends Dialog{
-	private Activity mContext;
+	private Context mContext;
+	private Activity mActivity;
 	private TextView txtResult;
 	private ProgressBar progressBarDownload;
-	private Handler downloadHandler;
 	private Long fileLength;
 
 	public DownloadApkDialog(Context context, Long fileLength) {
 		super(context);
-		this.mContext = (Activity) context;
 		this.fileLength = fileLength;
+		this.mActivity = (Activity) context;
+		this.mContext = context;
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,26 +48,8 @@ public class DownloadApkDialog extends Dialog{
 		progressBarDownload = (ProgressBar) this.findViewById(R.id.progressBarDownload);
 		txtResult = (TextView) this.findViewById(R.id.txtResult);
 
-		progressBarDownload.setMax(Integer.parseInt(String.valueOf(fileLength)));
-		txtResult.setText(0 + "%");
-
-		downloadHandler = new Handler(){
-			public void handleMessage(Message msg){
-				switch (msg.what) {
-					case 100:
-						txtResult.setText("已下载：" + msg.what + "%");
-						dismiss();
-						//安装
-						Intent intent = new Intent(Intent.ACTION_VIEW);
-						intent.setDataAndType(Uri.fromFile(new File(ConstantsUtil.SAVE_PATH + "sx_quality.apk")), "application/vnd.android.package-archive");
-						mContext.startActivity(intent);
-						break;
-					default:
-						txtResult.setText("已下载：" + msg.what + "%");
-						break;
-				}
-			}
-		};
+		progressBarDownload.setMax(100);
+		txtResult.setText("已下载" + 0 + "%");
 
 		downloadApk();
 	}
@@ -73,37 +58,26 @@ public class DownloadApkDialog extends Dialog{
 	 * 下载apk
 	 */
 	private void downloadApk() {
-		new Thread(new Runnable() {
+		DownloadUtil.getInstance().download(fileLength, ConstantsUtil.BASE_URL + ConstantsUtil.DOWNLOAD_APK, ConstantsUtil.SAVE_PATH, new DownloadUtil.OnDownloadListener() {
 			@Override
-			public void run() {
-				try {
-					DownloadFileTaskUtil.downloadFileDoGet(ConstantsUtil.BASE_URL + ConstantsUtil.DOWNLOAD_APK, ConstantsUtil.SAVE_PATH + "sx_quality.apk", listener);
-				} catch (Exception e) {
-					e.printStackTrace();
-					dismiss();
-					mContext.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							ToastUtil.showShort(mContext, "文件下载失败！");
-						}
-					});
-				}
+			public void onDownloadSuccess(String path) {
+				dismiss();
+				//安装
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.fromFile(new File(ConstantsUtil.SAVE_PATH + "quality.apk")), "application/vnd.android.package-archive");
+				mActivity.startActivity(intent);
 			}
-		}).start();
-	}
 
-	/**
-	 * APK下载监听
-	 */
-	private DownloadProgressListener listener = new DownloadProgressListener() {
-		@Override
-		public void downloadSize(Long progressSize) {
-			progressBarDownload.setProgress(Integer.parseInt(String.valueOf(progressSize)));
-			float result = (float) progressBarDownload.getProgress() / (float) progressBarDownload.getMax();
-			int p = (int) (result * 100);
-			Message message = new Message();
-			message.what = p;
-			downloadHandler.sendMessage(message);
-		}
-	};
+			@Override
+			public void onDownloading(int progress) {
+				progressBarDownload.setProgress(progress);
+				txtResult.setText("已下载" + progress + "%");
+			}
+
+			@Override
+			public void onDownloadFailed() {
+				ToastUtil.showShort(mContext, "文件下载失败！");
+			}
+		});
+	}
 }

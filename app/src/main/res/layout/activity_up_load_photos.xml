@@ -10,18 +10,17 @@
 
     <include
         android:id="@+id/actionBar"
-        layout="@layout/layout_navigation_bar"
+        layout="@layout/v_2_layout_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_dp"
         android:layout_alignParentTop="true"
-        app:layout_heightPercent="12%"/>
+        app:layout_heightPercent="8%"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvUpLoadPhone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/upload_photos"
-        android:padding="@dimen/ten_dp"
+        android:background="@color/gray_bg"
         android:scrollbars="none">
 
     </android.support.v7.widget.RecyclerView>

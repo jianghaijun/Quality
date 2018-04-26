@@ -1,14 +1,10 @@
 package com.sx.quality.activity;
 
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
+
+import android.graphics.Paint;
+import android.graphics.Rect;
 
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -18,9 +14,31 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        int a = 10;
-        int b = 3;
-        int c = (int) ((Float.valueOf(a) / Float.valueOf(b)) * 350);
-        System.out.println(c);
+
+        /*Rect rect = new Rect();
+        pFont.setTextSize(16);
+        pFont.getTextBounds("豆", 0, 1, rect);
+        int oneSizeWidth = rect.width();
+        int oneSizeHeight = rect.height();*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Paint pFont = new Paint();
+                System.out.print(computeMaxStringWidth(new String[] {"国" , "3"}, pFont) + "-----------------");
+            }
+        }).start();
+
+    }
+
+    private int computeMaxStringWidth(String[] strings, Paint p) {
+        float maxWidthF = 0.0f;
+        int len = strings.length;
+        for (int i = 0; i < len; i++) {
+            float width = p.measureText(strings[i]);
+            maxWidthF = Math.max(width, maxWidthF);
+        }
+        int maxWidth = (int) (maxWidthF + 0.5);
+        return maxWidth;
     }
 }

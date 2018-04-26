@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.AppActivity">
+
+    <Button
+        android:id="@+id/btnInfo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_hundred_dp"
+        android:background="@color/white"
+        android:padding="@dimen/ten_dp"
+        android:textColor="@color/v_2_tab_color"
+        android:textSize="@dimen/fourteen_sp" />
+</RelativeLayout>

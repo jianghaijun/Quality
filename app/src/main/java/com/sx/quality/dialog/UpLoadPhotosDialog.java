@@ -2,6 +2,7 @@ package com.sx.quality.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,13 +11,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
+import com.sx.quality.activity.LoginActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.model.LoginModel;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.JsonUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -67,7 +69,7 @@ public class UpLoadPhotosDialog extends Dialog{
 						txtNum.setText("已上传：" + msg.what + "%  (" + (upLoadNum+1) + "/" + upLoadPhotosBeenList.size() + ")");
 						if (upLoadNum == upLoadPhotosBeenList.size() - 1) {
 							// 移除已经上传的照片
-							DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
+							DataSupport.deleteAll(ContractorListPhotosBean.class, "photoAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPhotoAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
 							UpLoadPhotosDialog.this.dismiss();
 							choiceListener.returnTrueOrFalse(true);
 							ToastUtil.showShort(mContext, "文件上传成功！");
@@ -77,6 +79,17 @@ public class UpLoadPhotosDialog extends Dialog{
 						UpLoadPhotosDialog.this.dismiss();
 						choiceListener.returnTrueOrFalse(true);
 						ToastUtil.showShort(mContext, "文件上传失败！");
+						break;
+					case -2:
+						UpLoadPhotosDialog.this.dismiss();
+						ToastUtil.showShort(mContext, mContext.getString(R.string.json_error));
+						break;
+					case -3:
+						// Token异常重新登录
+						ToastUtil.showLong(mContext, "Token过期请重新登录！");
+						SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
+						ScreenManagerUtil.popAllActivityExceptOne();
+						mContext.startActivity(new Intent(mContext, LoginActivity.class));
 						break;
 					default:
 						txtNum.setText("已上传：" + msg.what + "%  (" + (upLoadNum+1) + "/" + upLoadPhotosBeenList.size() + ")");
@@ -95,33 +108,55 @@ public class UpLoadPhotosDialog extends Dialog{
 	 * 上传文件
 	 */
 	private void UpLoadPhotos() {
+		final ContractorListPhotosBean bean = upLoadPhotosBeenList.get(upLoadNum);
 		OkHttpUtils.post()
-				.addFile("filesName", upLoadPhotosBeenList.get(upLoadNum).getPictureName(), new File(upLoadPhotosBeenList.get(upLoadNum).getPictureAddress()))
-				.addParams("nodeId", upLoadPhotosBeenList.get(upLoadNum).getNodeId())
-				.addParams("pictureDesc", upLoadPhotosBeenList.get(upLoadNum).getPictureDesc())
-				.addParams("pictureName", upLoadPhotosBeenList.get(upLoadNum).getPictureName())
-				.addParams("pictureType", upLoadPhotosBeenList.get(upLoadNum).getPictureType())
+				.addFile("filesName", bean.getPhotoName(), new File(bean.getPhotoAddress()))
+				.addParams("processId", bean.getProcessId())
+				.addParams("photoDesc", bean.getPhotoDesc())
+				.addParams("longitude", bean.getLongitude())
+				.addParams("latitude", bean.getLatitude())
+				.addParams("location", bean.getLocation())
+				.addParams("photoName", bean.getPhotoName())
+				.addParams("photoType", bean.getPhotoType())
+				.addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
 				.addParams("userId", (String) SpUtil.get(mContext,ConstantsUtil.USER_ID, ""))
 				.url(ConstantsUtil.BASE_URL + ConstantsUtil.UP_LOAD_PHOTOS)
 				.build()
 				.execute(new com.zhy.http.okhttp.callback.Callback() {
 					@Override
 					public Object parseNetworkResponse(Response response, int id) throws Exception {
-						Gson gson = new Gson();
 						String jsonData = response.body().string().toString();
-						LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
-						upLoadPhotosBeenList.get(upLoadNum).setPictureId(loginModel.getPictureId());
-						// 移除已经上传的照片
-						DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=? AND userId = ?", upLoadPhotosBeenList.get(upLoadNum).getPictureAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
-						upLoadNum++;
-						if (upLoadNum < upLoadPhotosBeenList.size()) {
-							UpLoadPhotos();
+						if (JsonUtils.isGoodJson(jsonData)) {
+							Gson gson = new Gson();
+							LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+							if (loginModel.isSuccess()) {
+								bean.setPhotoId(loginModel.getPictureId());
+								// 移除已经上传的照片
+								DataSupport.deleteAll(ContractorListPhotosBean.class, "photoAddress=? AND userId = ?", bean.getPhotoAddress(), (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
+								upLoadNum++;
+								if (upLoadNum < upLoadPhotosBeenList.size()) {
+									UpLoadPhotos();
+								}
+							} else {
+								switch (loginModel.getCode()) {
+									case 3003:
+									case 3004:
+										Message jsonErr = new Message();
+										jsonErr.what = -3;
+										upLoadPhotosHandler.sendMessage(jsonErr);
+										break;
+								}
+							}
+						} else {
+							Message jsonErr = new Message();
+							jsonErr.what = -2;
+							upLoadPhotosHandler.sendMessage(jsonErr);
 						}
 						return null;
 					}
 
 					@Override
-					public void onError(Call call, Exception e, int id) {
+					public void onError(final Call call,final Exception e, final int id) {
 						new Thread(new Runnable() {
 							@Override
 							public void run() {

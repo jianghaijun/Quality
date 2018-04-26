@@ -1,17 +1,18 @@
 package com.sx.quality.activity;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.sx.quality.bean.NewContractorListBean;
 import com.sx.quality.dialog.DownloadApkDialog;
-import com.sx.quality.dialog.PromptDialog;
+import com.sx.quality.dialog.V_2PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.model.CheckVersionModel;
 import com.sx.quality.utils.AppInfoUtil;
@@ -24,12 +25,11 @@ import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
-import org.litepal.crud.DataSupport;
-import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,100 +37,76 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- *                     _ooOoo_
- *                    o8888888o
- *                    88" . "88
- *                    (| -_- |)
- *                    O\  =  /O
- *                 ____/`---'\____
- *               .'  \\|     |//  `.
- *              /  \\|||  :  |||//  \
- *             /  _||||| -:- |||||-  \
- *             |   | \\\  -  /// |   |
- *             | \_|  ''\---/''  |   |
- *             \  .-\__  `-`  ___/-. /
- *           ___`. .'  /--.--\  `. . __
- *        ."" '<  `.___\_<|>_/___.'  >'"".
- *       | | :  `- \`.;`\ _ /`;.`/ - ` : | |
- *       \  \ `-.   \_ __\ /__ _/   .-` /  /
- * ======`-.____`-.___\_____/___.-`____.-'======
- *                     `=---='
- * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- * 			   佛祖保佑       永无BUG
- *       Created by dell on 2017/10/23 8:58
- */
-public class PersonalSettingActivity extends BaseActivity {
-    @ViewInject(R.id.imgBtnLeft)
-    private ImageView imgBtnLeft;
-    @ViewInject(R.id.txtTitle)
-    private TextView txtTitle;
-
-    @ViewInject(R.id.txtVersion)
-    private TextView txtVersion;
-    @ViewInject(R.id.txtUserName)
-    private TextView txtUserName;
-    @ViewInject(R.id.txtCachingSize)
-    private TextView txtCachingSize;
-
+public class MySettingActivity extends BaseActivity {
+    private MyHolder myHolder;
     private Context mContext;
+    private Activity mActivity;
+    private ChoiceListener checkListener;
     private Long fileLength;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_persion_setting);
-        x.view().inject(this);
+    public MySettingActivity(Context mContext, View layoutMy, ChoiceListener checkListener) {
+        this.mContext = mContext;
+        this.mActivity = (Activity) mContext;
+        myHolder = new MyHolder();
+        x.view().inject(myHolder, layoutMy);
+        this.checkListener = checkListener;
 
-        mContext = this;
-        ScreenManagerUtil.pushActivity(this);
+        myHolder.txtVersion.setText("当前版本" + AppInfoUtil.getVersion(mContext));
+        myHolder.txtUserName.setText((String) SpUtil.get(mContext, "UserName", ""));
+        myHolder.txtCachingSize.setText(GlideCatchUtil.getCacheSize());
 
-        imgBtnLeft.setVisibility(View.VISIBLE);
-        imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
-        txtTitle.setText(getString(R.string.person_setting));
-
-        txtVersion.setText("当前版本" + AppInfoUtil.getVersion(this));
-        txtUserName.setText((String) SpUtil.get(this, "UserName", ""));
-        txtCachingSize.setText(GlideCatchUtil.getCacheSize());
+        setData();
     }
 
-    @Event({R.id.btnSignOut, R.id.imgBtnLeft, R.id.imgViewUpdatePassword, R.id.imgViewCheckVersion, R.id.imgViewCleanUpCaching })
-    private void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgBtnLeft:
-                this.finish();
-                break;
-            case R.id.btnSignOut:
-                SpUtil.put(this, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
+    /**
+     * 赋值
+     */
+    private void setData() {
+        myHolder.btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
                 ScreenManagerUtil.popAllActivityExceptOne();
-                //ScreenManagerUtil.popAllActivityExceptOne(LoginActivity.class);
-                startActivity(new Intent(mContext, LoginActivity.class));
-                break;
-            case R.id.imgViewUpdatePassword:
-                startActivity(new Intent(this, UpdatePassWordActivity.class));
-                break;
-            case R.id.imgViewCheckVersion:
-                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                mContext.startActivity(new Intent(mContext, LoginActivity.class));
+            }
+        });
+
+
+        myHolder.imgViewUpdatePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(new Intent(mContext, UpdatePassWordActivity.class));
+            }
+        });
+
+        myHolder.imgViewCheckVersion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(mActivity)) {
                     checkVersion();
                 } else {
-                    ToastUtil.showShort(this, getString(R.string.not_network));
+                    ToastUtil.showShort(mContext, getString(R.string.not_network));
                 }
-                break;
-            case R.id.imgViewCleanUpCaching:
-                LoadingUtils.showLoading(this);
+            }
+        });
+
+        myHolder.imgViewCleanUpCaching.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadingUtils.showLoading(mContext);
                 // 清除已加载工序列表
-                SpUtil.put(mContext, ConstantsUtil.NODE_ID, "");
-                DataSupport.deleteAll(NewContractorListBean.class);
+                SpUtil.put(mContext, ConstantsUtil.LEVEL_ID, "");
+                //DataSupport.deleteAll(NewContractorListBean.class);
                 boolean isClean = GlideCatchUtil.cleanCatchDisk();
-                txtCachingSize.setText(GlideCatchUtil.getCacheSize());
+                myHolder.txtCachingSize.setText(GlideCatchUtil.getCacheSize());
                 LoadingUtils.hideLoading();
                 if (isClean) {
-                    ToastUtil.showShort(this, "清理成功");
+                    ToastUtil.showShort(mContext, "清理成功");
                 } else {
-                    ToastUtil.showShort(this, "清理失败");
+                    ToastUtil.showShort(mContext, "清理失败");
                 }
-                break;
-        }
+            }
+        });
     }
 
     /**
@@ -140,6 +116,7 @@ public class PersonalSettingActivity extends BaseActivity {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.CHECK_VERSION)
+                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .get()
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -156,7 +133,6 @@ public class PersonalSettingActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String data = response.body().string();
-
                 if (JsonUtils.isGoodJson(data)) {
                     Gson gson = new Gson();
                     final CheckVersionModel model = gson.fromJson(data, CheckVersionModel.class);
@@ -168,7 +144,7 @@ public class PersonalSettingActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     fileLength = model.getFileLength();
-                                    PromptDialog promptDialog = new PromptDialog(mContext, choiceListener, "发现新版本", "是否更新？", "否", "是");
+                                    V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, choiceListener, "发现新版本", "是否更新？", "否", "是");
                                     promptDialog.show();
                                 }
                             });
@@ -177,7 +153,7 @@ public class PersonalSettingActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    txtVersion.setText("当前已是最新版本！");
+                                    myHolder.txtVersion.setText("当前已是最新版本！");
                                 }
                             });
                         }
@@ -208,16 +184,43 @@ public class PersonalSettingActivity extends BaseActivity {
         @Override
         public void returnTrueOrFalse(boolean trueOrFalse) {
             if (trueOrFalse) {
-                DownloadApkDialog downloadApkDialog = new DownloadApkDialog(mContext, fileLength);
-                downloadApkDialog.setCanceledOnTouchOutside(false);
-                downloadApkDialog.show();
+                checkListener.returnTrueOrFalse(true);
             }
         }
     };
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ScreenManagerUtil.popActivity(this);
+    /**
+     * 下载APK
+     */
+    public void downloadApk() {
+        DownloadApkDialog downloadApkDialog = new DownloadApkDialog(mContext, fileLength);
+        downloadApkDialog.setCanceledOnTouchOutside(false);
+        downloadApkDialog.show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 容纳器
+     */
+    private class MyHolder {
+        @ViewInject(R.id.txtVersion)
+        private TextView txtVersion;
+        @ViewInject(R.id.txtUserName)
+        private TextView txtUserName;
+        @ViewInject(R.id.txtCachingSize)
+        private TextView txtCachingSize;
+        @ViewInject(R.id.btnSignOut)
+        private TextView btnSignOut;
+        @ViewInject(R.id.imgViewUpdatePassword)
+        private ImageView imgViewUpdatePassword;
+        @ViewInject(R.id.imgViewCheckVersion)
+        private ImageView imgViewCheckVersion;
+        @ViewInject(R.id.imgViewCleanUpCaching)
+        private ImageView imgViewCleanUpCaching;
+    }
+
 }

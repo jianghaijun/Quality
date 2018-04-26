@@ -3,6 +3,7 @@ package com.sx.quality.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,15 +13,17 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.sx.quality.activity.LoginActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.adapter.SelectAuditorsAdapter;
 import com.sx.quality.bean.SelectAuditorsBean;
-import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.ReportListener;
 import com.sx.quality.model.SelectAuditorsModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.LoadingUtils;
+import com.sx.quality.utils.ScreenManagerUtil;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
 import org.json.JSONException;
@@ -28,12 +31,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -86,6 +86,7 @@ public class ReportDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 dismiss();
+                reportListener.returnUserId("");
             }
         });
 
@@ -118,26 +119,20 @@ public class ReportDialog extends Dialog {
      */
     private void initData() {
         LoadingUtils.showLoading(mContext);
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30000L, TimeUnit.MILLISECONDS)
-                .readTimeout(30000L, TimeUnit.MILLISECONDS)
-                .build();
-
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject json = new JSONObject();
         try {
-            json.put("roleFlag", "2");
+            json.put("roleFlag", ConstantsUtil.roleFlag);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        RequestBody requestBody = RequestBody.create(JSON, json.toString());
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, json.toString());
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_AUDITORS)
+                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
-        okHttpClient.newCall(request).enqueue(callback);
+        ConstantsUtil.okHttpClient.newCall(request).enqueue(callback);
     }
 
     /**
@@ -158,29 +153,48 @@ public class ReportDialog extends Dialog {
 
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            Gson gson = new Gson();
             String jsonData = response.body().string().toString();
             if (JsonUtils.isGoodJson(jsonData)) {
-                jsonData = null == jsonData || jsonData.equals("null") || jsonData.equals("") ? "{}" : jsonData;
-                final SelectAuditorsModel model = gson.fromJson(jsonData, SelectAuditorsModel.class);
+                try {
+                    JSONObject obj = new JSONObject(jsonData);
+                    boolean resultFlag = obj.getBoolean("success");
+                    final String msg = obj.getString("message");
+                    final String code = obj.getString("code");
 
-                if (model.isSuccess()) {
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            selectAuditorsData = model.getData();
-                            setData();
-                            LoadingUtils.hideLoading();
-                        }
-                    });
-                } else {
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LoadingUtils.hideLoading();
-                            ToastUtil.showLong(mContext, mContext.getString(R.string.get_data_exception));
-                        }
-                    });
+                    if (resultFlag) {
+                        Gson gson = new Gson();
+                        final SelectAuditorsModel model = gson.fromJson(jsonData, SelectAuditorsModel.class);
+                        mContext.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                selectAuditorsData = model.getData();
+                                setData();
+                                LoadingUtils.hideLoading();
+                            }
+                        });
+                    } else {
+                        mContext.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LoadingUtils.hideLoading();
+                                switch (code) {
+                                    case "3003":
+                                    case "3004":
+                                        // Token异常重新登录
+                                        ToastUtil.showLong(mContext, msg);
+                                        SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
+                                        ScreenManagerUtil.popAllActivityExceptOne();
+                                        mContext.startActivity(new Intent(mContext, LoginActivity.class));
+                                        break;
+                                    default:
+                                        ToastUtil.showLong(mContext, msg);
+                                        break;
+                                }
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             } else {
                 mContext.runOnUiThread(new Runnable() {

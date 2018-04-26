@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.sx.quality.activity.V_2MainActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/v_2_layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="8%" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rlBottom"
+        android:layout_below="@+id/actionBar" />
+
+    <RelativeLayout
+        android:id="@+id/rlBottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:layout_heightPercent="10%">
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/two_px"
+            android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/five_dp"
+            android:paddingBottom="@dimen/five_dp"
+            android:layout_below="@+id/view"
+            android:background="@null"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMsg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableTop="@drawable/msg_un_select"
+                android:text="@string/msg"
+                android:textColor="@color/v_2_tab_color"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnProject"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableTop="@drawable/project_un_select"
+                android:text="@string/project"
+                android:textColor="@color/v_2_tab_color"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnApplication"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableTop="@drawable/application_un_select"
+                android:text="@string/application"
+                android:textColor="@color/v_2_tab_color"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnFriends"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableTop="@drawable/friend_un_select"
+                android:text="@string/friends"
+                android:textColor="@color/v_2_tab_color"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnMe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableTop="@drawable/me_un_select"
+                android:text="@string/me"
+                android:textColor="@color/v_2_tab_color"
+                android:textSize="@dimen/fourteen_sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</com.zhy.android.percent.support.PercentRelativeLayout>

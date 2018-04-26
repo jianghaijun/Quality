@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/five_dp">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/v_2_main_check_bg"
+        android:layout_marginTop="@dimen/five_dp"
+        android:padding="@dimen/one_dp"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:layout_marginBottom="@dimen/one_dp">
+            <TextView
+                android:id="@+id/txtNo"
+                android:layout_width="@dimen/fifty_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/no"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="@dimen/one_hundred_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/working_name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtPhotosNum"
+                android:layout_width="@dimen/one_hundred_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/photos_num"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtPhotographers"
+                android:layout_width="@dimen/eighty_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/photographers"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtValidator"
+                android:layout_width="@dimen/eighty_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/validator"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="@dimen/eighty_dp"
+                android:layout_height="@dimen/thirty"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="@string/status"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+        </TableRow>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:scrollbars="none">
+
+            <TableLayout
+                android:id="@+id/tabLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/v_2_main_check_bg"/>
+        </ScrollView>
+    </TableLayout>
+</com.zhy.android.percent.support.PercentLinearLayout>

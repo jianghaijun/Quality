@@ -5,13 +5,13 @@ package com.sx.quality.bean;
  */
 
 public class PictureBean {
-    private String pictureId;
+    private String photoId;
 
-    public String getPictureId() {
-        return pictureId;
+    public String getPhotoId() {
+        return photoId;
     }
 
-    public void setPictureId(String pictureId) {
-        this.pictureId = pictureId;
+    public void setPhotoId(String photoId) {
+        this.photoId = photoId;
     }
 }

@@ -29,6 +29,12 @@ import java.util.regex.Pattern;
 public class ImageUtil {
     // 计算每行应该有多少内容
     private static List<String> list = new ArrayList<>();
+    // 计算第一行文字个数
+    private static Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+    private static Matcher m;
+    private static String[] str = new String[] {"我"};
+    private static String txt = "";
+    private static int byteLen = 0;
 
     /**
      * 设置水印图片在左上角
@@ -53,7 +59,6 @@ public class ImageUtil {
         if (src == null) {
             return null;
         }
-
         // 原图尺寸
         int width = src.getWidth();
         int height = src.getHeight();
@@ -74,39 +79,44 @@ public class ImageUtil {
         Rect rect = new Rect();
         pFont.setTextSize(16 * widthMultiple);
         pFont.getTextBounds("豆", 0, 1, rect);
-        int oneSizeWidth = rect.width();
+
+        int oneSizeWidth = computeMaxStringWidth(str, pFont);
         int oneSizeHeight = rect.height();
         // 去掉左右间距所剩宽度
-        int lenWidth = watermarkWidth - DensityUtil.dip2px(15 * widthMultiple);
+        int lenWidth = watermarkWidth - DensityUtil.dip2px(10);
         // 水印图上文字大小
         int testSize = DensityUtil.px2dip(16 * widthMultiple);
         list.clear();
-        // 计算第一行文字个数
-        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-        String txt = "";
-        int byteLen = 0;
-        for (int i = 0; i < len; i++) {
-            if (i == 0) {
-                txt = level_1.substring(0, i);
-            } else {
-                txt = level_1.substring(i-1, i);
-            }
-            Matcher m = p.matcher(txt);
-            if(m.matches()){
-                byteLen+=oneSizeWidth;
-            } else {
-                byteLen+=(oneSizeWidth / 2 + 1);
-            }
-            if (byteLen > lenWidth) {
-                list.add(level_1.substring(0, i-1));
-                level_1 = level_1.substring(i-1);
-                break;
-            }
-        }
+        if (computeMaxStringWidth(new String[] {level_1}, pFont) < lenWidth) {
+            list.add(level_1);
+        } else {
+            byteLen = 0;
+            for (int i = 1; i < len; i++) {
+                if (i == 0) {
+                    txt = level_1.substring(0, i);
+                } else {
+                    txt = level_1.substring(i-1, i);
+                }
 
-        // 第二行显示文字实际宽度
-        lenWidth = lenWidth - oneSizeWidth * 5;
-        rows(level_1, lenWidth, oneSizeWidth);
+                m = p.matcher(txt);
+
+                if(m.matches()){
+                    byteLen+=oneSizeWidth;
+                } else {
+                    String[] strNum = new String[] {txt};
+                    byteLen+=(computeMaxStringWidth(strNum, pFont));
+                }
+                if (byteLen > lenWidth) {
+                    list.add(level_1.substring(0, i-1));
+                    level_1 = level_1.substring(i-1);
+                    break;
+                }
+            }
+
+            // 第二行显示文字实际宽度
+            lenWidth = lenWidth - computeMaxStringWidth(new String[] {"施工部位："} , pFont) - DensityUtil.dip2px(5);
+            rows(level_1, lenWidth, oneSizeWidth, pFont);
+        }
 
         int marginTop = 8;
         // 设置水印高度 上下距离+(行高+行距) * 行数 + logo高度
@@ -122,16 +132,22 @@ public class ImageUtil {
         canvas.drawColor(Color.argb(255 ,255, 255, 255));
 
         // 将Logo添加到底板中
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
-        canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * heightMultiple, null);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.watermark_logo);
+        Rect rectSrc = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()); // 创建一个指定的新矩形的坐标
+        Rect dst = new Rect(dp2px(context, 5 * widthMultiple), dp2px(context, 1 * heightMultiple), bitmap.getWidth() + dp2px(context, 5 * widthMultiple), bitmap.getHeight() + dp2px(context, 1 * heightMultiple)); // 创建一个指定的新矩形的坐标
+        canvas.drawBitmap(bitmap, rectSrc, dst, null); // 将photo 缩放或则扩大搜索到
+
+        //canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * heightMultiple, null);
 
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "山西路桥", DensityUtil.px2dip(20 * heightMultiple), Color.rgb(0, 0, 0), (int) (20 * widthMultiple), (int) (2 * heightMultiple));
 
-        int marginTopSize = DensityUtil.px2dip(logoHeight + 10 * heightMultiple);
+        int marginTopSize = DensityUtil.px2dip(logoHeight + 12 * heightMultiple);
 
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "工程名称：" + level_0, testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
+
+        marginTopSize +=  DensityUtil.px2dip(3 * heightMultiple);
 
         // 循环向图片上添加文字
         for (int i = 0; i < list.size(); i++) {
@@ -139,11 +155,11 @@ public class ImageUtil {
             if (i == 0) {
                 watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
             } else {
-                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 0, 0), DensityUtil.px2dip(oneSizeWidth) * 5 + 7, marginTopSize);
+                watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, list.get(i), testSize, Color.rgb(0, 0, 0), DensityUtil.px2dip(computeMaxStringWidth(new String[] {"施工部位："}, pFont)) + 5, marginTopSize);
             }
         }
 
-        marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)));
+        marginTopSize += (DensityUtil.px2dip((oneSizeHeight + marginTop * heightMultiple)) + 2);
         String userName = (String) SpUtil.get(context, "UserName", "");
         watermarkBitmap = drawTextToLeftTop(context, watermarkBitmap, "上传人员：" + userName + " " + createTime, testSize, Color.rgb(0, 0, 0), 5, marginTopSize);
 
@@ -212,24 +228,21 @@ public class ImageUtil {
      * @param level_1
      * @param lenSize
      */
-    static Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-    static String txt = "";
-    static int byteLen = 0;
-    private static void rows(String level_1, int lenSize, int oneSizeWidth){
-        byteLen = 0;
+    private static void rows(String level_1, int lenSize, int oneSizeWidth, Paint pFont){
         int len = level_1.length();
-
+        byteLen = 0;
         for (int i = 0; i < len; i++) {
             if (i == 0) {
                 txt = level_1.substring(0, i);
             } else {
                 txt = level_1.substring(i-1, i);
             }
-            Matcher m = p.matcher(txt);
+            m = p.matcher(txt);
             if(m.matches()){
                 byteLen+=oneSizeWidth;
             } else {
-                byteLen+=(oneSizeWidth / 2 + 1);
+                String[] strNum = new String[] {txt};
+                byteLen+=(computeMaxStringWidth(strNum, pFont));
             }
             if (byteLen > lenSize) {
                 list.add(level_1.substring(0, i-1));
@@ -239,9 +252,26 @@ public class ImageUtil {
         }
 
         if (level_1.getBytes().length > lenSize) {
-            rows(level_1, lenSize, oneSizeWidth);
+            rows(level_1, lenSize, oneSizeWidth, pFont);
         } else {
             list.add(level_1);
         }
+    }
+
+    /**
+     * 获取字符串所占像素（px）
+     * @param strings
+     * @param p
+     * @return
+     */
+    private static int computeMaxStringWidth(String[] strings, Paint p) {
+        float maxWidthF = 0.0f;
+        int len = strings.length;
+        for (int i = 0; i < len; i++) {
+            float width = p.measureText(strings[i]);
+            maxWidthF = Math.max(width, maxWidthF);
+        }
+        int maxWidth = (int) (maxWidthF + 0.5);
+        return maxWidth;
     }
 }

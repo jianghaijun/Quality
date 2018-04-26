@@ -92,7 +92,7 @@ public class SelectAuditorsAdapter extends BaseAdapter {
             selectAuditorsHandler.txtAuditors.setCompoundDrawables(null, null, drawable, null);
         }
 
-        selectAuditorsHandler.txtAuditors.setText(selectAuditorsList.get(position).getUserName());
+        selectAuditorsHandler.txtAuditors.setText(selectAuditorsList.get(position).getRealName());
 
         return view;
     }

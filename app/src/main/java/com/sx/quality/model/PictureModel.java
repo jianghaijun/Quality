@@ -10,8 +10,17 @@ import java.util.List;
 
 public class PictureModel {
     private String selectUserId;
-    private String rootNodeId;
-    private List<PictureBean> sxZlPictureList;
+    private String rootLevelId;
+    private String processId;
+    private List<PictureBean> sxZlPhotoList;
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
 
     public String getSelectUserId() {
         return selectUserId;
@@ -21,19 +30,19 @@ public class PictureModel {
         this.selectUserId = selectUserId;
     }
 
-    public String getRootNodeId() {
-        return rootNodeId;
+    public String getRootLevelId() {
+        return rootLevelId;
     }
 
-    public void setRootNodeId(String rootNodeId) {
-        this.rootNodeId = rootNodeId;
+    public void setRootLevelId(String rootLevelId) {
+        this.rootLevelId = rootLevelId;
     }
 
-    public List<PictureBean> getSxZlPictureList() {
-        return sxZlPictureList;
+    public List<PictureBean> getSxZlPhotoList() {
+        return sxZlPhotoList;
     }
 
-    public void setSxZlPictureList(List<PictureBean> sxZlPictureList) {
-        this.sxZlPictureList = sxZlPictureList;
+    public void setSxZlPhotoList(List<PictureBean> sxZlPhotoList) {
+        this.sxZlPhotoList = sxZlPhotoList;
     }
 }

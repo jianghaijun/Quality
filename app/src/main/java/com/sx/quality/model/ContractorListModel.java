@@ -1,6 +1,5 @@
 package com.sx.quality.model;
 
-import com.sx.quality.bean.ContractorListBean;
 import com.sx.quality.bean.NewContractorListBean;
 
 import java.util.ArrayList;
@@ -13,9 +12,8 @@ import java.util.List;
 public class ContractorListModel {
     private boolean success;
     private String message;
-    private int errcode;
+    private int code;
     private List<NewContractorListBean> data;
-    //private List<ContractorListBean> data;
 
     public boolean isSuccess() {
         return success;
@@ -33,16 +31,16 @@ public class ContractorListModel {
         this.message = message;
     }
 
-    public int getErrcode() {
-        return errcode;
+    public int getCode() {
+        return code;
     }
 
-    public void setErrcode(int errcode) {
-        this.errcode = errcode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public List<NewContractorListBean> getData() {
-        return data == null || data.equals("null") ? new ArrayList<NewContractorListBean>() : data;
+        return data;
     }
 
     public void setData(List<NewContractorListBean> data) {

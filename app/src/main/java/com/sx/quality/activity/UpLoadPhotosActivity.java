@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,8 +13,8 @@ import android.widget.TextView;
 
 import com.sx.quality.adapter.UpLoadPhotosAdapter;
 import com.sx.quality.bean.ContractorListPhotosBean;
-import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.dialog.UpLoadPhotosDialog;
+import com.sx.quality.dialog.V_2PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
 import com.sx.quality.listener.PermissionListener;
 import com.sx.quality.utils.ConstantsUtil;
@@ -41,8 +40,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
     private ImageButton imgBtnLeft;
     @ViewInject(R.id.txtTitle)
     private TextView txtTitle;
-    @ViewInject(R.id.txtRight)
-    private Button txtRight;
+    @ViewInject(R.id.btnRight)
+    private Button btnRight;
 
     @ViewInject(R.id.rvUpLoadPhone)
     private RecyclerView rvUpLoadPhone;
@@ -66,9 +65,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(getResources().getDrawable(R.drawable.back_btn));
         txtTitle.setText(R.string.show_photo);
-        txtRight.setVisibility(View.VISIBLE);
-        txtRight.setBackgroundResource(R.drawable.btn_blue);
-        txtRight.setText(R.string.up_load);
+        btnRight.setText("上传");
+        btnRight.setVisibility(View.VISIBLE);
 
         initData();
     }
@@ -78,14 +76,14 @@ public class UpLoadPhotosActivity extends BaseActivity {
      */
     private void initData() {
         // 获取当前登录人员需要上传的图片
-        upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createtime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
+        upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
 
         if (Build.VERSION.SDK_INT >= 23) {
             requestAuthority(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
                 @Override
                 public void agree() {
                     adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-                    rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
+                    rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 4));
                     rvUpLoadPhone.setAdapter(adapter);
                 }
 
@@ -98,22 +96,22 @@ public class UpLoadPhotosActivity extends BaseActivity {
             });
         } else {
             adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-            rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
+            rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 4));
             rvUpLoadPhone.setAdapter(adapter);
         }
     }
 
-    @Event({R.id.txtRight, R.id.imgBtnLeft})
+    @Event({R.id.btnRight, R.id.imgBtnLeft})
     private void onClick(View view) {
         switch (view.getId()) {
             // 上传图片
-            case R.id.txtRight:
+            case R.id.btnRight:
                 if (!isCanUpload) {
                     isCanUpload = true;
                     if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
                         if (upLoadPhotosBeenList.size() > 0) {
                             if (!JudgeNetworkIsAvailable.GetNetworkType(this).equals("WIFI")) {
-                                PromptDialog promptDialog = new PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
+                                V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, netWorkTypeListener, "提示", "当前网络为移动网络,是否继续上传?", "否", "是");
                                 promptDialog.setCancelable(false);
                                 promptDialog.setCanceledOnTouchOutside(false);
                                 promptDialog.show();
@@ -158,10 +156,15 @@ public class UpLoadPhotosActivity extends BaseActivity {
             requestAuthority(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
                 @Override
                 public void agree() {
-                    UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
-                    upLoadPhotosDialog.setCancelable(false);
-                    upLoadPhotosDialog.setCanceledOnTouchOutside(false);
-                    upLoadPhotosDialog.show();
+                    if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 50) {
+                        V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前50张？", "否", "是");
+                        promptDialog.show();
+                    } else {
+                        UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
+                        upLoadPhotosDialog.setCancelable(false);
+                        upLoadPhotosDialog.setCanceledOnTouchOutside(false);
+                        upLoadPhotosDialog.show();
+                    }
                 }
 
                 @Override
@@ -173,12 +176,34 @@ public class UpLoadPhotosActivity extends BaseActivity {
                 }
             });
         } else {
-            UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
-            upLoadPhotosDialog.setCancelable(false);
-            upLoadPhotosDialog.setCanceledOnTouchOutside(false);
-            upLoadPhotosDialog.show();
+            if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 50) {
+                V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前50张？", "否", "是");
+                promptDialog.show();
+            } else {
+                UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
+                upLoadPhotosDialog.setCancelable(false);
+                upLoadPhotosDialog.setCanceledOnTouchOutside(false);
+                upLoadPhotosDialog.show();
+            }
         }
     }
+
+    /**
+     * 文件上传
+     */
+    private ChoiceListener listener = new ChoiceListener() {
+        @Override
+        public void returnTrueOrFalse(boolean trueOrFalse) {
+            isCanUpload = false;
+            if (trueOrFalse) {
+                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createTime desc limit 0, 50", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
+                UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
+                upLoadPhotosDialog.setCancelable(false);
+                upLoadPhotosDialog.setCanceledOnTouchOutside(false);
+                upLoadPhotosDialog.show();
+            }
+        }
+    };
 
     /**
      * 文件上传成功更新UI
@@ -188,10 +213,17 @@ public class UpLoadPhotosActivity extends BaseActivity {
         public void returnTrueOrFalse(boolean trueOrFalse) {
             isCanUpload = false;
             if (trueOrFalse) {
-                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createtime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
+                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
                 adapter = new UpLoadPhotosAdapter(mContext, upLoadPhotosBeenList);
-                rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 5));
+                rvUpLoadPhone.setLayoutManager(new GridLayoutManager(mContext, 4));
                 rvUpLoadPhone.setAdapter(adapter);
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.showShort(mContext, "上传失败！");
+                    }
+                });
             }
         }
     };

@@ -104,3 +104,15 @@
 
 -dontwarn cn.jiguang.**
 -keep class cn.jiguang.** { *; }
+
+# banner 的混淆代码
+-keep class com.youth.banner.** {
+    *;
+ }
+# 百度定位混淆
+-keep class com.baidu.** {*;}
+-keep class vi.com.** {*;}
+-dontwarn com.baidu.**
+
+-dontwarn cn.hutool.**
+-keep class cn.hutool.** { *; }

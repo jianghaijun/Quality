@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/v_2_main_bg">
+
+    <ImageButton
+        android:id="@+id/imgBtnLeft"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/v_2_action_bar_bg"
+        android:contentDescription="@null"
+        android:src="@null"
+        android:visibility="gone"
+        app:layout_heightPercent="100%"
+        app:layout_widthPercent="10%" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp" />
+
+    <Button
+        android:id="@+id/btnRightOne"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/btnRight"
+        android:background="@drawable/v_2_action_bar_bg"
+        android:gravity="center"
+        android:src="@null"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnRight"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/v_2_action_bar_bg"
+        android:gravity="center"
+        android:src="@null"
+        android:text="@string/reported"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="invisible" />
+</com.zhy.android.percent.support.PercentRelativeLayout>

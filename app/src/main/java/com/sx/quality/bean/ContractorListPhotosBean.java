@@ -1,7 +1,5 @@
 package com.sx.quality.bean;
 
-import com.sx.quality.utils.DataUtils;
-
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
@@ -12,26 +10,46 @@ import java.io.Serializable;
 
 public class ContractorListPhotosBean extends DataSupport implements Serializable {
     private int isToBeUpLoad = -1;
+    private int isNewAdd = -1;
+    private String userKey;
     private String userId;
-    private String pictureId;
-    private String pictureDesc;
+    private String photoId;
+    private String photoDesc;
     private String thumbPath;
-    private String createtime;
-    private String nodeId;
-    private String pictureName;
-    private String pictureType;
-    private String pictureNameNoSuffix;
-    private String pictureAddress;
-    private String rootNodeId;
+    private String createTime;
+    private String processId;
+    private String photoName;
+    private String photoType;
+    private String photoAddress;
+    private String rootLevelId;
     private boolean isCanSelect = false;
     private String checkFlag;
+    private String longitude;
+    private String latitude;
+    private String location;
 
-    public String getRootNodeId() {
-        return rootNodeId;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setRootNodeId(String rootNodeId) {
-        this.rootNodeId = rootNodeId;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getUserId() {
@@ -42,20 +60,44 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
         this.userId = userId;
     }
 
-    public String getCheckFlag() {
-        return checkFlag == null || "".equals(checkFlag) ? "0" : checkFlag;
+    public int getIsToBeUpLoad() {
+        return isToBeUpLoad;
     }
 
-    public void setCheckFlag(String checkFlag) {
-        this.checkFlag = checkFlag;
+    public void setIsToBeUpLoad(int isToBeUpLoad) {
+        this.isToBeUpLoad = isToBeUpLoad;
     }
 
-    public boolean isCanSelect() {
-        return isCanSelect;
+    public int getIsNewAdd() {
+        return isNewAdd;
     }
 
-    public void setCanSelect(boolean canSelect) {
-        isCanSelect = canSelect;
+    public void setIsNewAdd(int isNewAdd) {
+        this.isNewAdd = isNewAdd;
+    }
+
+    public String getUserKey() {
+        return userKey;
+    }
+
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
+    }
+
+    public String getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(String photoId) {
+        this.photoId = photoId;
+    }
+
+    public String getPhotoDesc() {
+        return photoDesc;
+    }
+
+    public void setPhotoDesc(String photoDesc) {
+        this.photoDesc = photoDesc;
     }
 
     public String getThumbPath() {
@@ -66,75 +108,67 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
         this.thumbPath = thumbPath;
     }
 
-    public String getPictureNameNoSuffix() {
-        return pictureNameNoSuffix;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setPictureNameNoSuffix(String pictureNameNoSuffix) {
-        this.pictureNameNoSuffix = pictureNameNoSuffix;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
-    public String getCreatetime() {
-        return createtime == null || createtime.equals("") ? DataUtils.getCurrentData() : createtime;
+    public String getProcessId() {
+        return processId;
     }
 
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
+    public void setProcessId(String processId) {
+        this.processId = processId;
     }
 
-    public int getIsToBeUpLoad() {
-        return isToBeUpLoad;
+    public String getPhotoName() {
+        return photoName;
     }
 
-    public void setIsToBeUpLoad(int isToBeUpLoad) {
-        this.isToBeUpLoad = isToBeUpLoad;
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 
-    public String getPictureDesc() {
-        return pictureDesc;
+    public String getPhotoType() {
+        return photoType;
     }
 
-    public void setPictureDesc(String pictureDesc) {
-        this.pictureDesc = pictureDesc;
+    public void setPhotoType(String photoType) {
+        this.photoType = photoType;
     }
 
-    public String getPictureId() {
-        return pictureId == null || pictureId.equals("null") ? "" : pictureId;
+    public String getPhotoAddress() {
+        return photoAddress;
     }
 
-    public void setPictureId(String pictureId) {
-        this.pictureId = pictureId;
+    public void setPhotoAddress(String photoAddress) {
+        this.photoAddress = photoAddress;
     }
 
-    public String getNodeId() {
-        return nodeId == null || nodeId.equals("null") ? "" : nodeId;
+    public String getRootLevelId() {
+        return rootLevelId;
     }
 
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
+    public void setRootLevelId(String rootLevelId) {
+        this.rootLevelId = rootLevelId;
     }
 
-    public String getPictureName() {
-        return pictureName == null || pictureName.equals("null") ? "" : pictureName;
+    public boolean isCanSelect() {
+        return isCanSelect;
     }
 
-    public void setPictureName(String pictureName) {
-        this.pictureName = pictureName;
+    public void setCanSelect(boolean canSelect) {
+        isCanSelect = canSelect;
     }
 
-    public String getPictureAddress() {
-        return pictureAddress == null || pictureAddress.equals("null") ? "" : pictureAddress;
+    public String getCheckFlag() {
+        return checkFlag;
     }
 
-    public void setPictureAddress(String pictureAddress) {
-        this.pictureAddress = pictureAddress;
-    }
-
-    public String getPictureType() {
-        return pictureType;
-    }
-
-    public void setPictureType(String pictureType) {
-        this.pictureType = pictureType;
+    public void setCheckFlag(String checkFlag) {
+        this.checkFlag = checkFlag;
     }
 }

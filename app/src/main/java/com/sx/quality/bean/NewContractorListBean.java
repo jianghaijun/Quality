@@ -3,32 +3,59 @@ package com.sx.quality.bean;
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jack on 2017/10/11.
  */
 
 public class NewContractorListBean extends DataSupport implements Serializable {
-    private String nodeId;
-    private String nodeName;
-    private String nodeTitle;
-    private String folderFlag;
-    private String pid;
-    // 该工序下有多少道工序
-    private int processNum;
-    // 已完成多少道工序
-    private int finishedNum;
-    private String isFinish;
-    private long outTime;
+    private String levelId;         // 层级ID
+    private String levelName;       // 层级名称
+    private String parentId;        // 父ID
+    private String folderFlag;      // 是否是文件夹flag 0:不是文件夹 1：是文件夹
+    private int processNum;         // 工序数量
+    private int finishedNum;        // 已完成工序数量
+    private String isFinish;        // 是否已审核完
+    private String levelType;        // 质量或安全
 
-    public String getPid() {
-        return pid;
+    public String getLevelType() {
+        return levelType;
     }
 
-    public void setPid(String pid) {
-        this.pid = pid;
+    public void setLevelType(String levelType) {
+        this.levelType = levelType;
+    }
+
+    public String getIsFinish() {
+        return isFinish;
+    }
+
+    public void setIsFinish(String isFinish) {
+        this.isFinish = isFinish;
+    }
+
+    public String getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getFolderFlag() {
@@ -47,51 +74,11 @@ public class NewContractorListBean extends DataSupport implements Serializable {
         this.processNum = processNum;
     }
 
-    public String getNodeTitle() {
-        return nodeTitle;
-    }
-
-    public void setNodeTitle(String nodeTitle) {
-        this.nodeTitle = nodeTitle;
-    }
-
-    public String getNodeId() {
-        return nodeId == null || nodeId.equals("null") ? "" : nodeId;
-    }
-
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
-    }
-
-    public String getNodeName() {
-        return nodeName == null || nodeName.equals("null") ? "" : nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
-
     public int getFinishedNum() {
         return finishedNum;
     }
 
     public void setFinishedNum(int finishedNum) {
         this.finishedNum = finishedNum;
-    }
-
-    public String getIsFinish() {
-        return isFinish;
-    }
-
-    public void setIsFinish(String isFinish) {
-        this.isFinish = isFinish;
-    }
-
-    public long getOutTime() {
-        return outTime;
-    }
-
-    public void setOutTime(long outTime) {
-        this.outTime = outTime;
     }
 }

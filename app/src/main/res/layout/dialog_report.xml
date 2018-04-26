@@ -64,7 +64,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_weight="1"
-                android:background="@drawable/btn_yellow"
+                android:background="@drawable/btn_blue"
                 android:text="@string/cancel"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fourteen_sp" />
@@ -75,7 +75,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/five_dp"
                 android:layout_weight="1"
-                android:background="@drawable/btn_yellow"
+                android:background="@drawable/btn_blue"
                 android:text="@string/query"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fourteen_sp" />

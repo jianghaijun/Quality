@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,10 +11,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
+import com.sx.quality.bean.UserInfo;
+import com.sx.quality.model.AliasModel;
 import com.sx.quality.model.LoginModel;
-import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
@@ -35,7 +33,6 @@ import java.io.IOException;
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -74,7 +71,6 @@ public class LoginActivity extends BaseActivity {
     private ImageView imgLogo;
 
     private boolean isLogin = false;
-    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +107,8 @@ public class LoginActivity extends BaseActivity {
                     }
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -119,16 +117,17 @@ public class LoginActivity extends BaseActivity {
      */
     private void Login () {
         LoadingUtils.showLoading(mContext);
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         OkHttpClient client = new OkHttpClient();
         JSONObject object = new JSONObject();
         try {
-            object.put("name", edtUserName.getText().toString().trim());
-            object.put("password", edtUserPassWord.getText().toString().trim());
+            object.put("userId", edtUserName.getText().toString().trim());
+            object.put("userPwd", edtUserPassWord.getText().toString().trim());
+            object.put("accountId", ConstantsUtil.ACCOUNT_ID);
+            object.put("loginType", "1");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RequestBody requestBody = RequestBody.create(JSON, object.toString());
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, object.toString());
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.LOGIN)
                 .post(requestBody)
@@ -151,34 +150,38 @@ public class LoginActivity extends BaseActivity {
                 Gson gson = new Gson();
                 String jsonData = response.body().string().toString();
                 if (JsonUtils.isGoodJson(jsonData)) {
-                    final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
-                    if (loginModel.isSuccess()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SpUtil.put(mContext, "UserName", loginModel.getData().getRealName());
-                                SpUtil.put(mContext, "user", edtUserName.getText().toString().trim());
-                                SpUtil.put(mContext, ConstantsUtil.USER_ID, loginModel.getData().getUserId());
-                                // 用户部门
-                                //SpUtil.put(mContext, ConstantsUtil.USER_DEPARTMENT, TextUtils.isEmpty(loginModel.getData().getDepartment()) ? "" : loginModel.getData().getDepartment());
-                                userId = loginModel.getData().getUserId();
-
-                                // 设置极光别名
-                                int sequence = (int) System.currentTimeMillis();
-                                JPushInterface.setAlias(mContext, sequence, userId);
-
-                                LoginSuccessful();
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                isLogin = false;
-                                LoadingUtils.hideLoading();
-                                ToastUtil.showShort(mContext, getString(R.string.login_error));
-                            }
-                        });
+                    try {
+                        JSONObject obj = new JSONObject(jsonData);
+                        boolean resultFlag = obj.getBoolean("success");
+                        final String msg = obj.getString("message");
+                        if (resultFlag) {
+                            final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserInfo userInfo = loginModel.getData().getUserInfo();
+                                    SpUtil.put(mContext, "UserName", userInfo.getRealName());
+                                    SpUtil.put(mContext, "user", edtUserName.getText().toString().trim());
+                                    SpUtil.put(mContext, ConstantsUtil.USER_ID, userInfo.getUserId());
+                                    SpUtil.put(mContext, ConstantsUtil.TOKEN, loginModel.getData().getToken());
+                                    // 设置极光别名
+                                    int sequence = (int) System.currentTimeMillis();
+                                    JPushInterface.setAlias(mContext, sequence, userInfo.getUserId());
+                                    LoginSuccessful();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    isLogin = false;
+                                    LoadingUtils.hideLoading();
+                                    ToastUtil.showShort(mContext, msg);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     runOnUiThread(new Runnable() {
@@ -195,24 +198,23 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 登录成功
+     * 登录成功--->上传极光别名
      */
     private void LoginSuccessful () {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
         JSONObject object = new JSONObject();
         try {
-            object.put("userId", userId);
-            object.put("alias", userId);
+            object.put("userId", SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
+            object.put("alias", SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RequestBody requestBody = RequestBody.create(JSON, object.toString());
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, object.toString());
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.SUBMIT_ALIAS)
+                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -227,36 +229,41 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson gson = new Gson();
                 String jsonData = response.body().string().toString();
                 if (JsonUtils.isGoodJson(jsonData)) {
-                    final LoginModel loginModel = gson.fromJson(jsonData, LoginModel.class);
-                    if (loginModel.isSuccess()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                LoadingUtils.hideLoading();
-                                isLogin = false;
-
-                                SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
-                                SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, loginModel.getData().getUserType());
-
-                                // 2017/11/27 更换为新主界面
-                                //startActivity(new Intent(mContext, MainActivity.class));
-                                startActivity(new Intent(mContext, NewMainActivity.class));
-                                LoginActivity.this.finish();
-                                edtUserPassWord.setText("");
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                isLogin = false;
-                                LoadingUtils.hideLoading();
-                                ToastUtil.showShort(mContext, "别名上传失败！");
-                            }
-                        });
+                    try {
+                        JSONObject obj = new JSONObject(jsonData);
+                        boolean resultFlag = obj.getBoolean("success");
+                        final String msg = obj.getString("message");
+                        if (resultFlag) {
+                            Gson gson = new Gson();
+                            final AliasModel aliasModel = gson.fromJson(jsonData, AliasModel.class);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    LoadingUtils.hideLoading();
+                                    isLogin = false;
+                                    SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
+                                    SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, aliasModel.getData().getUserType());
+                                    startActivity(new Intent(mContext, V_2MainActivity.class));
+                                    LoginActivity.this.finish();
+                                    edtUserPassWord.setText("");
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    isLogin = false;
+                                    LoadingUtils.hideLoading();
+                                    ToastUtil.showShort(mContext, msg);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        LoadingUtils.hideLoading();
+                        ToastUtil.showLong(mContext, mContext.getString(R.string.data_error));
+                        e.printStackTrace();
                     }
                 } else {
                     runOnUiThread(new Runnable() {

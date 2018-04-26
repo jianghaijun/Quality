@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -28,7 +27,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
@@ -37,7 +35,6 @@ import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SensorUtil;
 import com.sx.quality.utils.SoundUtils;
 import com.sx.quality.view.FinderVerticalView;
-import com.sx.quality.view.FinderView;
 import com.sx.quality.view.RotateTextView;
 
 import java.io.BufferedOutputStream;
@@ -573,7 +570,7 @@ public class PhotographVerticalActivity extends AppCompatActivity implements Sur
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            ScreenManagerUtil.popAllActivityExceptOne(ContractorDetailsActivity.class);
+            ScreenManagerUtil.popAllActivityExceptOne(V_2ContractorDetailsActivity.class);
             return true;
         } else {
             return super.onKeyDown(keyCode, event);

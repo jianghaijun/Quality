@@ -13,31 +13,17 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
 import com.sx.quality.activity.R;
 import com.sx.quality.activity.ShowPhotosActivity;
 import com.sx.quality.bean.ContractorListPhotosBean;
-import com.sx.quality.bean.PictureBean;
-import com.sx.quality.dialog.PromptDialog;
+import com.sx.quality.dialog.V_2PromptDialog;
 import com.sx.quality.listener.ChoiceListener;
-import com.sx.quality.model.PictureModel;
 import com.sx.quality.utils.ConstantsUtil;
-import com.sx.quality.utils.LoadingUtils;
-import com.sx.quality.utils.SpUtil;
-import com.sx.quality.utils.ToastUtil;
 
 import org.litepal.crud.DataSupport;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * @author Administrator
@@ -78,17 +64,13 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
         holder.ivUpLoadPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(mContext, ShowPhotosActivity.class);
-                intent.putExtra("thumbUrl", upLoadPhoneList.get(position).getThumbPath());
-                intent.putExtra("photoUrl", upLoadPhoneList.get(position).getPictureAddress());
-                intent.putExtra("isUpload", upLoadPhoneList.get(position).getIsToBeUpLoad());*/
                 // 图片浏览
                 ArrayList<String> urls = new ArrayList<>();
                 int len = upLoadPhoneList.size();
                 for (int i = 0; i < len; i++) {
-                    String fileUrl = upLoadPhoneList.get(i).getPictureAddress();
+                    String fileUrl = upLoadPhoneList.get(i).getPhotoAddress();
                     if (!TextUtils.isEmpty(fileUrl) && !fileUrl.contains(ConstantsUtil.SAVE_PATH)) {
-                        fileUrl = ConstantsUtil.FILE_BASE_URL + fileUrl;
+                        fileUrl = ConstantsUtil.BASE_URL + fileUrl;
                     }
                     urls.add(fileUrl);
                 }
@@ -106,12 +88,12 @@ public class UpLoadPhotosAdapter extends RecyclerView.Adapter<UpLoadPhotosAdapte
         holder.ivUpLoadPhone.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, new ChoiceListener() {
                     @Override
                     public void returnTrueOrFalse(boolean trueOrFalse) {
                         if (trueOrFalse) {
                             // 删除照片
-                            DataSupport.deleteAll(ContractorListPhotosBean.class, "pictureAddress=?", upLoadPhoneList.get(position).getPictureAddress());
+                            DataSupport.deleteAll(ContractorListPhotosBean.class, "photoAddress=?", upLoadPhoneList.get(position).getPhotoAddress());
                             upLoadPhoneList.remove(position);
                             UpLoadPhotosAdapter.this.notifyDataSetChanged();
                         }

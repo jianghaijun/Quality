@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.sx.quality.activity.UpLoadPhotosActivity">
+
+    <include
+        android:id="@+id/actionBar"
+        layout="@layout/v_2_layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_alignParentTop="true"
+        app:layout_heightPercent="12%" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/forty"
+            android:background="@color/prompt_dialog_reminder_bg"
+            android:padding="@dimen/five_dp">
+
+            <Button
+                android:id="@+id/btnSavePhoto"
+                android:layout_width="@dimen/sevenTy_dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/btn_blue"
+                android:text="@string/submit_yun"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnLocalSave"
+                android:layout_width="@dimen/sevenTy_dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/five_dp"
+                android:layout_toLeftOf="@+id/btnSavePhoto"
+                android:background="@drawable/btn_blue"
+                android:text="@string/local_save"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <Button
+                android:id="@+id/btnMeasuredRecord"
+                android:layout_width="@dimen/sevenTy_dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/five_dp"
+                android:layout_toLeftOf="@+id/btnLocalSave"
+                android:background="@drawable/btn_blue"
+                android:text="@string/measured_record"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/txtWorkingPath"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/five_dp"
+                android:layout_toLeftOf="@+id/btnMeasuredRecord"
+                android:gravity="left|center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/workingNo"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/working_no"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtWorkingNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/workingNo"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/workingName"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/working_name"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtWorkingName"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/workingName"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/eighty_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/takePhotoRequirement"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/take_photo_requirement"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <EditText
+                        android:id="@+id/txtTakePhotoRequirement"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/seventy_five_dp"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/takePhotoRequirement"
+                        android:background="@drawable/search_bg"
+                        android:focusable="false"
+                        android:gravity="left|center"
+                        android:padding="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/entryTime"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/entry_time"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtEntryTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/entryTime"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/location"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/location"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/location"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/takePhotoNum"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/take_photo_num"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtTakePhotoNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/takePhotoNum"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_hundred_dp"
+                    android:layout_marginBottom="@dimen/five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/photos"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/photos"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/photos"
+                        android:background="@drawable/search_bg">
+
+                        <ImageButton
+                            android:id="@+id/imgBtnAdd"
+                            android:layout_width="@dimen/eighty_dp"
+                            android:layout_height="@dimen/eighty_dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="@dimen/ten_dp"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/add" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rvContractorDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/five_dp"
+                            android:layout_marginLeft="@dimen/ten_dp"
+                            android:layout_toLeftOf="@+id/imgBtnAdd"
+                            android:background="@null"
+                            android:scrollbars="none" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</com.zhy.android.percent.support.PercentLinearLayout>

@@ -9,7 +9,7 @@ import com.sx.quality.bean.LoginBean;
 public class LoginModel {
     private boolean success;
     private String message;
-    private int errcode;
+    private int code;
     private String pictureId;
     private LoginBean data;
 
@@ -19,6 +19,14 @@ public class LoginModel {
 
     public void setPictureId(String pictureId) {
         this.pictureId = pictureId;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public LoginBean getData() {
@@ -43,13 +51,5 @@ public class LoginModel {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public int getErrcode() {
-        return errcode;
-    }
-
-    public void setErrcode(int errcode) {
-        this.errcode = errcode;
     }
 }
