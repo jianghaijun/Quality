@@ -274,9 +274,9 @@ public class V_2ContractorActivity extends BaseActivity {
         public void returnData(List<Node> allCaches, List<Node> allNode, int point, String levelId) {
             allCache = allCaches;
             all = allNode;
-            String alreadyLoadNode = (String) SpUtil.get(mContext, ConstantsUtil.LEVEL_ID, "");
+            //String alreadyLoadNode = (String) SpUtil.get(mContext, ConstantsUtil.LEVEL_ID, "");
             // 没有网络并且没有加载过
-            if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorActivity.this) && !alreadyLoadNode.contains(levelId)) {
+            if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorActivity.this)/* && !alreadyLoadNode.contains("," + levelId + ",")*/) {
                 loadProcedureByNodeId(point, levelId);
             } else {
                 List<NewContractorListBean> listBean = DataSupport.where("parentId = ?", levelId).find(NewContractorListBean.class);

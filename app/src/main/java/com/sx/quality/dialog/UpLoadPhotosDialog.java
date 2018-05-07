@@ -52,7 +52,7 @@ public class UpLoadPhotosDialog extends Dialog{
 		this.choiceListener = choiceListener;
 		this.upLoadPhotosBeenList = upLoadPhotosBeenList;
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,7 +115,7 @@ public class UpLoadPhotosDialog extends Dialog{
 				.addParams("photoDesc", bean.getPhotoDesc())
 				.addParams("longitude", bean.getLongitude())
 				.addParams("latitude", bean.getLatitude())
-				.addParams("location", bean.getLocation())
+				.addParams("location", bean.getLocation() == null ? "" : bean.getLocation())
 				.addParams("photoName", bean.getPhotoName())
 				.addParams("photoType", bean.getPhotoType())
 				.addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))

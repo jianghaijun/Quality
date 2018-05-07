@@ -21,14 +21,20 @@ import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.yuyh.library.imgsel.common.Constant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.IOException;
+import java.util.List;
 
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
@@ -69,8 +75,9 @@ public class LoginActivity extends BaseActivity {
     private Context mContext;
     @ViewInject(R.id.imgLogo)
     private ImageView imgLogo;
-
+    // 登录锁
     private boolean isLogin = false;
+    private IWXAPI wxAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +95,7 @@ public class LoginActivity extends BaseActivity {
         edtUserName.setText(userName);
     }
 
-    @Event(R.id.btnLogin)
+    @Event({R.id.btnLogin, R.id.btnWeChatLogin})
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
@@ -103,9 +110,31 @@ public class LoginActivity extends BaseActivity {
                             Login ();
                         }
                     } else {
-                        ToastUtil.showShort(this, getString(R.string.not_network));
+                        // 根据userId password获取用户信息
+                        List<UserInfo> userList = DataSupport.where("userId=? and userPwd=?", edtUserName.getText().toString().trim(), edtUserPassWord.getText().toString().trim()).find(UserInfo.class);
+                        if (userList != null && userList.size() > 0) {
+                            if (!isLogin) {
+                                isLogin = true;
+                                UserInfo user = userList.get(0);
+                                SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, user.getUserLevel());
+                                SpUtil.put(mContext, "UserName", user.getRealName());
+                                SpUtil.put(mContext, "user", user.getUserId());
+                                SpUtil.put(mContext, ConstantsUtil.USER_ID, user.getUserId());
+                                SpUtil.put(mContext, ConstantsUtil.TOKEN, user.getToken());
+                                SpUtil.put(mContext, ConstantsUtil.USER_HEAD, user.getImageUrl() == null ? "" : user.getImageUrl().toString());
+                                startActivity(new Intent(mContext, V_2MainActivity.class));
+                                LoginActivity.this.finish();
+                                edtUserPassWord.setText("");
+                                isLogin = false;
+                            }
+                        } else {
+                            ToastUtil.showShort(mContext, "用户名或密码错误!");
+                        }
                     }
                 }
+                break;
+            case R.id.btnWeChatLogin:
+                //weChatLogin();
                 break;
             default:
                 break;
@@ -117,7 +146,6 @@ public class LoginActivity extends BaseActivity {
      */
     private void Login () {
         LoadingUtils.showLoading(mContext);
-        OkHttpClient client = new OkHttpClient();
         JSONObject object = new JSONObject();
         try {
             object.put("userId", edtUserName.getText().toString().trim());
@@ -132,7 +160,7 @@ public class LoginActivity extends BaseActivity {
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.LOGIN)
                 .post(requestBody)
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -164,6 +192,12 @@ public class LoginActivity extends BaseActivity {
                                     SpUtil.put(mContext, "user", edtUserName.getText().toString().trim());
                                     SpUtil.put(mContext, ConstantsUtil.USER_ID, userInfo.getUserId());
                                     SpUtil.put(mContext, ConstantsUtil.TOKEN, loginModel.getData().getToken());
+                                    SpUtil.put(mContext, ConstantsUtil.USER_HEAD, userInfo.getImageUrl() == null ? "" : ConstantsUtil.BASE_URL + ConstantsUtil.prefix + userInfo.getImageUrl().toString());
+                                    // 保存至本地用户登录信息
+                                    userInfo.setUserPwd(edtUserPassWord.getText().toString().trim());
+                                    userInfo.setImageUrl(userInfo.getImageUrl() == null ? "" : ConstantsUtil.BASE_URL + ConstantsUtil.prefix + userInfo.getImageUrl().toString());
+                                    userInfo.setToken(loginModel.getData().getToken());
+                                    userInfo.saveOrUpdate("userId=?", userInfo.getUserId());
                                     // 设置极光别名
                                     int sequence = (int) System.currentTimeMillis();
                                     JPushInterface.setAlias(mContext, sequence, userInfo.getUserId());
@@ -244,7 +278,13 @@ public class LoginActivity extends BaseActivity {
                                     LoadingUtils.hideLoading();
                                     isLogin = false;
                                     SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
-                                    SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, aliasModel.getData().getUserType());
+                                    SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, aliasModel.getData() == null ? "" : aliasModel.getData().getRoleFlag());
+                                    List<UserInfo> userList = DataSupport.where("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, ""))).find(UserInfo.class);
+                                    if (userList != null && userList.size() > 0) {
+                                        UserInfo user = userList.get(0);
+                                        user.setUserLevel(aliasModel.getData().getRoleFlag() == null ? "0" : aliasModel.getData().getRoleFlag());
+                                        user.saveOrUpdate("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, "")));
+                                    }
                                     startActivity(new Intent(mContext, V_2MainActivity.class));
                                     LoginActivity.this.finish();
                                     edtUserPassWord.setText("");

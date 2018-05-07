@@ -38,7 +38,7 @@
         android:src="@null"
         android:text="@string/cancel"
         android:textColor="@color/white"
-        android:textSize="@dimen/twenty_sp"
+        android:textSize="@dimen/fourteen_sp"
         android:visibility="invisible" />
 
     <Button
@@ -51,6 +51,6 @@
         android:src="@null"
         android:text="@string/reported"
         android:textColor="@color/white"
-        android:textSize="@dimen/twenty_sp"
+        android:textSize="@dimen/fourteen_sp"
         android:visibility="invisible" />
 </com.zhy.android.percent.support.PercentRelativeLayout>

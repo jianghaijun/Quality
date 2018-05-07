@@ -479,6 +479,14 @@ public class ActualMeasurementActivity extends BaseActivity {
                 time.show();
                 break;
             case R.id.btnSaveInfo:
+                if (txtConstructionDate.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请选择施工时间！");
+                    break;
+                } else if (txtCheckDate.getText().toString().trim().equals("")) {
+                    ToastUtil.showShort(mContext, "请选择检查时间！");
+                    break;
+                }
+
                 if (tabLayStandard.getChildCount() > 0) {
                     List<MeasuredRecordBean> measuredList = new ArrayList<>();
                     for (int i = 0; i < tabLayStandard.getChildCount(); i++) {

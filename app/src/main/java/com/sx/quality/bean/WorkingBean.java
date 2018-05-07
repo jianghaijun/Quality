@@ -23,12 +23,120 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String levelId;          // 工序部位
     private long enterTime;          // 录入时间
     private String actualNumber;     // 实际照片数量
+    private String photoerAll;       // 拍照者all
     private String checkNameAll;     // 确认者姓名all
     private String createUser;       // 拍照者
     private String processState;     // 工序状态
+    private String dismissal;        // 驳回原因
+    private String ext1;        // 层厚
+    private String ext2;        // 层厚
+    private String ext3;        // 层厚
+    private String ext4;        // 层厚
+    private String ext5;        // 层厚
+    private String ext6;        // 层厚
+    private String ext7;        // 层厚
+    private String ext8;        // 层厚
+    private String ext9;        // 层厚
+    private String ext10;        // 层厚
+
+    public String getExt1() {
+        return ext1 == null ? "" : ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1;
+    }
+
+    public String getExt2() {
+        return ext2 == null ? "" : ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2;
+    }
+
+    public String getExt3() {
+        return ext3 == null ? "" : ext3;
+    }
+
+    public void setExt3(String ext3) {
+        this.ext3 = ext3;
+    }
+
+    public String getExt4() {
+        return ext4 == null ? "" : ext4;
+    }
+
+    public void setExt4(String ext4) {
+        this.ext4 = ext4;
+    }
+
+    public String getExt5() {
+        return ext5 == null ? "" : ext5;
+    }
+
+    public void setExt5(String ext5) {
+        this.ext5 = ext5;
+    }
+
+    public String getExt6() {
+        return ext6 == null ? "" : ext6;
+    }
+
+    public void setExt6(String ext6) {
+        this.ext6 = ext6;
+    }
+
+    public String getExt7() {
+        return ext7 == null ? "" : ext7;
+    }
+
+    public void setExt7(String ext7) {
+        this.ext7 = ext7;
+    }
+
+    public String getExt8() {
+        return ext8 == null ? "" : ext8;
+    }
+
+    public void setExt8(String ext8) {
+        this.ext8 = ext8;
+    }
+
+    public String getExt9() {
+        return ext9 == null ? "" : ext9;
+    }
+
+    public void setExt9(String ext9) {
+        this.ext9 = ext9;
+    }
+
+    public String getExt10() {
+        return ext10 == null ? "" : ext10;
+    }
+
+    public void setExt10(String ext10) {
+        this.ext10 = ext10;
+    }
+
+    public String getDismissal() {
+        return dismissal == null ? "" : dismissal;
+    }
+
+    public void setDismissal(String dismissal) {
+        this.dismissal = dismissal;
+    }
+
+    public String getPhotoerAll() {
+        return photoerAll == null ? "" : photoerAll;
+    }
+
+    public void setPhotoerAll(String photoerAll) {
+        this.photoerAll = photoerAll;
+    }
 
     public String getLevelId() {
-        return levelId;
+        return levelId == null ? "" : levelId;
     }
 
     public void setLevelId(String levelId) {
@@ -36,7 +144,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getProcessId() {
-        return processId;
+        return processId == null ? "" : processId;
     }
 
     public void setProcessId(String processId) {
@@ -44,7 +152,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getProcessName() {
-        return processName;
+        return processName == null ? "" : processName;
     }
 
     public void setProcessName(String processName) {
@@ -52,7 +160,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getProcessCode() {
-        return processCode;
+        return processCode == null ? "" : processCode;
     }
 
     public void setProcessCode(String processCode) {
@@ -60,7 +168,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getPhotoContent() {
-        return photoContent;
+        return photoContent == null ? "" : photoContent;
     }
 
     public void setPhotoContent(String photoContent) {
@@ -68,7 +176,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getPhotoDistance() {
-        return photoDistance;
+        return photoDistance == null ? "" : photoDistance;
     }
 
     public void setPhotoDistance(String photoDistance) {
@@ -76,7 +184,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getPhotoNumber() {
-        return photoNumber;
+        return photoNumber == null ? "" : photoNumber;
     }
 
     public void setPhotoNumber(String photoNumber) {
@@ -84,7 +192,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getLongitude() {
-        return longitude;
+        return longitude == null ? "" : longitude;
     }
 
     public void setLongitude(String longitude) {
@@ -92,7 +200,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getLatitude() {
-        return latitude;
+        return latitude == null ? "" : latitude;
     }
 
     public void setLatitude(String latitude) {
@@ -100,7 +208,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getLocation() {
-        return location;
+        return location == null ? "" : location;
     }
 
     public void setLocation(String location) {
@@ -108,7 +216,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getLevelNameAll() {
-        return levelNameAll;
+        return levelNameAll == null ? "" : levelNameAll;
     }
 
     public void setLevelNameAll(String levelNameAll) {
@@ -124,7 +232,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getActualNumber() {
-        return actualNumber;
+        return actualNumber == null ? "" : actualNumber;
     }
 
     public void setActualNumber(String actualNumber) {
@@ -132,7 +240,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getCheckNameAll() {
-        return checkNameAll;
+        return checkNameAll == null ? "" : checkNameAll;
     }
 
     public void setCheckNameAll(String checkNameAll) {
@@ -140,7 +248,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getCreateUser() {
-        return createUser;
+        return createUser == null ? "" : createUser;
     }
 
     public void setCreateUser(String createUser) {
@@ -148,7 +256,7 @@ public class WorkingBean extends DataSupport implements Serializable {
     }
 
     public String getProcessState() {
-        return processState;
+        return processState == null ? "" : processState;
     }
 
     public void setProcessState(String processState) {

@@ -122,6 +122,7 @@ public class ReportDialog extends Dialog {
         JSONObject json = new JSONObject();
         try {
             json.put("roleFlag", ConstantsUtil.roleFlag);
+            json.put("userType", SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }

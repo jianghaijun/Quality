@@ -211,7 +211,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtWorkingName.setText(bean.getProcessName());
             txtWorkingName.setTextSize(14);
             txtWorkingName.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            int width = (int) ((DensityUtil.getScreenWidth() * 0.8) - DensityUtil.dip2px(2 + 51 + 101 + 81 * 2 + 80 + 10 + 1));
+            int width = (int) ((DensityUtil.getScreenWidth() * 0.8) - DensityUtil.dip2px(2 + 51 + 81 + 81 * 2 + 80 + 10 + 1));
             lp = new TableRow.LayoutParams(width, DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -231,7 +231,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtPhotoNum.setText(bean.getActualNumber());
             txtPhotoNum.setTextSize(14);
             txtPhotoNum.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            lp = new TableRow.LayoutParams(DensityUtil.dip2px(100), DensityUtil.dip2px(30));
+            lp = new TableRow.LayoutParams(DensityUtil.dip2px(80), DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
@@ -243,7 +243,7 @@ public class WorkingPopupWindow extends PopupWindow {
             // 拍照者
             TextView txtPhotographers = new TextView(mActivity);
             txtPhotographers.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.white));
-            txtPhotographers.setText(bean.getCreateUser());
+            txtPhotographers.setText(bean.getPhotoerAll());
             txtPhotographers.setTextSize(14);
             txtPhotographers.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
             lp = new TableRow.LayoutParams(DensityUtil.dip2px(80), DensityUtil.dip2px(30));
@@ -293,6 +293,9 @@ public class WorkingPopupWindow extends PopupWindow {
                     txtStatus.setText("审核中");
                     break;
                 case "3":
+                    txtStatus.setText("已驳回");
+                    break;
+                case "4":
                     txtStatus.setText("已完成");
                     break;
             }
@@ -318,15 +321,31 @@ public class WorkingPopupWindow extends PopupWindow {
                     intent.putExtra("enterTime", DataUtils.getDataToStr(DateUtil.date(dateLong)));
                     intent.putExtra("actualNumber", bean.getPhotoNumber());
                     intent.putExtra("photoContent", bean.getPhotoContent());
+                    intent.putExtra("distanceAngle", bean.getPhotoDistance());
                     intent.putExtra("processId", bean.getProcessId());
                     intent.putExtra("levelId", bean.getLevelId());
+                    intent.putExtra("location", bean.getLocation());
+                    intent.putExtra("dismissal", bean.getDismissal());
                     intent.putExtra("userType", (String) SpUtil.get(mActivity, ConstantsUtil.USER_TYPE, ""));
+                    intent.putExtra("ext1", bean.getExt1());
+                    intent.putExtra("ext2", bean.getExt2());
+                    intent.putExtra("ext3", bean.getExt3());
+                    intent.putExtra("ext4", bean.getExt4());
+                    intent.putExtra("ext5", bean.getExt5());
+                    intent.putExtra("ext6", bean.getExt6());
+                    intent.putExtra("ext7", bean.getExt7());
+                    intent.putExtra("ext8", bean.getExt8());
+                    intent.putExtra("ext9", bean.getExt9());
+                    intent.putExtra("ext10", bean.getExt10());
+
                     mActivity.startActivity(intent);
+                    dismiss();
                 }
             });
             tableRow.addView(txtStatus, lp);
 
             tabLay.addView(tableRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
+
             bean.saveOrUpdate("processId = ?", bean.getProcessId());
         }
     }

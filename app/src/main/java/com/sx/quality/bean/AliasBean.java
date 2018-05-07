@@ -6,6 +6,15 @@ package com.sx.quality.bean;
 
 public class AliasBean {
     private String userType;
+    private String roleFlag;
+
+    public String getRoleFlag() {
+        return roleFlag;
+    }
+
+    public void setRoleFlag(String roleFlag) {
+        this.roleFlag = roleFlag;
+    }
 
     public String getUserType() {
         return userType;

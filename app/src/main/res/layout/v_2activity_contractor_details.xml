@@ -25,47 +25,52 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/forty"
+            android:layout_height="wrap_content"
             android:background="@color/prompt_dialog_reminder_bg"
+            android:minHeight="@dimen/forty"
             android:padding="@dimen/five_dp">
 
             <Button
                 android:id="@+id/btnSavePhoto"
                 android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/thirty"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:background="@drawable/btn_blue"
                 android:text="@string/submit_yun"
                 android:textColor="@color/white"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnLocalSave"
-                android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/fifty_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_toLeftOf="@+id/btnSavePhoto"
                 android:background="@drawable/btn_blue"
-                android:text="@string/local_save"
-                android:visibility="gone"
+                android:text="@string/reject"
                 android:textColor="@color/white"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnMeasuredRecord"
                 android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/thirty"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_toLeftOf="@+id/btnLocalSave"
                 android:background="@drawable/btn_blue"
                 android:text="@string/measured_record"
                 android:textColor="@color/white"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp" />
 
             <TextView
                 android:id="@+id/txtWorkingPath"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_toLeftOf="@+id/btnMeasuredRecord"
                 android:gravity="left|center"
@@ -182,12 +187,42 @@
                     android:background="@null">
 
                     <TextView
+                        android:id="@+id/distanceAngle"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/distance_angle"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtDistanceAngle"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/distanceAngle"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
                         android:id="@+id/entryTime"
                         android:layout_width="@dimen/eighty_dp"
                         android:layout_height="match_parent"
                         android:background="@color/v_2_main_bg"
                         android:gravity="center"
-                        android:text="@string/entry_time"
+                        android:text="@string/check_date"
                         android:textColor="@color/white"
                         android:textSize="@dimen/fourteen_sp" />
 
@@ -207,6 +242,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rlLocation"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/forty_five_dp"
                     android:background="@null">
@@ -229,6 +265,37 @@
                         android:layout_marginRight="@dimen/ten_dp"
                         android:layout_marginTop="@dimen/two_point_five_dp"
                         android:layout_toRightOf="@+id/location"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlLocationPosition"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null">
+
+                    <TextView
+                        android:id="@+id/locationPosition"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/locationPosition"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtLocationPosition"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/locationPosition"
                         android:background="@drawable/search_bg"
                         android:gravity="left|center"
                         android:paddingLeft="@dimen/five_dp"
@@ -267,6 +334,371 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rlRejectPhotos"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/forty_five_dp"
+                    android:background="@null"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/rejectPhoto"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/reject_photo"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <TextView
+                        android:id="@+id/txtRejectPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/rejectPhoto"
+                        android:background="@drawable/search_bg"
+                        android:gravity="left|center"
+                        android:paddingLeft="@dimen/five_dp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlFixedPoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_hundred_dp"
+                    android:background="@null"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/fixedPoint"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/v_2_main_bg"
+                        android:gravity="center"
+                        android:text="@string/fixedPoint"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/two_point_five_dp"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_point_five_dp"
+                        android:layout_toRightOf="@+id/fixedPoint"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/one_dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/search_bg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="位置点1"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtElevation1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/one_dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/search_bg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="位置点2"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtElevation2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/one_dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/search_bg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="位置点3"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtElevation3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/one_dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/search_bg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="位置点4"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtElevation4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/search_bg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="位置点5"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/one_dp"
+                                android:layout_marginLeft="@dimen/one_dp"
+                                android:layout_marginRight="@dimen/one_dp"
+                                android:background="@color/v_2_main_bg" />
+
+                            <EditText
+                                android:id="@+id/edtElevation5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:gravity="left|center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/one_hundred_dp"
                     android:layout_marginBottom="@dimen/five_dp"
@@ -296,16 +728,16 @@
                             android:layout_width="@dimen/eighty_dp"
                             android:layout_height="@dimen/eighty_dp"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="@dimen/ten_dp"
                             android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/ten_dp"
                             android:background="@drawable/add" />
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rvContractorDetails"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginRight="@dimen/five_dp"
                             android:layout_marginLeft="@dimen/ten_dp"
+                            android:layout_marginRight="@dimen/five_dp"
                             android:layout_toLeftOf="@+id/imgBtnAdd"
                             android:background="@null"
                             android:scrollbars="none" />

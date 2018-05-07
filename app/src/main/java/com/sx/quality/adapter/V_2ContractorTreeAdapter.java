@@ -169,7 +169,7 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
                 for (int i = len; i >= 0; i--) {
                     String name = nodeName.get(i);
                     if (name.contains("(")) {
-                        name = name.substring(0, name.indexOf("("));
+                        name = name.substring(0, name.lastIndexOf("("));
                     }
                     if (i != 0) {
                         sb.append(name.trim() + "→");

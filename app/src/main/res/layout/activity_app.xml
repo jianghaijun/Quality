@@ -1,18 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.android.percent.support.PercentLinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.zhy.android.percent.support.PercentLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
     tools:context="com.sx.quality.activity.AppActivity">
 
-    <com.youth.banner.Banner
-        android:id="@+id/banner"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"/>
+        android:layout_height="150dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false">
+
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            app:indicator_margin="@dimen/two_dp"
+            app:indicator_width="@dimen/five_dp"
+            app:title_height="@dimen/twenty_five_dp"
+            app:title_textsize="@dimen/fourteen_sp" />
+
+        <com.dalong.marqueeview.MarqueeView
+            android:id="@+id/mMarqueeView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/twenty_five_dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/five_dp"
+            android:layout_marginRight="@dimen/fifty_dp"
+            app:direction="left"
+            app:isRepeat="true"
+            app:speed="200"
+            app:startPoint="start"
+            app:textSize="@dimen/fourteen_sp"
+            app:textcolor="@color/white" />
+
+    </RelativeLayout>
 
     <!--app:image_scale_type="fit_xy"-->
 
@@ -23,5 +48,5 @@
         android:background="@null"
         android:divider="@null"
         android:dividerHeight="@dimen/zero_dp"
-        android:scrollbars="none"/>
+        android:scrollbars="none" />
 </com.zhy.android.percent.support.PercentLinearLayout>

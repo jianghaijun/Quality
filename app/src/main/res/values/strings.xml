@@ -33,6 +33,7 @@
     <string name="user_name">用户名</string>
     <string name="user_password">密码</string>
     <string name="login">登录</string>
+    <string name="weChat_login">微信登录</string>
     <string name="please_input_user_name">请输入用户名</string>
     <string name="please_input_user_password">请输入密码</string>
     <string name="login_error">用户名或密码不正确!</string>
@@ -96,9 +97,12 @@
     <string name="measured_record">实测记录</string>
     <string name="working_no">工序编号</string>
     <string name="entry_time">录入时间</string>
-    <string name="location">当前位置</string>
+    <string name="distance_angle">距离及角度</string>
+    <string name="location">拍照位置</string>
+    <string name="locationPosition">参考位置</string>
     <string name="take_photo_num">拍照数量</string>
     <string name="take_photo_requirement">拍照要求</string>
+    <string name="fixedPoint">层厚定\n点位置</string>
     <string name="photos">照片\n长按删除</string>
     <string name="working_position">工序部位</string>
     <string name="standard">标准</string>
@@ -121,4 +125,9 @@
     <string name="nine">9</string>
     <string name="ten">10</string>
     <string name="submit_yun">上传云端</string>
+    <string name="reject_photo">驳回原因</string>
+    <string name="reject">驳回</string>
+    <string name="elevation">现标高</string>
+    <string name="PositionOfPileNumber">桩号位置</string>
+    <string name="please_input_remark">请输入</string>
 </resources>

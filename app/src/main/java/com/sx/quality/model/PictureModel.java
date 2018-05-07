@@ -12,7 +12,43 @@ public class PictureModel {
     private String selectUserId;
     private String rootLevelId;
     private String processId;
+    private String pushMessage;
+    private String dismissal;
+    private String stateFlag;
+    private String recordType;
     private List<PictureBean> sxZlPhotoList;
+
+    public String getPushMessage() {
+        return pushMessage;
+    }
+
+    public void setPushMessage(String pushMessage) {
+        this.pushMessage = pushMessage;
+    }
+
+    public String getStateFlag() {
+        return stateFlag;
+    }
+
+    public void setStateFlag(String stateFlag) {
+        this.stateFlag = stateFlag;
+    }
+
+    public String getDismissal() {
+        return dismissal;
+    }
+
+    public void setDismissal(String dismissal) {
+        this.dismissal = dismissal;
+    }
+
+    public String getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(String recordType) {
+        this.recordType = recordType;
+    }
 
     public String getProcessId() {
         return processId;

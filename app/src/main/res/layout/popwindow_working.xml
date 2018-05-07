@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/txtPhotosNum"
-                android:layout_width="@dimen/one_hundred_dp"
+                android:layout_width="@dimen/eighty_dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"

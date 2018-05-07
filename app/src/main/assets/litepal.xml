@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <litepal>
     <dbname value="SX_Quality"/>
-    <version value="20"/>
+    <version value="27"/>
 
     <list>
         <mapping class="com.sx.quality.bean.ContractorListPhotosBean"></mapping>
         <mapping class="com.sx.quality.bean.NewContractorListBean"></mapping>
         <mapping class="com.sx.quality.bean.WorkingBean"></mapping>
+        <mapping class="com.sx.quality.bean.UserInfo"></mapping>
     </list>
 </litepal>

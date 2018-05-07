@@ -75,4 +75,19 @@
         app:layout_marginLeftPercent="10%"
         app:layout_marginRightPercent="10%" />
 
+
+    <Button
+        android:id="@+id/btnWeChatLogin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/thirty"
+        android:background="@drawable/btn_blue"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:text="@string/weChat_login"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="gone"
+        app:layout_marginLeftPercent="10%"
+        app:layout_marginRightPercent="10%" />
 </com.zhy.android.percent.support.PercentLinearLayout>

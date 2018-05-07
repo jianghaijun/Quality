@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:background="@null"
         android:orientation="vertical"
-        app:layout_heightPercent="30%h"
+        app:layout_heightPercent="50%h"
         app:layout_widthPercent="90%w">
 
         <RelativeLayout
@@ -19,7 +19,7 @@
             android:layout_height="0dp"
             android:background="@color/prompt_dialog_reminder_bg"
             android:padding="1dp"
-            app:layout_heightPercent="25%">
+            app:layout_heightPercent="20%">
 
             <TextView
                 android:id="@+id/txtTitle"
@@ -27,43 +27,25 @@
                 android:layout_height="match_parent"
                 android:gravity="left|center"
                 android:paddingLeft="10dp"
-                android:text="@string/picture_source"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textColor="@color/black" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/white"
-            app:layout_heightPercent="50%">
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_heightPercent="45%">
 
-            <TextView
-                android:id="@+id/txtPhotograph"
+            <EditText
+                android:id="@+id/edtContext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/view"
                 android:gravity="left|center"
-                android:paddingLeft="10dp"
-                android:text="@string/photo_graph"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp" />
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_centerVertical="true"
-                android:background="@color/dark_grey" />
-
-            <TextView
-                android:id="@+id/txtAlbum"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/view"
-                android:gravity="left|center"
-                android:paddingLeft="10dp"
-                android:text="@string/album"
+                android:hint="@string/please_input_remark"
+                android:paddingLeft="@dimen/ten_dp"
+                android:paddingRight="@dimen/ten_dp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fourteen_sp" />
         </RelativeLayout>
@@ -73,20 +55,28 @@
             android:layout_height="0dp"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            app:layout_heightPercent="25%">
+            android:padding="10dp"
+            app:layout_heightPercent="35%">
 
             <Button
-                android:id="@+id/btnCancel"
+                android:id="@+id/close_setting_btn"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_white"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/query_setting_btn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/btn_blue"
-                android:text="@string/cancel"
-                android:textColor="@color/white"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textColor="@color/white" />
         </LinearLayout>
     </com.zhy.android.percent.support.PercentLinearLayout>
 

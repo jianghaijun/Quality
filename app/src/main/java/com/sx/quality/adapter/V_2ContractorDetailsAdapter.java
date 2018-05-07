@@ -56,11 +56,13 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
     private List<ContractorListPhotosBean> phoneListBean;
     private RequestOptions options;
     private String levelId;
+    private String status;
 
-    public V_2ContractorDetailsAdapter(Context mContext, List<ContractorListPhotosBean> phoneListBean, ShowPhotoListener listener, String levelId) {
+    public V_2ContractorDetailsAdapter(Context mContext, List<ContractorListPhotosBean> phoneListBean, ShowPhotoListener listener, String levelId, String status) {
         this.mContext = (Activity) mContext;
         this.listener = listener;
         this.levelId = levelId;
+        this.status = status;
         this.phoneListBean = phoneListBean;
         options = new RequestOptions()
                 .placeholder(R.drawable.rotate_pro_loading)
@@ -99,22 +101,16 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
 
         holder.txtStatus.setVisibility(View.VISIBLE);
 
-        if (phoneListBean.get(position).getCheckFlag().equals("0")) {
-            holder.txtStatus.setText("待审核");
-        } else if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2")) {
+        if (status.equals("2")) {
             holder.txtStatus.setText("审核中");
-        } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
-            holder.txtStatus.setText("审核通过");
-            // 如果有审核通过的就设置该工序为已完成状态
-            List<NewContractorListBean> bean = DataSupport.where("levelId = ?", levelId).find(NewContractorListBean.class);
-            if (bean != null && bean.size() != 0) {
-                bean.get(0).setIsFinish("1");
-                bean.get(0).saveOrUpdate("levelId=?", levelId);
-            }
-        } else if (phoneListBean.get(position).getCheckFlag().equals("3") || phoneListBean.get(position).getCheckFlag().equals("5")) {
-            holder.txtStatus.setText("审核未通过");
+        } else if(status.equals("3")) {
+            holder.txtStatus.setText("已驳回");
+        } else if(status.equals("4")) {
+            holder.txtStatus.setText("已完成");
+        }  else if(phoneListBean.get(position).getIsToBeUpLoad() != 1) {
+            holder.txtStatus.setText("已上传");
         } else {
-            holder.txtStatus.setText("未上传");
+            holder.txtStatus.setText("待上传");
         }
 
         Glide.with(mContext)
@@ -127,29 +123,8 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
         holder.ivUpLoadPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (V_2ContractorDetailsActivity.isCanSelect) {
-                    if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
-                        ToastUtil.showShort(mContext, "未上传的照片不能进行审核操作，请先上传照片。");
-                    } else {
-                        if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2")) {
-                            ToastUtil.showShort(mContext, "照片正在审核中，不能再次提交审核！");
-                        } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
-                            ToastUtil.showShort(mContext, "照片已审核通过，不能再次提交审核！");
-                        } else if (phoneListBean.get(position).getCheckFlag().equals("5") || phoneListBean.get(position).getCheckFlag().equals("3")) {
-                            ToastUtil.showShort(mContext, "照片审核未通过，不能再次提交审核！");
-                        } else {
-                            if (phoneListBean.get(position).isCanSelect()) {
-                                holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_un_select));
-                            } else {
-                                holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_select));
-                            }
-                            phoneListBean.get(position).setCanSelect(!phoneListBean.get(position).isCanSelect());
-                        }
-                    }
-                } else {
-                    // 图片浏览方式
-                    listener.selectWayOrShowPhoto(false, String.valueOf(position), "", phoneListBean.get(position).getIsToBeUpLoad());
-                }
+                // 图片浏览方式
+                listener.selectWayOrShowPhoto(false, String.valueOf(position), "", phoneListBean.get(position).getIsToBeUpLoad());
             }
         });
 
@@ -159,11 +134,11 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
         holder.ivUpLoadPhone.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2")) {
+                /*if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2")) {
                     ToastUtil.showShort(mContext, "照片正在审核中，不能进行删除操作！");
                 } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
                     ToastUtil.showShort(mContext, "照片已审核通过，不能进行删除操作！");
-                } else {
+                } else {*/
                     PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
                         @Override
                         public void returnTrueOrFalse(boolean trueOrFalse) {
@@ -180,13 +155,13 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
                         }
                     }, "提示", "是否删除此照片？", "否", "是");
                     promptDialog.show();
-                }
+               /* }*/
                 return true;
             }
         });
 
         // 选择按钮点击事件
-        holder.ivIsChoose.setOnClickListener(new View.OnClickListener() {
+        /*holder.ivIsChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
@@ -208,7 +183,7 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
                     }
                 }
             }
-        });
+        });*/
     }
 
     /**
@@ -222,6 +197,7 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
         PictureModel model = new PictureModel();
         model.setSelectUserId((String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
         model.setRootLevelId(levelId);
+        model.setProcessId(bean.getProcessId());
         List<PictureBean> beanList = new ArrayList<>();
         PictureBean picBean = new PictureBean();
         picBean.setPhotoId(bean.getPhotoId());

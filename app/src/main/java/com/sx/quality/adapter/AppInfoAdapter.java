@@ -50,18 +50,18 @@ public class AppInfoAdapter extends RecyclerView.Adapter<AppInfoAdapter.AppInfoH
             public void onClick(View v) {
                 Intent intent;
                 switch (position) {
-                    case 4:
+                    case 0:
                         intent = new Intent(mContext, V_2ContractorActivity.class);
                         SpUtil.put(mContext, ConstantsUtil.USER_TYPE, "0");
                         mContext.startActivity(intent);
                         break;
-                    case 5:
+                    case 1:
                         intent = new Intent(mContext, V_2ContractorActivity.class);
                         SpUtil.put(mContext, ConstantsUtil.USER_TYPE, "1");
                         mContext.startActivity(intent);
                         break;
                     // 待上传照片
-                    case 6:
+                    case 2:
                         intent = new Intent(mContext, UpLoadPhotosActivity.class);
                         mContext.startActivity(intent);
                         break;
