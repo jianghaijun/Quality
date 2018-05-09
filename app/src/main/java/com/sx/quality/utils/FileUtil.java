@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,52 +21,51 @@ import java.net.URL;
 import static org.xutils.common.util.IOUtil.copy;
 
 /**
- *                     _ooOoo_
- *                    o8888888o
- *                    88" . "88
- *                    (| -_- |)
- *                    O\  =  /O
- *                 ____/`---'\____
- *               .'  \\|     |//  `.
- *              /  \\|||  :  |||//  \
- *             /  _||||| -:- |||||-  \
- *             |   | \\\  -  /// |   |
- *             | \_|  ''\---/''  |   |
- *             \  .-\__  `-`  ___/-. /
- *           ___`. .'  /--.--\  `. . __
- *        ."" '<  `.___\_<|>_/___.'  >'"".
- *       | | :  `- \`.;`\ _ /`;.`/ - ` : | |
- *       \  \ `-.   \_ __\ /__ _/   .-` /  /
+ * _ooOoo_
+ * o8888888o
+ * 88" . "88
+ * (| -_- |)
+ * O\  =  /O
+ * ____/`---'\____
+ * .'  \\|     |//  `.
+ * /  \\|||  :  |||//  \
+ * /  _||||| -:- |||||-  \
+ * |   | \\\  -  /// |   |
+ * | \_|  ''\---/''  |   |
+ * \  .-\__  `-`  ___/-. /
+ * ___`. .'  /--.--\  `. . __
+ * ."" '<  `.___\_<|>_/___.'  >'"".
+ * | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ * \  \ `-.   \_ __\ /__ _/   .-` /  /
  * ======`-.____`-.___\_____/___.-`____.-'======
- *                     `=---='
+ * `=---='
  * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- * 			   佛祖保佑       永无BUG
- *       Created by dell on 2017/10/20 17:41
+ * 佛祖保佑       永无BUG
+ * Created by dell on 2017/10/20 17:41
  */
 
 public class FileUtil {
 
     /**
-     *
      * @param context
      * @param uri
      * @return
      */
-    public static String getRealFilePath(final Context context, final Uri uri ) {
-        if ( null == uri ) return null;
+    public static String getRealFilePath(final Context context, final Uri uri) {
+        if (null == uri) return null;
         final String scheme = uri.getScheme();
         String data = null;
-        if ( scheme == null )
+        if (scheme == null)
             data = uri.getPath();
-        else if ( ContentResolver.SCHEME_FILE.equals( scheme ) ) {
+        else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
             data = uri.getPath();
-        } else if ( ContentResolver.SCHEME_CONTENT.equals( scheme ) ) {
-            Cursor cursor = context.getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
-            if ( null != cursor ) {
-                if ( cursor.moveToFirst() ) {
-                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
-                    if ( index > -1 ) {
-                        data = cursor.getString( index );
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+            if (null != cursor) {
+                if (cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    if (index > -1) {
+                        data = cursor.getString(index);
                     }
                 }
                 cursor.close();
@@ -76,6 +76,7 @@ public class FileUtil {
 
     /**
      * 计算图片压缩比例
+     *
      * @param bitWidth
      * @param bitHeight
      * @return
@@ -102,6 +103,7 @@ public class FileUtil {
 
     /**
      * 压缩图片
+     *
      * @param image
      */
     public static Bitmap compressBitmap(Bitmap image) {
@@ -148,6 +150,26 @@ public class FileUtil {
             result = null;
         }*/
         return result;
+    }
+
+    /**
+     * 删除单个文件
+     *
+     * @param fileName 要删除的文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteFile(String fileName) {
+        File file = new File(fileName);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 }

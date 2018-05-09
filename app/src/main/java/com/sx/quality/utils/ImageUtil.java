@@ -15,6 +15,9 @@ import com.bumptech.glide.request.transition.BitmapTransitionFactory;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.R;
+import com.vinaygaba.rubberstamp.RubberStamp;
+import com.vinaygaba.rubberstamp.RubberStampConfig;
+import com.vinaygaba.rubberstamp.RubberStampPosition;
 
 import org.xutils.common.util.DensityUtil;
 
@@ -136,14 +139,14 @@ public class ImageUtil {
 
         // 将Logo添加到底板中
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.watermark_logo);
-        /*Rect rectSrc = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()); // 创建一个指定的新矩形的坐标
-        Rect dst = new Rect(dp2px(context, 5 * widthMultiple), dp2px(context, 1 * heightMultiple), bitmap.getWidth() + dp2px(context, 5 * widthMultiple), bitmap.getHeight() + dp2px(context, 1 * heightMultiple)); // 创建一个指定的新矩形的坐标
-        canvas.drawBitmap(bitmap, rectSrc, dst, null); // 将photo 缩放或扩大
-        canvas.drawBitmap(bitmap, dp2px(context, 5 * widthMultiple), 5 * heightMultiple, null);*/
-        Paint paint = new Paint();
-        paint.setAlpha(255);
-        paint.setAntiAlias(true);
-        canvas.drawBitmap(bitmap, DensityUtil.dip2px(5), DensityUtil.dip2px(2), paint);
+        RubberStampConfig config = new RubberStampConfig.RubberStampConfigBuilder()
+                .base(watermarkBitmap)
+                .rubberStamp(bitmap)
+                .rubberStampPosition(RubberStampPosition.TOP_LEFT)
+                .margin(10, 2)
+                .build();
+        RubberStamp rubberStamp = new RubberStamp(context);
+        watermarkBitmap = rubberStamp.addStamp(config);
         // 添加文字
         watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "山西路桥", p, r, (int) (bitmap.getWidth() + DensityUtil.dip2px(10) + 5 * widthMultiple), DensityUtil.dip2px(2 * heightMultiple));
         // 距离上面的间距

@@ -302,7 +302,7 @@ public class ActualMeasurementActivity extends BaseActivity {
             // 编号
             TextView txtNo = new TextView(mContext);
             txtNo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-            txtNo.setText(measured.getOrderFlag());
+            txtNo.setText(n + 1 + "");
             txtNo.setTextSize(14);
             txtNo.setGravity(Gravity.CENTER);
             txtNo.setTextColor(ContextCompat.getColor(mContext, R.color.black));

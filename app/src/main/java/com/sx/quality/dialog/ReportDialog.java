@@ -121,7 +121,13 @@ public class ReportDialog extends Dialog {
         LoadingUtils.showLoading(mContext);
         JSONObject json = new JSONObject();
         try {
-            json.put("roleFlag", ConstantsUtil.roleFlag);
+            // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+            String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+            if (userLevel.equals("0")) {
+                json.put("roleFlag", ConstantsUtil.roleFlag);
+            } else {
+                json.put("roleFlag", ConstantsUtil.roleFlag_2);
+            }
             json.put("userType", SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
         } catch (JSONException e) {
             e.printStackTrace();

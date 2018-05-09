@@ -19,6 +19,8 @@ public class ConstantsUtil {
 
     /**山西路桥传1  长陵机电传2*/
     public static String roleFlag = "1";
+    /**山西路桥传2  长陵机电传2*/
+    public static String roleFlag_2 = "2";
     /**山西路桥传  长陵机电传*/
     public static String prefix = "/apisxdehzl/";
     //public static String prefix = "";

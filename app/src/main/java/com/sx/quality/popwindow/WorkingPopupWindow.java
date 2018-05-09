@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class WorkingPopupWindow extends PopupWindow {
     private View mView;
     private String nodeName;
     private String levelId;
+    private List<Boolean> isSave = new ArrayList<>();
 
     public WorkingPopupWindow(Activity mActivity, String nodeName, String levelId) {
         super();
@@ -188,6 +190,7 @@ public class WorkingPopupWindow extends PopupWindow {
         TableLayout tabLay = (TableLayout) mView.findViewById(R.id.tabLay);
         // 动态添加行
         for (int i = 0; i < workList.size(); i++) {
+            final int point = i;
             final WorkingBean bean = workList.get(i);
             TableRow tableRow = new TableRow(mActivity);
             // 编号
@@ -293,10 +296,16 @@ public class WorkingPopupWindow extends PopupWindow {
                     txtStatus.setText("审核中");
                     break;
                 case "3":
-                    txtStatus.setText("已驳回");
+                    txtStatus.setText("初审驳回");
                     break;
                 case "4":
-                    txtStatus.setText("已完成");
+                    txtStatus.setText("自检完成");
+                    break;
+                case "5":
+                    txtStatus.setText("复审驳回");
+                    break;
+                case "6":
+                    txtStatus.setText("抽检完成");
                     break;
             }
 
@@ -337,6 +346,12 @@ public class WorkingPopupWindow extends PopupWindow {
                     intent.putExtra("ext8", bean.getExt8());
                     intent.putExtra("ext9", bean.getExt9());
                     intent.putExtra("ext10", bean.getExt10());
+                    List<WorkingBean> list = DataSupport.where("processId = ?", bean.getProcessId()).find(WorkingBean.class);
+                    if (list != null && list.size() > 0) {
+                        intent.putExtra("check", isSave.get(point));
+                    } else {
+                        intent.putExtra("check", true);
+                    }
 
                     mActivity.startActivity(intent);
                     dismiss();
@@ -346,7 +361,83 @@ public class WorkingPopupWindow extends PopupWindow {
 
             tabLay.addView(tableRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
 
-            bean.saveOrUpdate("processId = ?", bean.getProcessId());
+            if (nodeName.contains("填方")) {
+                // 先判断本地内存有没有该条数据
+                List<WorkingBean> list = DataSupport.where("processId = ?", bean.getProcessId()).find(WorkingBean.class);
+                if (list != null && list.size() > 0) {
+                    // 判断本地层厚字段是否都为空
+                    WorkingBean local = list.get(0);
+                    if (checkLocal(local)) {
+                        isSave.add(true);
+                        bean.saveOrUpdate("processId = ?", bean.getProcessId());
+                    } else {
+                        // 是否有不相等的
+                        isSave.add(check(local, bean));
+                        if (check(local, bean)) {
+                            bean.saveOrUpdate("processId = ?", bean.getProcessId());
+                        } else {
+                            bean.setExt1(local.getExt1());
+                            bean.setExt2(local.getExt2());
+                            bean.setExt3(local.getExt3());
+                            bean.setExt4(local.getExt4());
+                            bean.setExt5(local.getExt5());
+                            bean.setExt6(local.getExt6());
+                            bean.setExt7(local.getExt7());
+                            bean.setExt8(local.getExt8());
+                            bean.setExt9(local.getExt9());
+                            bean.setExt10(local.getExt10());
+                            bean.saveOrUpdate("processId = ?", bean.getProcessId());
+                        }
+                    }
+                } else {
+                    isSave.add(true);
+                    bean.saveOrUpdate("processId = ?", bean.getProcessId());
+                }
+            } else {
+                isSave.add(true);
+                bean.saveOrUpdate("processId = ?", bean.getProcessId());
+            }
+        }
+    }
+
+    private boolean checkLocal(WorkingBean bean) {
+        if (bean == null) {
+            return true;
+        }
+        String ext1 = bean.getExt1();
+        String ext2 = bean.getExt2();
+        String ext3 = bean.getExt3();
+        String ext4 = bean.getExt4();
+        String ext5 = bean.getExt5();
+        String ext6 = bean.getExt6();
+        String ext7 = bean.getExt7();
+        String ext8 = bean.getExt8();
+        String ext9 = bean.getExt9();
+        String ext10 = bean.getExt10();
+
+        if (TextUtils.isEmpty(ext1) && TextUtils.isEmpty(ext2) && TextUtils.isEmpty(ext3) && TextUtils.isEmpty(ext4) && TextUtils.isEmpty(ext5) && TextUtils.isEmpty(ext6) && TextUtils.isEmpty(ext7) && TextUtils.isEmpty(ext8) && TextUtils.isEmpty(ext9) && TextUtils.isEmpty(ext10)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean check(WorkingBean local, WorkingBean netWork) {
+        boolean ext1 = local.getExt1().equals(netWork.getExt1());
+        boolean ext2 = local.getExt2().equals(netWork.getExt2());
+        boolean ext3 = local.getExt3().equals(netWork.getExt3());
+        boolean ext4 = local.getExt4().equals(netWork.getExt4());
+        boolean ext5 = local.getExt5().equals(netWork.getExt5());
+        boolean ext6 = local.getExt6().equals(netWork.getExt6());
+        boolean ext7 = local.getExt7().equals(netWork.getExt7());
+        boolean ext8 = local.getExt8().equals(netWork.getExt8());
+        boolean ext9 = local.getExt9().equals(netWork.getExt9());
+        boolean ext10 = local.getExt10().equals(netWork.getExt10());
+
+        if (ext1 && ext2 && ext3 && ext4 && ext5 && ext6 && ext7 && ext8 && ext9 && ext10) {
+            return true;
+        } else {
+            return false;
         }
     }
 

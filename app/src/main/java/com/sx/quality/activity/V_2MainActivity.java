@@ -100,7 +100,7 @@ public class V_2MainActivity extends BaseActivity {
         layoutFriends = viewLI.inflate(R.layout.layout_empty, null);
         layoutMe = viewLI.inflate(R.layout.activity_my_setting, null);
         // 用户头像
-        imgViewUserAvatar = (ImageView) layoutMe.findViewById(R.id.imgViewUserAvatar);
+        imgViewUserAvatar = layoutMe.findViewById(R.id.imgViewUserAvatar);
         List<UserInfo> userList = DataSupport.where("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, ""))).find(UserInfo.class);
         String userHead = "";
         if (userList != null && userList.size() > 0) {

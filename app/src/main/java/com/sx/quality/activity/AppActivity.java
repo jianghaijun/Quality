@@ -111,6 +111,10 @@ public class AppActivity extends BaseActivity {
         bean.setTitle(mContext.getString(R.string.to_upload_photos));
         appInfoList.add(bean);
         bean = new AppInfoBean();
+        bean.setImgUrl(R.drawable.experimental_management);
+        bean.setTitle(mContext.getString(R.string.experimental_management));
+        appInfoList.add(bean);
+        bean = new AppInfoBean();
         bean.setImgUrl(R.drawable.bim_platform);
         bean.setTitle(mContext.getString(R.string.bim_platform));
         appInfoList.add(bean);
@@ -159,12 +163,12 @@ public class AppActivity extends BaseActivity {
         bean.setTitle(mContext.getString(R.string.labor_competition));
         appInfoList.add(bean);
         bean = new AppInfoBean();
-        bean.setImgUrl(R.drawable.experimental_management);
-        bean.setTitle(mContext.getString(R.string.experimental_management));
-        appInfoList.add(bean);
-        bean = new AppInfoBean();
         bean.setImgUrl(R.drawable.attendance_card);
         bean.setTitle(mContext.getString(R.string.attendance_card));
+        appInfoList.add(bean);
+        bean = new AppInfoBean();
+        bean.setImgUrl(R.drawable.mail_list);
+        bean.setTitle(mContext.getString(R.string.process_report));
         appInfoList.add(bean);
 
         appInfoAdapter = new AppInfoAdapter(mContext, appInfoList);

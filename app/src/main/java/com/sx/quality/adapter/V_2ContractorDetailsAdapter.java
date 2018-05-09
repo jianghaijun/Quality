@@ -100,17 +100,29 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
         }
 
         holder.txtStatus.setVisibility(View.VISIBLE);
-
-        if (status.equals("2")) {
-            holder.txtStatus.setText("审核中");
-        } else if(status.equals("3")) {
-            holder.txtStatus.setText("已驳回");
-        } else if(status.equals("4")) {
-            holder.txtStatus.setText("已完成");
-        }  else if(phoneListBean.get(position).getIsToBeUpLoad() != 1) {
-            holder.txtStatus.setText("已上传");
-        } else {
+        if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
             holder.txtStatus.setText("待上传");
+        } else {
+            switch (status) {
+                case "1":
+                    holder.txtStatus.setText("已上传");
+                    break;
+                case "2":
+                    holder.txtStatus.setText("审核中");
+                    break;
+                case "3":
+                    holder.txtStatus.setText("初审驳回");
+                    break;
+                case "4":
+                    holder.txtStatus.setText("自检完成");
+                    break;
+                case "5":
+                    holder.txtStatus.setText("复审驳回");
+                    break;
+                case "6":
+                    holder.txtStatus.setText("抽检完成");
+                    break;
+            }
         }
 
         Glide.with(mContext)
@@ -134,56 +146,25 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
         holder.ivUpLoadPhone.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                /*if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2")) {
-                    ToastUtil.showShort(mContext, "照片正在审核中，不能进行删除操作！");
-                } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
-                    ToastUtil.showShort(mContext, "照片已审核通过，不能进行删除操作！");
-                } else {*/
-                    PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
-                        @Override
-                        public void returnTrueOrFalse(boolean trueOrFalse) {
-                            if (trueOrFalse) {
-                                // 删除照片
-                                if (1 == phoneListBean.get(position).getIsToBeUpLoad()) {
-                                    DataSupport.deleteAll(ContractorListPhotosBean.class, "photoAddress=?", phoneListBean.get(position).getPhotoAddress());
-                                    phoneListBean.remove(position);
-                                    V_2ContractorDetailsAdapter.this.notifyDataSetChanged();
-                                } else {
-                                    deletePhoto(phoneListBean.get(position), position);
-                                }
+                PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                    @Override
+                    public void returnTrueOrFalse(boolean trueOrFalse) {
+                        if (trueOrFalse) {
+                            // 删除照片
+                            if (1 == phoneListBean.get(position).getIsToBeUpLoad()) {
+                                DataSupport.deleteAll(ContractorListPhotosBean.class, "photoAddress=?", phoneListBean.get(position).getPhotoAddress());
+                                phoneListBean.remove(position);
+                                V_2ContractorDetailsAdapter.this.notifyDataSetChanged();
+                            } else {
+                                deletePhoto(phoneListBean.get(position), position);
                             }
                         }
-                    }, "提示", "是否删除此照片？", "否", "是");
-                    promptDialog.show();
-               /* }*/
+                    }
+                }, "提示", "是否删除此照片？", "否", "是");
+                promptDialog.show();
                 return true;
             }
         });
-
-        // 选择按钮点击事件
-        /*holder.ivIsChoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (phoneListBean.get(position).getIsToBeUpLoad() == 1) {
-                    ToastUtil.showShort(mContext, "未上传的照片不能进行审核操作，请先上传照片。");
-                } else {
-                    if (phoneListBean.get(position).getCheckFlag().equals("1") || phoneListBean.get(position).getCheckFlag().equals("2") || phoneListBean.get(position).getCheckFlag().equals("3")) {
-                        ToastUtil.showShort(mContext, "照片正在审核中，不能再次提交审核！");
-                    } else if (phoneListBean.get(position).getCheckFlag().equals("4")) {
-                        ToastUtil.showShort(mContext, "照片已审核通过，不能再次提交审核！");
-                    } else if (phoneListBean.get(position).getCheckFlag().equals("5")) {
-                        ToastUtil.showShort(mContext, "照片审核未通过，不能再次提交审核！");
-                    } else {
-                        if (phoneListBean.get(position).isCanSelect()) {
-                            holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_un_select));
-                        } else {
-                            holder.ivIsChoose.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.icon_image_select));
-                        }
-                        phoneListBean.get(position).setCanSelect(!phoneListBean.get(position).isCanSelect());
-                    }
-                }
-            }
-        });*/
     }
 
     /**

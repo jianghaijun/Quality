@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_hundred_dp"
         android:background="@color/white"
-        android:padding="@dimen/ten_dp"
+        android:paddingTop="@dimen/ten_dp"
+        android:paddingBottom="@dimen/ten_dp"
         android:textColor="@color/v_2_tab_color"
-        android:textSize="@dimen/fourteen_sp" />
+        android:textSize="@dimen/twelve_sp" />
 </RelativeLayout>

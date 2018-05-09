@@ -21,10 +21,6 @@ import com.sx.quality.utils.LoadingUtils;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
-import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.yuyh.library.imgsel.common.Constant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +35,6 @@ import java.util.List;
 import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -77,7 +72,6 @@ public class LoginActivity extends BaseActivity {
     private ImageView imgLogo;
     // 登录锁
     private boolean isLogin = false;
-    private IWXAPI wxAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +128,6 @@ public class LoginActivity extends BaseActivity {
                 }
                 break;
             case R.id.btnWeChatLogin:
-                //weChatLogin();
                 break;
             default:
                 break;

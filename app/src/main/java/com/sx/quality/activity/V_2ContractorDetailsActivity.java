@@ -48,6 +48,7 @@ import com.sx.quality.manager.GPSProviderStatus;
 import com.sx.quality.model.ContractorDetailsModel;
 import com.sx.quality.model.PictureModel;
 import com.sx.quality.service.LocationService;
+import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
@@ -203,17 +204,19 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         status = getIntent().getStringExtra("status");
         processName = getIntent().getStringExtra("processName");
 
-        // 如果是驳回状态 显示驳回原因
-        if (status.equals("3")) {
+        // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过)
+        if (status.equals("3") || status.equals("5")) {
             rlRejectPhotos.setVisibility(View.VISIBLE);
             txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
         }
 
+        // 质量(0)--安全(1)
         String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
         if (type.equals("1")) {
             workingNo.setText("隐患编号");
             workingName.setText("隐患内容");
         }
+
         // 所有填方工序显示层厚定点位置 隐藏当前位置和定位位置
         if (rootNodeName.contains("填方")) {
             rlFixedPoint.setVisibility(View.VISIBLE);
@@ -221,43 +224,70 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             btnSavePhoto.setText("保存层厚\n定点位置");
         }
 
+        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
         String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
-        if (userLevel.equals("1")) {
-            // 监理--->显示驳回按钮、上传云端和完成按钮
-            btnLocalSave.setVisibility(View.VISIBLE);
-            if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalSave.getLayoutParams();
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                btnLocalSave.setLayoutParams(params);
-            }
-
-            //btnSavePhoto.setVisibility(View.VISIBLE);
-            if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                params.setMargins(0, 0, DensityUtil.dip2px(60), 0);
-                btnMeasuredRecord.setLayoutParams(params);
-            }
-            btnRight.setVisibility(View.VISIBLE);
-            btnRight.setText("完成");
-        } else if(userLevel.equals("2")) {
-            // 领导-->隐藏拍照功能
-            imgBtnAdd.setVisibility(View.GONE);
-            if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                btnMeasuredRecord.setLayoutParams(params);
-            }
-        } else {
-            // 班组，施工人员--->显示上传云端和审核按钮
-            //btnSavePhoto.setVisibility(View.VISIBLE);
-            if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                btnMeasuredRecord.setLayoutParams(params);
-            }
-            btnRight.setVisibility(View.VISIBLE);
-            btnRight.setText("审核");
+        switch (userLevel) {
+            // 1:质检部长(驳回--提交)
+            case "1":
+                // 领导-->隐藏拍照功能
+                imgBtnAdd.setVisibility(View.GONE);
+                btnLocalSave.setVisibility(View.VISIBLE);
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalSave.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    btnLocalSave.setLayoutParams(params);
+                }
+                // 实测记录
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.setMargins(0, 0, DensityUtil.dip2px(60), 0);
+                    btnMeasuredRecord.setLayoutParams(params);
+                }
+                btnRight.setVisibility(View.VISIBLE);
+                btnRight.setText("审核");
+                break;
+            // 2:监理(驳回--完成)
+            case "2":
+                // 监理--->显示驳回按钮和完成按钮
+                btnLocalSave.setVisibility(View.VISIBLE);
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalSave.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    btnLocalSave.setLayoutParams(params);
+                }
+                // 实测记录
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.setMargins(0, 0, DensityUtil.dip2px(60), 0);
+                    btnMeasuredRecord.setLayoutParams(params);
+                }
+                btnRight.setVisibility(View.VISIBLE);
+                btnRight.setText("抽检完成");
+                break;
+            // 3:领导(查看)
+            case "3":
+                // 领导-->隐藏拍照功能
+                imgBtnAdd.setVisibility(View.GONE);
+                // 实测记录按钮
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    btnMeasuredRecord.setLayoutParams(params);
+                }
+                break;
+            // 其它(提交审核)
+            default:
+                // 班组，施工人员--->显示审核按钮
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    btnMeasuredRecord.setLayoutParams(params);
+                }
+                btnRight.setVisibility(View.VISIBLE);
+                btnRight.setText("审核");
+                break;
         }
 
         getPermissions();
@@ -313,7 +343,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 public void run() {
                                     // 查询本地保存的照片
                                     phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
-                                    for (ContractorListPhotosBean photo: model.getData()) {
+                                    for (ContractorListPhotosBean photo : model.getData()) {
                                         phoneList.add(photo);
                                     }
 
@@ -340,7 +370,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 赋值
      */
     private void setData() {
-        String distance = getIntent().getStringExtra("location")  == null || TextUtils.isEmpty(getIntent().getStringExtra("location")) || getIntent().getStringExtra("location").equals("unknown") || getIntent().getStringExtra("location").equals("null") ? "" : getIntent().getStringExtra("location");
+        String distance = getIntent().getStringExtra("location") == null || TextUtils.isEmpty(getIntent().getStringExtra("location")) || getIntent().getStringExtra("location").equals("unknown") || getIntent().getStringExtra("location").equals("null") ? "" : getIntent().getStringExtra("location");
         txtLocation.setText(distance);
         txtWorkingPath.setText(rootNodeName);
         txtWorkingNo.setText(getIntent().getStringExtra("processCode"));
@@ -357,16 +387,16 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         if (workList != null && workList.size() > 0) {
             bean = workList.get(0);
         }
-        edtPositionOfPileNumber1.setText(checkText() ? bean == null ? "" : bean.getExt1() : getIntent().getStringExtra("ext1"));
-        edtElevation1.setText(checkText() ? bean == null ? "" : bean.getExt2() : getIntent().getStringExtra("ext2"));
-        edtPositionOfPileNumber2.setText(checkText() ? bean == null ? "" : bean.getExt3() : getIntent().getStringExtra("ext3"));
-        edtElevation2.setText(checkText() ? bean == null ? "" : bean.getExt4() : getIntent().getStringExtra("ext4"));
-        edtPositionOfPileNumber3.setText(checkText() ? bean == null ? "" : bean.getExt5() : getIntent().getStringExtra("ext5"));
-        edtElevation3.setText(checkText() ? bean == null ? "" : bean.getExt6() : getIntent().getStringExtra("ext6"));
-        edtPositionOfPileNumber4.setText(checkText() ? bean == null ? "" : bean.getExt7() : getIntent().getStringExtra("ext7"));
-        edtElevation4.setText(checkText() ? bean == null ? "" : bean.getExt8() : getIntent().getStringExtra("ext8"));
-        edtPositionOfPileNumber5.setText(checkText() ? bean == null ? "" : bean.getExt9() : getIntent().getStringExtra("ext9"));
-        edtElevation5.setText(checkText() ? bean == null ? "" : bean.getExt10() : getIntent().getStringExtra("ext10"));
+        edtPositionOfPileNumber1.setText(checkData() ? bean == null ? "" : bean.getExt1() : getIntent().getStringExtra("ext1"));
+        edtElevation1.setText(checkData() ? bean == null ? "" : bean.getExt2() : getIntent().getStringExtra("ext2"));
+        edtPositionOfPileNumber2.setText(checkData() ? bean == null ? "" : bean.getExt3() : getIntent().getStringExtra("ext3"));
+        edtElevation2.setText(checkData() ? bean == null ? "" : bean.getExt4() : getIntent().getStringExtra("ext4"));
+        edtPositionOfPileNumber3.setText(checkData() ? bean == null ? "" : bean.getExt5() : getIntent().getStringExtra("ext5"));
+        edtElevation3.setText(checkData() ? bean == null ? "" : bean.getExt6() : getIntent().getStringExtra("ext6"));
+        edtPositionOfPileNumber4.setText(checkData() ? bean == null ? "" : bean.getExt7() : getIntent().getStringExtra("ext7"));
+        edtElevation4.setText(checkData() ? bean == null ? "" : bean.getExt8() : getIntent().getStringExtra("ext8"));
+        edtPositionOfPileNumber5.setText(checkData() ? bean == null ? "" : bean.getExt9() : getIntent().getStringExtra("ext9"));
+        edtElevation5.setText(checkData() ? bean == null ? "" : bean.getExt10() : getIntent().getStringExtra("ext10"));
 
         if (phoneList != null) {
             adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
@@ -378,8 +408,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
 
         // 有网络时提交层厚定点位置信息
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
-            if (checkText() && !checkLocal(bean)) {
+        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        // 有网络并且不是领导
+        if (JudgeNetworkIsAvailable.isNetworkAvailable(this) && !userLevel.equals("3")) {
+            if (!getIntent().getBooleanExtra("check", true)) {
                 PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
                     @Override
                     public void returnTrueOrFalse(boolean trueOrFalse) {
@@ -395,9 +427,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * 是否都为空
+     *
      * @return
      */
-    private boolean checkText() {
+    private boolean checkData() {
         String ext1 = getIntent().getStringExtra("ext1");
         String ext2 = getIntent().getStringExtra("ext2");
         String ext3 = getIntent().getStringExtra("ext3");
@@ -408,28 +441,6 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         String ext8 = getIntent().getStringExtra("ext8");
         String ext9 = getIntent().getStringExtra("ext9");
         String ext10 = getIntent().getStringExtra("ext10");
-
-        if (TextUtils.isEmpty(ext1) && TextUtils.isEmpty(ext2) && TextUtils.isEmpty(ext3) && TextUtils.isEmpty(ext4) && TextUtils.isEmpty(ext5) && TextUtils.isEmpty(ext6) && TextUtils.isEmpty(ext7) && TextUtils.isEmpty(ext8) && TextUtils.isEmpty(ext9) && TextUtils.isEmpty(ext10)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean checkLocal(WorkingBean bean) {
-        if (bean == null) {
-            return true;
-        }
-        String ext1 = bean.getExt1();
-        String ext2 = bean.getExt2();
-        String ext3 = bean.getExt3();
-        String ext4 = bean.getExt4();
-        String ext5 = bean.getExt5();
-        String ext6 = bean.getExt6();
-        String ext7 = bean.getExt7();
-        String ext8 = bean.getExt8();
-        String ext9 = bean.getExt9();
-        String ext10 = bean.getExt10();
 
         if (TextUtils.isEmpty(ext1) && TextUtils.isEmpty(ext2) && TextUtils.isEmpty(ext3) && TextUtils.isEmpty(ext4) && TextUtils.isEmpty(ext5) && TextUtils.isEmpty(ext6) && TextUtils.isEmpty(ext7) && TextUtils.isEmpty(ext8) && TextUtils.isEmpty(ext9) && TextUtils.isEmpty(ext10)) {
             return true;
@@ -463,6 +474,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * 选择上报给谁
+     *
      * @param pictureBeanList
      * @param submitPictureList
      */
@@ -480,7 +492,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     pictureBeanList.add(pictureBean);
                     String photoId = newBean.getPhotoId();
                     for (ContractorListPhotosBean bean : phoneList) {
-                        if (bean.getPhotoAddress().equals(newBean.getPhotoAddress())){
+                        if (bean.getPhotoAddress().equals(newBean.getPhotoAddress())) {
                             bean.setIsNewAdd(-1);
                             bean.setPhotoId(photoId);
                             bean.setIsToBeUpLoad(-1);
@@ -488,6 +500,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         }
                     }
                 }
+
+                status = "1";
 
                 adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
 
@@ -507,21 +521,30 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * 上报审核图片
+     *
      * @param userId
      * @param pictureBeanList
      */
     private void submitReported(String userId, final List<PictureBean> pictureBeanList) {
         LoadingUtils.showLoading(mContext);
-        PictureModel model = new PictureModel();
+        final PictureModel model = new PictureModel();
         model.setSelectUserId(userId);
         model.setPushMessage(rootNodeName);
+        model.setStateFlag("1");
         model.setProcessId(processId);
         model.setRecordType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, "0"));
-        /*model.setSxZlPhotoList(pictureBeanList);*/
         Gson gson = new Gson();
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, gson.toJson(model).toString());
+        String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+        String url;
+        if (userLevel.equals("0")) {
+            url = ConstantsUtil.SUBMIT_AUDITORS_PICTURE;
+        } else {
+            url = ConstantsUtil.REJECT_FINISH;
+        }
+
         Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.SUBMIT_AUDITORS_PICTURE)
+                .url(ConstantsUtil.BASE_URL + url)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
@@ -556,10 +579,22 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                             }
                                         }
                                     }
-                                    //isCanSelect = !isCanSelect;
-                                    if (null != adapter) {
-                                        adapter.notifyDataSetChanged();
+
+                                    // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+                                    String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+
+                                    if (userLevel.equals("0")) {
+                                        status = "2";
+                                    } else {
+                                        status = "4";
                                     }
+
+                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+
+                                    LinearLayoutManager ms = new LinearLayoutManager(mContext);
+                                    ms.setOrientation(LinearLayoutManager.HORIZONTAL);
+                                    rvContractorDetails.setLayoutManager(ms);
+                                    rvContractorDetails.setAdapter(adapter);
                                 }
                             });
                         } else {
@@ -580,7 +615,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     /**
      * 拍照
      */
-    private void takePictures(){
+    private void takePictures() {
         Intent intent = new Intent();
         intent.setClass(mContext, PhotographActivity.class);
         startActivityForResult(intent, 1);
@@ -663,6 +698,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * 保存图片
+     *
      * @param bm
      * @param path
      * @param filename
@@ -709,7 +745,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setLatitude(String.valueOf(latitude));
             addPhotoBean.setLongitude(String.valueOf(longitude));
             addPhotoBean.setLocation(sLocation);
-            addPhotoBean.setUserId((String) SpUtil.get(mContext,ConstantsUtil.USER_ID, ""));
+            addPhotoBean.setUserId((String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
             addPhotoBean.setPhotoType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
             addPhotoBean.setCreateTime(DataUtils.getCurrentData());
             String[] strings = new String[]{engineeringName, rootNodeName};
@@ -735,6 +771,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[0], params[1], addPhotoBean.getCreateTime());
             // 保存到SD卡指定文件夹下
             saveBitmapFile(bitmap, fileUrlName);
+            // 删除拍摄的照片
+            FileUtil.deleteFile(FileUtil.getRealFilePath(mContext, uri));
             return null;
         }
 
@@ -750,10 +788,11 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * 保存图片到SD卡指定目录下
+     *
      * @param bitmap
      * @param fileName
      */
-    public void saveBitmapFile(Bitmap bitmap, String fileName){
+    public void saveBitmapFile(Bitmap bitmap, String fileName) {
         // 将要保存图片的路径
         File imgFile = new File(ConstantsUtil.SAVE_PATH);
         if (!imgFile.exists()) {
@@ -797,13 +836,11 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 sb.append(location.getAddrStr());
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
-                sLocation = sb.toString();
+                sLocation = sb.toString() == null || TextUtils.isEmpty(sb.toString()) || sb.toString().equals("null") ? "" : sb.toString();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (null != sb.toString() && !TextUtils.isEmpty(sb.toString())) {
-                            txtLocationPosition.setText(sb.toString());
-                        }
+                        txtLocationPosition.setText(sLocation);
                     }
                 });
             }
@@ -817,10 +854,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             String permissionInfo = "";
             ArrayList<String> permissions = new ArrayList<>();
             // 定位精确位置
-            if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
             }
-            if(checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
             }
             // 读写权限
@@ -976,15 +1013,20 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         if (trueOrFalse) {
                             if (isFinish) {
                                 // 完成工序接口
-                                for (ContractorListPhotosBean phone: phoneList) {
+                                for (ContractorListPhotosBean phone : phoneList) {
                                     phone.setIsToBeUpLoad(-1);
                                     phone.setIsNewAdd(-1);
                                     phone.setCheckFlag("0");
                                 }
 
-                                if (adapter != null) {
-                                    adapter.notifyDataSetChanged();
-                                }
+                                status = "6";
+
+                                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+
+                                LinearLayoutManager ms = new LinearLayoutManager(mContext);
+                                ms.setOrientation(LinearLayoutManager.HORIZONTAL);
+                                rvContractorDetails.setLayoutManager(ms);
+                                rvContractorDetails.setAdapter(adapter);
 
                                 RejectDialog rejectDialog = new RejectDialog(mContext, new ReportListener() {
                                     @Override
@@ -1025,27 +1067,26 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 完成工序
      */
     private void finishPhoto() {
-        // 设置为驳回状态
-        List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
-        if (workList != null && workList.size() > 0) {
-            WorkingBean bean = workList.get(0);
-            if (bean.getProcessState().equals("4")) {
-                ToastUtil.showShort(mContext, "该工序已为完成状态，不能再次提交!");
+        switch (status) {
+            case "6":
+                ToastUtil.showLong(mContext, "该工序已抽检完成，不能再次提交!");
                 return;
-            } else if (bean.getProcessState().equals("3")) {
-                ToastUtil.showShort(mContext, "驳回状态不能进行完成操作!");
+            case "5":
+                ToastUtil.showLong(mContext, "该工序复审被驳回，请等待班组人员办理重新办理后再提交!");
                 return;
-            }  else if (!status.equals("2")) {
-                ToastUtil.showShort(mContext, "该工序还未提交审核！");
+            case "3":
+                ToastUtil.showLong(mContext, "该工序初审被驳回，请等待班组人员办理重新办理后再提交!");
                 return;
-            }
+            case "2":
+                ToastUtil.showLong(mContext, "该工序正在审核中，请等待班组人员提交复审后再进行提交!");
+                return;
+            case "1":
+                ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行提交!");
+                return;
+            case "0":
+                ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行提交!");
+                return;
         }
-
-        /*if (status.equals("3")) {
-            ToastUtil.showShort(mContext, "驳回状态不能进行完成操作!");
-            return;
-        }*/
-
         toExaminePhoto(true);
     }
 
@@ -1053,12 +1094,27 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 拍照
      */
     private void takePhotos() {
-        if (status.equals("4")) {
-            String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
+        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
+        // 0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过
+        if (status.equals("6")) {
             if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "审核通过的隐患不能再进行拍照!");
+                ToastUtil.showLong(mContext, "抽检完成的隐患不能再进行拍照!");
             } else {
-                ToastUtil.showLong(mContext, "审核通过的工序不能再进行拍照!");
+                ToastUtil.showLong(mContext, "抽检完成的工序不能再进行拍照!");
+            }
+        } else if(status.equals("2") && userLevel.equals("0")) {
+            if (type.equals("1")) {
+                ToastUtil.showLong(mContext, "审核中的隐患不能再进行拍照!");
+            } else {
+                ToastUtil.showLong(mContext, "审核中的工序不能再进行拍照!");
+            }
+        } else if(status.equals("4") && userLevel.equals("0")) {
+            if (type.equals("1")) {
+                ToastUtil.showLong(mContext, "该隐患已提交至监理审核，不能再进行拍照!");
+            } else {
+                ToastUtil.showLong(mContext, "该工序已提交至监理审核,不能再进行拍照!");
             }
         } else {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -1105,46 +1161,64 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 驳回
      */
     private void reject() {
-        List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
-        if (workList != null && workList.size() > 0) {
-            WorkingBean bean = workList.get(0);
-            if (bean.getProcessState().equals("3")) {
-                ToastUtil.showShort(mContext, "驳回状态不能进行完成操作!");
-                return;
+        String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
+        String s;
+        if (type.equals("1")) {
+            s = "隐患";
+        } else {
+            s = "工序";
+        }
+
+        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        if (userLevel.equals("1")) {
+            switch (status) {
+                case "6":
+                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                    return;
+                case "4":
+                    ToastUtil.showLong(mContext, "该" + s + "已提交至监理审核，您不能进行驳回操作!");
+                    return;
+                case "3":
+                    ToastUtil.showLong(mContext, "该" + s + "已被驳回，不能再次进行驳回操作!");
+                    return;
+                case "1":
+                case "0":
+                    ToastUtil.showLong(mContext, "该" + s + "还未进行审核，进行审核后才能进行驳回操作!");
+                    return;
+            }
+        } else if (userLevel.equals("2")) {
+            switch (status) {
+                case "6":
+                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                    return;
+                case "5":
+                    ToastUtil.showLong(mContext, "该" + s + "已被驳回，不能再次进行驳回操作!");
+                    return;
+                case "3":
+                    ToastUtil.showLong(mContext, "该" + s + "已被初审人员驳回，不能再次进行驳回操作!");
+                    return;
+                case "2":
+                case "1":
+                case "0":
+                    ToastUtil.showLong(mContext, "该" + s + "还未进行审核，进行审核后才能进行驳回操作!");
+                    return;
             }
         }
 
-        /*if (status.equals("3")) {
-            ToastUtil.showShort(mContext, "驳回状态不能进行完成操作!");
-            return;
-        } else*/ if (status.equals("4")) {
-            String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
-            if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "审核通过的隐患不能进行驳回操作!");
-            } else {
-                ToastUtil.showLong(mContext, "审核通过的工序不能进行驳回操作!");
+        RejectDialog rejectDialog = new RejectDialog(mContext, new ReportListener() {
+            @Override
+            public void returnUserId(String userId) {
+                // 调用驳回接口
+                rejectSubmit(userId, "0");
             }
-        } else if (!status.equals("2")) {
-            String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
-            if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "该隐患还未进行审核照片步骤!");
-            } else {
-                ToastUtil.showLong(mContext, "该工序还未进行审核照片步骤!");
-            }
-        } else {
-            RejectDialog rejectDialog = new RejectDialog(mContext, new ReportListener() {
-                @Override
-                public void returnUserId(String userId) {
-                    // 调用驳回接口
-                    rejectSubmit(userId, "0");
-                }
-            }, "驳回原因", "取消", "确认");
-            rejectDialog.show();
-        }
+        }, "驳回原因", "取消", "确认");
+        rejectDialog.show();
     }
 
     /**
      * 提交驳回
+     *
      * @param remark
      */
     private void rejectSubmit(String remark, final String stateFlag) {
@@ -1184,21 +1258,33 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     LoadingUtils.hideLoading();
                                     ToastUtil.showShort(mContext, "操作成功!");
                                     // 设置状态
-                                    /*finish();*/
                                     List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
                                     if (workList != null && workList.size() > 0) {
                                         WorkingBean bean = workList.get(0);
                                         if (stateFlag.equals("0")) {
-                                            bean.setProcessState("3");
+                                            // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+                                            String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+                                            // 质检部长驳回
+                                            if (userLevel.equals("1")) {
+                                                status = "3";
+                                                bean.setProcessState("3");
+                                            } else {
+                                                status = "5";
+                                                bean.setProcessState("5");
+                                            }
                                         } else {
-                                            bean.setProcessState("4");
+                                            status = "6";
+                                            bean.setProcessState("6");
                                         }
                                         bean.saveOrUpdate("processId = ?", bean.getProcessId());
                                     }
 
-                                    if (null != adapter) {
-                                        adapter.notifyDataSetChanged();
-                                    }
+                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+
+                                    LinearLayoutManager ms = new LinearLayoutManager(mContext);
+                                    ms.setOrientation(LinearLayoutManager.HORIZONTAL);
+                                    rvContractorDetails.setLayoutManager(ms);
+                                    rvContractorDetails.setAdapter(adapter);
                                 }
                             });
                         } else {
@@ -1217,65 +1303,6 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     }
 
     /**
-     * 上传云端
-     */
-    /*private void submitCloudEnd() {
-        final List<ContractorListPhotosBean> newList = getNewAddPhone();
-        List<ContractorListPhotosBean> oldList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? AND isNewAdd = -1 order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
-        if (newList.size() == 0 && oldList.size() == 0) {
-            ToastUtil.showShort(mContext, "没有可上传的照片，请拍摄后再保存！");
-        } else {
-            if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
-                for (ContractorListPhotosBean oldBean : oldList) {
-                    newList.add(oldBean);
-                }
-                // 上传
-                UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, newList, new ChoiceListener() {
-                    @Override
-                    public void returnTrueOrFalse(boolean trueOrFalse) {
-                        if (trueOrFalse) {
-                            // 设置为已上传
-                            for (ContractorListPhotosBean newBean : newList) {
-                                for (ContractorListPhotosBean bean : phoneList) {
-                                    if (bean.getPhotoAddress().equals(newBean.getPhotoAddress())){
-                                        bean.setIsNewAdd(-1);
-                                        bean.setPhotoId(newBean.getPhotoId());
-                                        bean.setIsToBeUpLoad(-1);
-                                        bean.setCheckFlag("0");
-                                    }
-                                }
-                            }
-                            adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
-
-                            LinearLayoutManager ms = new LinearLayoutManager(mContext);
-                            ms.setOrientation(LinearLayoutManager.HORIZONTAL);
-                            rvContractorDetails.setLayoutManager(ms);
-                            rvContractorDetails.setAdapter(adapter);
-                        }
-                    }
-                });
-                upLoadPhotosDialog.show();
-            } else {
-                ToastUtil.showLong(mContext, "当前无网络，请先连接网络再进行上传!");
-            }
-        }
-    }*/
-
-    /**
-     * 获取新拍摄的照片
-     * @return
-     */
-    private List<ContractorListPhotosBean> getNewAddPhone() {
-        List<ContractorListPhotosBean> pictureBeanList = new ArrayList<>();
-        for (ContractorListPhotosBean phoneListBean : phoneList) {
-            if (phoneListBean.getIsNewAdd() == 1) {
-                pictureBeanList.add(phoneListBean);
-            }
-        }
-        return pictureBeanList;
-    }
-
-    /**
      * 子线程运行
      */
     private void runChildrenThread(final String msg) {
@@ -1289,6 +1316,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
     /**
      * Token过期
+     *
      * @param code
      * @param msg
      */
@@ -1317,8 +1345,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     /**
      * 保存到服务器
      */
-    private void submitElevation(final boolean islogin) {
-        if (islogin) {
+    private void submitElevation(final boolean isLogin) {
+        if (isLogin) {
             LoadingUtils.showLoading(mContext);
         }
         JSONObject obj = new JSONObject();
@@ -1359,7 +1387,9 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ToastUtil.showShort(mContext, "保存成功!");
+                                        if (isLogin) {
+                                            ToastUtil.showShort(mContext, "保存成功!");
+                                        }
                                         saveOnLocal();
                                     }
                                 });
@@ -1373,13 +1403,13 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     } else {
                         runChildrenThread(getString(R.string.json_error));
                     }
-                    if (islogin) {
+                    if (isLogin) {
                         LoadingUtils.hideLoading();
                     }
                 }
             });
         } catch (JSONException e) {
-            if (islogin) {
+            if (isLogin) {
                 LoadingUtils.hideLoading();
             }
             ToastUtil.showShort(mContext, "参数有误！");
@@ -1408,26 +1438,67 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
     }
 
-    @Event({ R.id.imgBtnLeft, R.id.btnRight, R.id.btnRightOne, R.id.imgBtnAdd, R.id.btnMeasuredRecord, R.id.btnLocalSave, R.id.btnSavePhoto })
+    @Event({R.id.imgBtnLeft, R.id.btnRight, R.id.btnRightOne, R.id.imgBtnAdd, R.id.btnMeasuredRecord, R.id.btnLocalSave, R.id.btnSavePhoto})
     private void onClick(View v) {
+        String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
+        String s;
+        if (type.equals("1")) {
+            s = "隐患";
+        } else {
+            s = "工序";
+        }
         switch (v.getId()) {
             case R.id.imgBtnLeft:
                 this.finish();
                 break;
             // 审核
             case R.id.btnRight:
+                // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+                String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+                if (userLevel.equals("1") && (status.equals("1") || status.equals("0"))) {
+                    ToastUtil.showLong(mContext, "该" + s + "还未进行审核，进行审核后才能进行复审操作!");
+                    return;
+                }
+
                 int num = Integer.valueOf(getIntent().getStringExtra("actualNumber"));
                 if (phoneList.size() < num) {
                     ToastUtil.showShort(mContext, "拍照数量不能小于最少拍照张数！");
                 } else {
                     if (btnRight.getText().toString().equals("审核")) {
                         // 审核照片
-                        List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
-                        if (workList != null && workList.size() > 0) {
-                            WorkingBean bean = workList.get(0);
-                            if (bean.getProcessState().equals("4")) {
-                                ToastUtil.showShort(mContext, "该工序已为完成状态，不能再次审核!");
-                                return;
+                        if (userLevel.equals("0")) {
+                            switch (status) {
+                                case "6":
+                                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
+                                    return;
+                                case "5":
+                                    ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请等待质检部长驳回修改后再进行审核!");
+                                    return;
+                                case "4":
+                                    ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能次提交审核!");
+                                    return;
+                                case "2":
+                                    ToastUtil.showLong(mContext, "该" + s + "已提交审核，您不能次提交审核!");
+                                    return;
+                            }
+                        } else if (userLevel.equals("1")) {
+                            switch (status) {
+                                case "6":
+                                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                                    return;
+                                case "5":
+                                    ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请先驳回给施工人员修改后再进行审核!");
+                                    return;
+                                case "4":
+                                    ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能次提交审核!");
+                                    return;
+                                case "3":
+                                    ToastUtil.showLong(mContext, "该" + s + "初审被驳回，请等待施工人员修改后再进行审核!");
+                                    return;
+                                case "1":
+                                case "0":
+                                    ToastUtil.showLong(mContext, "该" + s + "还未进行初审，进行初审后才能进行审核操作!");
+                                    return;
                             }
                         }
                         toExaminePhoto(false);
@@ -1439,18 +1510,23 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 拍照
             case R.id.imgBtnAdd:
-                if (txtLocationPosition.getText().toString().length() < 5 || txtLocationPosition.getText().toString().contains("正在定位")) {
-                    PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
-                        @Override
-                        public void returnTrueOrFalse(boolean trueOrFalse) {
-                            if (trueOrFalse) {
-                                takePhotos();
-                            }
-                        }
-                    }, "提示", "未定位到当前位置，拍照后会导致拍摄照片无地理位置信息。是否继续拍照？", "否", "是");
-                    promptDialog.show();
+                String sdSize = AppInfoUtil.getSDAvailableSize();
+                if (Integer.valueOf(sdSize) < 10) {
+                    ToastUtil.showShort(mContext, "当前手机内存卡已无可用空间，请清理后再进行拍照！");
                 } else {
-                    takePhotos();
+                    if (txtLocationPosition.getText().toString().length() < 7 || txtLocationPosition.getText().toString().contains("正在定位")) {
+                        PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                            @Override
+                            public void returnTrueOrFalse(boolean trueOrFalse) {
+                                if (trueOrFalse) {
+                                    takePhotos();
+                                }
+                            }
+                        }, "提示", "未定位到当前位置，拍照后会导致拍摄照片无地理位置信息。是否继续拍照？", "否", "是");
+                        promptDialog.show();
+                    } else {
+                        takePhotos();
+                    }
                 }
                 break;
             // 实测记录

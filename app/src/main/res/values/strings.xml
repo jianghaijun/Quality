@@ -1,8 +1,8 @@
 <resources>
     <!--<string name="app_name">长临高速机电工程</string>
     <string name="app_title">长临高速机电工程项目部</string>-->
-    <string name="app_name">东二环高速公路</string>
-    <string name="app_title">东二环高速公路</string>
+    <string name="app_name">太原东二环高速公路</string>
+    <string name="app_title">太原东二环高速公路</string>
     <string name="not_network">当前无可用网络!</string>
     <string name="person_setting">个人设置</string>
     <string name="contractor">承包商</string>
@@ -84,8 +84,9 @@
     <string name="first_batch">首件批报</string>
     <string name="online_examination">在线考试</string>
     <string name="labor_competition">劳动竞赛</string>
-    <string name="experimental_management">实验管理</string>
+    <string name="experimental_management">品质工程评价</string>
     <string name="attendance_card">考勤打卡</string>
+    <string name="process_report">工序报表</string>
     <string name="no">NO.</string>
     <string name="working_name">工序名称</string>
     <string name="photos_num">照片数量</string>

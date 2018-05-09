@@ -85,11 +85,14 @@ public class UpLoadPhotosDialog extends Dialog{
 						ToastUtil.showShort(mContext, mContext.getString(R.string.json_error));
 						break;
 					case -3:
-						// Token异常重新登录
+						UpLoadPhotosDialog.this.dismiss();
+						String val = msg.getData().getString("key");
+						ToastUtil.showShort(mContext, val);
+						/*// Token异常重新登录
 						ToastUtil.showLong(mContext, "Token过期请重新登录！");
 						SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, false);
 						ScreenManagerUtil.popAllActivityExceptOne();
-						mContext.startActivity(new Intent(mContext, LoginActivity.class));
+						mContext.startActivity(new Intent(mContext, LoginActivity.class));*/
 						break;
 					default:
 						txtNum.setText("已上传：" + msg.what + "%  (" + (upLoadNum+1) + "/" + upLoadPhotosBeenList.size() + ")");
@@ -138,14 +141,12 @@ public class UpLoadPhotosDialog extends Dialog{
 									UpLoadPhotos();
 								}
 							} else {
-								switch (loginModel.getCode()) {
-									case 3003:
-									case 3004:
-										Message jsonErr = new Message();
-										jsonErr.what = -3;
-										upLoadPhotosHandler.sendMessage(jsonErr);
-										break;
-								}
+								Message jsonErr = new Message();
+								jsonErr.what = -3;
+								Bundle bundle = new Bundle();
+								bundle.putString("key", loginModel.getMessage());
+								jsonErr.setData(bundle);
+								upLoadPhotosHandler.sendMessage(jsonErr);
 							}
 						} else {
 							Message jsonErr = new Message();
