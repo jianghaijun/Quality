@@ -42,6 +42,8 @@ public class ConstantsUtil {
     public static String TOKEN = "TOKEN";
     /** userHead */
     public static String USER_HEAD = "USER_HEAD";
+    /** 屏幕高度 */
+    public static String SCREEN_HEIGHT = "SCREEN_HEIGHT";
     /** OkHttpClient */
     public static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(30000L, TimeUnit.MILLISECONDS)
@@ -87,6 +89,12 @@ public class ConstantsUtil {
     public static final String UPLOAD_ICON = prefix + "appUploadIcon";
     /** 上传层厚信息 */
     public static final String UPDATE_SX_ZL_PROCESS = prefix + "updateSxZlProcess";
+    /** 获取消息列表 */
+    public static final String GET_TIMER_TASK_LIST = prefix + "getSxZlTimerTaskList";
+    /** 获取工序详情 */
+    public static final String GET_PROCESS_DETAIL = prefix + "getSxZlProcessDetail";
+    /** 修改密码 */
+    public static final String UPDATE_PASSWORD = prefix + "updateUserPassword";
 
     /**
      * 文件存储路径

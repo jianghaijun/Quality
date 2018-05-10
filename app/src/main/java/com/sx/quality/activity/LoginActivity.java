@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.sx.quality.bean.QualityInspectionBean;
 import com.sx.quality.bean.UserInfo;
 import com.sx.quality.model.AliasModel;
 import com.sx.quality.model.LoginModel;
@@ -272,6 +273,13 @@ public class LoginActivity extends BaseActivity {
                                     isLogin = false;
                                     SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
                                     SpUtil.put(mContext, ConstantsUtil.USER_LEVEL, aliasModel.getData() == null ? "" : aliasModel.getData().getRoleFlag());
+
+                                    if (aliasModel.getData().getSxZlUserExtendList() != null) {
+                                        for (QualityInspectionBean qualityBean : aliasModel.getData().getSxZlUserExtendList()) {
+                                            qualityBean.saveOrUpdate("userExtendId=?", qualityBean.getUserExtendId());
+                                        }
+                                    }
+
                                     List<UserInfo> userList = DataSupport.where("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, ""))).find(UserInfo.class);
                                     if (userList != null && userList.size() > 0) {
                                         UserInfo user = userList.get(0);

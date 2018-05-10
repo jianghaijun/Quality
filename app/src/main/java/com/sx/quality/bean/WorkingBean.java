@@ -28,6 +28,9 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String createUser;       // 拍照者
     private String processState;     // 工序状态
     private String dismissal;        // 驳回原因
+    private long sendTime;
+    private String content;
+    private String createUserName;
     private String ext1;        // 层厚
     private String ext2;        // 层厚
     private String ext3;        // 层厚
@@ -38,6 +41,30 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String ext8;        // 层厚
     private String ext9;        // 层厚
     private String ext10;        // 层厚
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
+    public long getSendTime() {
+        return sendTime;
+    }
+
+    public void setSendTime(long sendTime) {
+        this.sendTime = sendTime;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getExt1() {
         return ext1 == null ? "" : ext1;

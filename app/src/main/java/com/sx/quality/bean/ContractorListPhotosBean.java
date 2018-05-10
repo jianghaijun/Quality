@@ -16,7 +16,7 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
     private String photoId;
     private String photoDesc;
     private String thumbPath;
-    private String createTime;
+    private long createTime;
     private String processId;
     private String photoName;
     private String photoType;
@@ -27,6 +27,24 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
     private String longitude;
     private String latitude;
     private String location;
+    private String roleFlag;
+    private int marginTopSize;
+
+    public String getRoleFlag() {
+        return roleFlag;
+    }
+
+    public void setRoleFlag(String roleFlag) {
+        this.roleFlag = roleFlag;
+    }
+
+    public int getMarginTopSize() {
+        return marginTopSize;
+    }
+
+    public void setMarginTopSize(int marginTopSize) {
+        this.marginTopSize = marginTopSize;
+    }
 
     public String getLongitude() {
         return longitude;
@@ -108,11 +126,11 @@ public class ContractorListPhotosBean extends DataSupport implements Serializabl
         this.thumbPath = thumbPath;
     }
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 

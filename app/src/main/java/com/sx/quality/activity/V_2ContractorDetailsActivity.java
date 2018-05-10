@@ -76,6 +76,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -178,6 +180,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 是否已点击上报按钮
      */
     public static boolean isCanSelect = false;
+
+    private long createTime = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,6 +302,9 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         } else {
             // 查询本地保存的照片
             phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+            if (phoneList != null && phoneList.size() > 0) {
+                createTime =  phoneList.get(phoneList.size() - 1).getCreateTime();
+            }
             setData();
         }
     }
@@ -346,12 +353,15 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     for (ContractorListPhotosBean photo : model.getData()) {
                                         phoneList.add(photo);
                                     }
-
+                                    if (phoneList != null && phoneList.size() > 0) {
+                                        createTime =  phoneList.get(phoneList.size() - 1).getCreateTime();
+                                    }
                                     setData();
                                     LoadingUtils.hideLoading();
                                 }
                             });
                         } else {
+                            LoadingUtils.hideLoading();
                             tokenErr(code, msg);
                         }
                     } catch (JSONException e) {
@@ -360,6 +370,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         e.printStackTrace();
                     }
                 } else {
+                    LoadingUtils.hideLoading();
                     runChildrenThread(getString(R.string.json_error));
                 }
             }
@@ -551,6 +562,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingUtils.hideLoading();
                 runChildrenThread("上报审核失败!");
             }
 
@@ -598,6 +610,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 }
                             });
                         } else {
+                            LoadingUtils.hideLoading();
                             tokenErr(code, msg);
                         }
                     } catch (JSONException e) {
@@ -606,6 +619,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         e.printStackTrace();
                     }
                 } else {
+                    LoadingUtils.hideLoading();
                     runChildrenThread(getString(R.string.json_error));
                 }
             }
@@ -664,7 +678,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
 
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
-                    fileInfoListener.fileInfo("东二环高速公路", rootNodeName, "", "", false);
+                    fileInfoListener.fileInfo("太原东二环高速公路", rootNodeName, "", "", false);
                     // 填写图片信息
                     /*fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();*/
@@ -742,12 +756,19 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setPhotoName(fileUrlName);
             addPhotoBean.setCheckFlag("-1");
             addPhotoBean.setIsNewAdd(1);
+            addPhotoBean.setRoleFlag("1");
             addPhotoBean.setLatitude(String.valueOf(latitude));
             addPhotoBean.setLongitude(String.valueOf(longitude));
             addPhotoBean.setLocation(sLocation);
             addPhotoBean.setUserId((String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
             addPhotoBean.setPhotoType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
-            addPhotoBean.setCreateTime(DataUtils.getCurrentData());
+            // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+            String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+            if (userLevel.equals("2")) {
+                addPhotoBean.setCreateTime(createTime);
+            } else {
+                addPhotoBean.setCreateTime(System.currentTimeMillis());
+            }
             String[] strings = new String[]{engineeringName, rootNodeName};
             addPhotoBean.setIsToBeUpLoad(1);
             addPhotoBean.save();
@@ -768,7 +789,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             // 压缩图片
             bitmap = FileUtil.compressBitmap(bitmap);
             // 在图片上添加水印
-            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[0], params[1], addPhotoBean.getCreateTime());
+            bitmap = ImageUtil.createWaterMaskLeftTop(mContext, bitmap, params[1], addPhotoBean);
             // 保存到SD卡指定文件夹下
             saveBitmapFile(bitmap, fileUrlName);
             // 删除拍摄的照片
@@ -1019,7 +1040,9 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     phone.setCheckFlag("0");
                                 }
 
-                                status = "6";
+                                for (ContractorListPhotosBean phone : submitPictureList) {
+                                    phone.setRoleFlag("2");
+                                }
 
                                 adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
 
@@ -1239,6 +1262,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingUtils.hideLoading();
                 runChildrenThread("操作失败!");
             }
 
@@ -1288,6 +1312,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 }
                             });
                         } else {
+                            LoadingUtils.hideLoading();
                             tokenErr(code, msg);
                         }
                     } catch (JSONException e) {
@@ -1296,6 +1321,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         e.printStackTrace();
                     }
                 } else {
+                    LoadingUtils.hideLoading();
                     runChildrenThread(getString(R.string.json_error));
                 }
             }

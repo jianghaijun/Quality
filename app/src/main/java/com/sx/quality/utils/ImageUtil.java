@@ -7,175 +7,182 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.request.transition.BitmapTransitionFactory;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 import com.sx.quality.activity.R;
+import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.bean.QualityInspectionBean;
 import com.vinaygaba.rubberstamp.RubberStamp;
 import com.vinaygaba.rubberstamp.RubberStampConfig;
 import com.vinaygaba.rubberstamp.RubberStampPosition;
 
+import org.litepal.crud.DataSupport;
 import org.xutils.common.util.DensityUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- * Created by jack on 2017/10/16.
- */
+import cn.hutool.core.date.DateUtil;
 
 public class ImageUtil {
-    // 计算每行应该有多少内容
-    private static List<String> list = new ArrayList<>();
-    // 计算第一行文字个数
-    private static Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-    private static Matcher m;
-    private static String[] str = new String[]{"我"};
-    private static String txt = "";
-    private static int byteLen = 0;
-
     /**
      * 设置水印图片在左上角
      *
-     * @param context
-     * @param src
+     * @param mContext
+     * @param baseMap
+     * @param level
+     * @param photosBean
+     * @return
      */
-    public static Bitmap createWaterMaskLeftTop(Context context, Bitmap src, String level_0, String level_1, String createTime) {
-        return createWaterMaskBitmap(src, context, level_0, level_1, createTime);
+    public static Bitmap createWaterMaskLeftTop(Context mContext, Bitmap baseMap, String level, ContractorListPhotosBean photosBean) {
+        return createWaterMaskBitmap(baseMap, mContext, level, photosBean);
     }
 
     /**
      * 给图片添加水印图和文字
      *
-     * @param src
-     * @param context
-     * @param level_0
-     * @param level_1
-     * @param createTime
+     * @param baseMap
+     * @param mContext
+     * @param level
+     * @param photosBean
      * @return
      */
-    private static Bitmap createWaterMaskBitmap(Bitmap src, Context context, String level_0, String level_1, String createTime) {
-        if (src == null) {
+    private static Bitmap createWaterMaskBitmap(Bitmap baseMap, Context mContext, String level, ContractorListPhotosBean photosBean) {
+        if (baseMap == null) {
             return null;
         }
         // 原图尺寸
-        int width = src.getWidth();
-        int height = src.getHeight();
+        int width = baseMap.getWidth();
+        int height = baseMap.getHeight();
         // 原图与固定尺寸比
         float widthMultiple = Float.valueOf(width) / Float.valueOf(1280);
         float heightMultiple = Float.valueOf(height) / Float.valueOf(960);
         // 水印尺寸
         int watermarkWidth = (int) (350 * widthMultiple);
         int watermarkHeight = (int) (145 * heightMultiple);
-        // 施工部位
-        level_1 = "施工部位：" + level_1;
         // 施工部位所占长度
-        int len = level_1.length();
+        int len = level.length();
+        String qualityUserName = "";
+        if (len > 3) {
+            String rootLevel = level.substring(2, 3);
+            switch (rootLevel) {
+                case "一":
+                    rootLevel = "1";
+                    break;
+                case "二":
+                    rootLevel = "2";
+                    break;
+                case "三":
+                    rootLevel = "3";
+                    break;
+                case "四":
+                    rootLevel = "4";
+                    break;
+                case "五":
+                    rootLevel = "5";
+                    break;
+                case "六":
+                    rootLevel = "6";
+                    break;
+            }
+            List<QualityInspectionBean> qualityBeanList = DataSupport.where("rootLevelId=?", rootLevel).find(QualityInspectionBean.class);
+            if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                qualityUserName = qualityBeanList.get(0).getRealName();
+            }
+        }
         // 计算一个16sp中文所占像素
         Paint pFont = new Paint(Paint.ANTI_ALIAS_FLAG);
         Rect rect = new Rect();
         pFont.setTextSize(16 * widthMultiple);
         pFont.getTextBounds("豆", 0, 1, rect);
-        // 一个字的高度和宽度
-        int oneSizeWidth = computeMaxStringWidth(str, pFont);
         Paint.FontMetrics fm = pFont.getFontMetrics();
         int oneSizeHeight = (int) (fm.descent - fm.ascent);
-        // 去掉左右间距所剩宽度
-        int lenWidth = watermarkWidth - DensityUtil.dip2px(10);
-        list.clear();
-        if (computeMaxStringWidth(new String[]{level_1}, pFont) < lenWidth) {
-            list.add(level_1);
-        } else {
-            byteLen = 0;
-            for (int i = 1; i < len; i++) {
-                if (i == 0) {
-                    txt = level_1.substring(0, i);
-                } else {
-                    txt = level_1.substring(i - 1, i);
-                }
-
-                m = p.matcher(txt);
-
-                if (m.matches()) {
-                    byteLen += oneSizeWidth;
-                } else {
-                    String[] strNum = new String[]{txt};
-                    byteLen += (computeMaxStringWidth(strNum, pFont));
-                }
-                if (byteLen > lenWidth) {
-                    list.add(level_1.substring(0, i - 1));
-                    level_1 = level_1.substring(i - 1);
-                    break;
-                }
-            }
-
-            // 第二行显示文字实际宽度
-            lenWidth = lenWidth - computeMaxStringWidth(new String[]{"施工部位："}, pFont) - DensityUtil.dip2px(5);
-            rows(level_1, lenWidth, oneSizeWidth, pFont);
+        // 工程部位水印文字宽度
+        int waterTextWith = watermarkWidth - computeMaxStringWidth(new String[]{"施工部位："}, pFont) - DensityUtil.dip2px(10);
+        int rows = computeMaxStringWidth(new String[]{level}, pFont) / waterTextWith;
+        if (computeMaxStringWidth(new String[]{level}, pFont) % waterTextWith != 0) {
+            rows += 1;
         }
-
         // 设置水印高度
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         Rect r = new Rect();
         p.setTextSize(20 * widthMultiple);
         p.getTextBounds("豆", 0, 1, r);
         Paint.FontMetrics fm1 = pFont.getFontMetrics();
-        int marginSum = (int) (DensityUtil.dip2px(10 * heightMultiple) + (fm1.descent - fm1.ascent) + (list.size() + 2) * oneSizeHeight);
+        int marginSum = (int) (DensityUtil.dip2px(10 * heightMultiple) + (fm1.descent - fm1.ascent) + (rows + 3) * oneSizeHeight);
         if (marginSum > watermarkHeight) {
             watermarkHeight = marginSum;
         }
-
         // 创建水印画布
         Bitmap watermarkBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(watermarkBitmap);
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         canvas.drawColor(Color.argb(255, 255, 255, 255));
-
         // 将Logo添加到底板中
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.watermark_logo);
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.watermark_logo);
         RubberStampConfig config = new RubberStampConfig.RubberStampConfigBuilder()
                 .base(watermarkBitmap)
                 .rubberStamp(bitmap)
                 .rubberStampPosition(RubberStampPosition.TOP_LEFT)
                 .margin(10, 2)
                 .build();
-        RubberStamp rubberStamp = new RubberStamp(context);
+        RubberStamp rubberStamp = new RubberStamp(mContext);
         watermarkBitmap = rubberStamp.addStamp(config);
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "山西路桥", p, r, (int) (bitmap.getWidth() + DensityUtil.dip2px(10) + 5 * widthMultiple), DensityUtil.dip2px(2 * heightMultiple));
+        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "山西路桥集团", p, r, (int) (bitmap.getWidth() + DensityUtil.dip2px(10) + 5 * widthMultiple), DensityUtil.dip2px(2 * heightMultiple));
         // 距离上面的间距
         int marginTopSize = (int) (DensityUtil.dip2px(5 * heightMultiple) + (fm1.descent - fm1.ascent));
         // 添加文字
-        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "工程名称：" + level_0, pFont, rect, DensityUtil.dip2px(5), marginTopSize);
+        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "工程名称：太原东二环高速公路", pFont, rect, DensityUtil.dip2px(5), marginTopSize);
         // 距离上面间距
         marginTopSize += oneSizeHeight;
         // 循环向图片上添加文字
-        for (int i = 0; i < list.size(); i++) {
-            if (i == 0) {
-                watermarkBitmap = drawTextToLeftTop(watermarkBitmap, list.get(i), pFont, rect, DensityUtil.dip2px(5), marginTopSize);
-            } else {
-                marginTopSize += oneSizeHeight;
-                watermarkBitmap = drawTextToLeftTop(watermarkBitmap, list.get(i), pFont, rect, computeMaxStringWidth(new String[]{"施工部位："}, pFont) + DensityUtil.dip2px(5), marginTopSize);
-            }
+        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "施工部位：", pFont, rect, DensityUtil.dip2px(5), marginTopSize);
+        int mar = rows * oneSizeHeight + marginTopSize;
+        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+        String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
+        String userName = (String) SpUtil.get(mContext, "UserName", "");
+        if (userLevel.equals("0")) {
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场技术员：" + userName + " 时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))), pFont, rect, DensityUtil.dip2px(5), mar);
+            mar += oneSizeHeight;
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "质检负责人：" + qualityUserName, pFont, rect, DensityUtil.dip2px(5), mar);
         }
-        marginTopSize += oneSizeHeight;
-        String userName = (String) SpUtil.get(context, "UserName", "");
-        watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "上传人员：" + userName + " " + createTime, pFont, rect, DensityUtil.dip2px(5), marginTopSize);
+
+        if (userLevel.equals("2")) {
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "质检负责人：" + qualityUserName + " 时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))), pFont, rect, DensityUtil.dip2px(5), mar);
+            mar += oneSizeHeight;
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场监理：" + userName, pFont, rect, DensityUtil.dip2px(5), mar);
+        }
 
         // 创建一个新的和SRC长度宽度一样的位图
         Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         // 将该图片作为画布
         canvas = new Canvas(newBitmap);
         // 在画布 0，0坐标上开始绘制原始图片
-        canvas.drawBitmap(src, 0, 0, null);
+        canvas.drawBitmap(baseMap, 0, 0, null);
         //在画布上绘制水印图片
-        canvas.drawBitmap(watermarkBitmap, src.getWidth() - watermarkBitmap.getWidth(), src.getHeight() - watermarkBitmap.getHeight(), null);
+        canvas.drawBitmap(watermarkBitmap, width - watermarkBitmap.getWidth(), height - watermarkBitmap.getHeight(), null);
+
+        TextPaint mPaint = new TextPaint();
+        // 文字矩阵区域
+        Rect textBounds = new Rect();
+        // 水印的字体大小
+        mPaint.setTextSize(16 * widthMultiple);
+        // 抗锯齿
+        mPaint.setAntiAlias(true);
+        // 水印的区域
+        mPaint.getTextBounds(level, 0, level.length(), textBounds);
+        // 水印的颜色
+        mPaint.setColor(Color.BLACK);
+        StaticLayout layout = new StaticLayout(level, 0, level.length(), mPaint, waterTextWith, Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.5F, true);
+        // 文字开始的坐标
+        float textX = width - watermarkBitmap.getWidth() + computeMaxStringWidth(new String[]{"施工部位："}, pFont) + DensityUtil.dip2px(5);
+        float textY = height - watermarkBitmap.getHeight() + marginTopSize - 5 * heightMultiple;
+        // 画文字
+        canvas.translate(textX, textY);
+        layout.draw(canvas);
         // 保存
         canvas.save(Canvas.ALL_SAVE_FLAG);
         // 存储
@@ -195,7 +202,7 @@ public class ImageUtil {
         return drawTextToBitmap(bitmap, text, paint, paddingLeft, paddingTop + bounds.height());
     }
 
-    //图片上绘制文字
+    // 图片上绘制文字
     private static Bitmap drawTextToBitmap(Bitmap bitmap, String text, Paint paint, int paddingLeft, int paddingTop) {
         Bitmap.Config bitmapConfig = bitmap.getConfig();
 
@@ -206,45 +213,9 @@ public class ImageUtil {
         }
         bitmap = bitmap.copy(bitmapConfig, true);
         Canvas canvas = new Canvas(bitmap);
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         canvas.drawText(text, paddingLeft, paddingTop, paint);
         return bitmap;
-    }
-
-    /**
-     * 截取level_1
-     *
-     * @param level_1
-     * @param lenSize
-     */
-    private static void rows(String level_1, int lenSize, int oneSizeWidth, Paint pFont) {
-        int len = level_1.length();
-        byteLen = 0;
-        for (int i = 0; i < len; i++) {
-            if (i == 0) {
-                txt = level_1.substring(0, i);
-            } else {
-                txt = level_1.substring(i - 1, i);
-            }
-            m = p.matcher(txt);
-            if (m.matches()) {
-                byteLen += oneSizeWidth;
-            } else {
-                String[] strNum = new String[]{txt};
-                byteLen += (computeMaxStringWidth(strNum, pFont));
-            }
-            if (byteLen > lenSize) {
-                list.add(level_1.substring(0, i - 1));
-                level_1 = level_1.substring(i - 1);
-                break;
-            }
-        }
-
-        if (computeMaxStringWidth(new String[]{level_1}, pFont) > lenSize) {
-            rows(level_1, lenSize, oneSizeWidth, pFont);
-        } else {
-            list.add(level_1);
-        }
     }
 
     /**

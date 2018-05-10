@@ -39,13 +39,12 @@ public class AppActivity extends BaseActivity {
         x.view().inject(hold, layoutApp);
     }
 
-    public void setDate(List<String> objList, final WorkingBean data) {
+    public void setDate(List<Integer> objList, final WorkingBean data) {
         //设置banner样式
         hold.banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
         //设置图片加载器
         hold.banner.setImageLoader(new GlideImageLoader());
         List<String> strings = new ArrayList<>();
-        strings.add("");
         strings.add("");
         strings.add("");
         hold.banner.setBannerTitles(strings);

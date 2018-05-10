@@ -131,4 +131,5 @@
     <string name="elevation">现标高</string>
     <string name="PositionOfPileNumber">桩号位置</string>
     <string name="please_input_remark">请输入</string>
+    <string name="no_msg">暂无消息！</string>
 </resources>

@@ -75,7 +75,8 @@ public class WorkingPopupWindow extends PopupWindow {
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mView = inflater.inflate(R.layout.popwindow_working, null);
         this.setContentView(mView);
-        this.setWidth((int) (DensityUtil.getScreenWidth() * 0.8));
+        int width = (int) SpUtil.get(mActivity, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenWidth());
+        this.setWidth((int) (width * 0.8));
         this.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
         this.setTouchable(true);
         this.setFocusable(true);
@@ -85,7 +86,7 @@ public class WorkingPopupWindow extends PopupWindow {
         this.setBackgroundDrawable(background);
         this.draw();
 
-        TextView txtName = (TextView) mView.findViewById(R.id.txtName);
+        TextView txtName = mView.findViewById(R.id.txtName);
         String type = (String) SpUtil.get(mActivity, ConstantsUtil.USER_TYPE, "");
         if (type.equals("1")) {
             txtName.setText("隐患内容");
@@ -96,7 +97,6 @@ public class WorkingPopupWindow extends PopupWindow {
      * 获取工序列表
      */
     private void getData() {
-        LoadingUtils.showLoading(mActivity);
         JSONObject obj = new JSONObject();
         try {
             obj.put("levelId", levelId);
@@ -104,6 +104,7 @@ public class WorkingPopupWindow extends PopupWindow {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, obj.toString());
+        LoadingUtils.showLoading(mActivity);
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.PROCESS_LIST)
                 .addHeader("token", (String) SpUtil.get(mActivity, ConstantsUtil.TOKEN, ""))

@@ -114,13 +114,21 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
                     holder.txtStatus.setText("初审驳回");
                     break;
                 case "4":
-                    holder.txtStatus.setText("自检完成");
+                    if (!phoneListBean.get(position).getRoleFlag().equals("2")) {
+                        holder.txtStatus.setText("自检完成");
+                    } else {
+                        holder.txtStatus.setText("已上传");
+                    }
                     break;
                 case "5":
                     holder.txtStatus.setText("复审驳回");
                     break;
                 case "6":
-                    holder.txtStatus.setText("抽检完成");
+                    if (!phoneListBean.get(position).getRoleFlag().equals("2")) {
+                        holder.txtStatus.setText("自检完成");
+                    } else {
+                        holder.txtStatus.setText("抽检完成");
+                    }
                     break;
             }
         }

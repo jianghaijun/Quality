@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,13 +19,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
-import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.bean.UserInfo;
-import com.sx.quality.dialog.DownloadApkDialog;
-import com.sx.quality.dialog.UpLoadPhotosDialog;
+import com.sx.quality.bean.WorkingBean;
 import com.sx.quality.listener.ChoiceListener;
-import com.sx.quality.model.ContractorDetailsModel;
-import com.sx.quality.model.LoginModel;
 import com.sx.quality.model.WorkingModel;
 import com.sx.quality.model.WorkingNewModel;
 import com.sx.quality.utils.ConstantsUtil;
@@ -41,6 +36,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
+import org.xutils.common.util.DensityUtil;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -73,10 +69,11 @@ public class V_2MainActivity extends BaseActivity {
     private ImageView imgViewUserAvatar;
 
     private Context mContext;
-    private List<String> objList;
+    private List<Integer> objList;
 
     // 子布局
     private View layoutMsg, layoutApp, layoutProject, layoutFriends, layoutMe;
+    private MsgActivity msgActivity;
     private AppActivity appActivity;
     private MySettingActivity mySettingActivity;
     // View列表
@@ -94,7 +91,7 @@ public class V_2MainActivity extends BaseActivity {
 
         //将要分页显示的View装入数组中
         LayoutInflater viewLI = LayoutInflater.from(this);
-        layoutMsg = viewLI.inflate(R.layout.layout_empty, null);
+        layoutMsg = viewLI.inflate(R.layout.layout_msg, null);
         layoutApp = viewLI.inflate(R.layout.activity_app, null);
         layoutProject = viewLI.inflate(R.layout.layout_empty, null);
         layoutFriends = viewLI.inflate(R.layout.layout_empty, null);
@@ -115,15 +112,19 @@ public class V_2MainActivity extends BaseActivity {
             Glide.with(this).load(userHead).apply(options).into(imgViewUserAvatar);
         }
 
+        // 获取屏幕高度
+        SpUtil.put(mContext, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenHeight());
+
+        // 消息
+        msgActivity = new MsgActivity(mContext, layoutMsg);
         // 应用
         appActivity = new AppActivity(mContext, layoutApp);
         // 我的
         mySettingActivity = new MySettingActivity(mContext, layoutMe, choiceListener);
 
         objList = new ArrayList<>();
-        objList.add("http://img8.zol.com.cn/bbs/upload/21223/21222249.jpg");
-        objList.add("http://img8.zol.com.cn/bbs/upload/21223/21222247.jpg");
-        objList.add("http://img8.zol.com.cn/bbs/upload/21223/21222236.jpg");
+        objList.add(R.drawable.sowing_map_one);
+        objList.add(R.drawable.sowing_map_two);
 
         //每个页面的view数据
         views = new ArrayList<>();
@@ -269,6 +270,7 @@ public class V_2MainActivity extends BaseActivity {
 
     /**
      * 设置背景
+     *
      * @param option
      */
     private void setStates(int option) {
@@ -303,6 +305,11 @@ public class V_2MainActivity extends BaseActivity {
                 top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
                 btnMsg.setCompoundDrawables(null, top, null, null);
                 btnMsg.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                    getMsgData();
+                } else {
+                    msgActivity.setDate(new ArrayList<WorkingBean>());
+                }
                 break;
             case 1:
                 top = ContextCompat.getDrawable(mContext, R.drawable.project_select);
@@ -362,13 +369,13 @@ public class V_2MainActivity extends BaseActivity {
     @TargetApi(23)
     private boolean addPermission(ArrayList<String> permissionsList, String permission) {
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            if (shouldShowRequestPermissionRationale(permission)){
+            if (shouldShowRequestPermissionRationale(permission)) {
                 return true;
-            }else{
+            } else {
                 permissionsList.add(permission);
                 return false;
             }
-        }else{
+        } else {
             return true;
         }
     }
@@ -400,6 +407,7 @@ public class V_2MainActivity extends BaseActivity {
 
     /**
      * 上传头像
+     *
      * @param path
      */
     private void uploadIcon(String path) {
@@ -451,7 +459,7 @@ public class V_2MainActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(final Call call,final Exception e, final int id) {
+                    public void onError(final Call call, final Exception e, final int id) {
                         isUploadHead = false;
                         runChildrenThread("头像上传失败！");
                     }
@@ -465,6 +473,60 @@ public class V_2MainActivity extends BaseActivity {
                         super.inProgress(progress, total, id);
                     }
                 });
+    }
+
+    /**
+     * 获取消息列表
+     */
+    private void getMsgData() {
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, "");
+        Request request = new Request.Builder()
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_TIMER_TASK_LIST)
+                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
+                .post(requestBody)
+                .build();
+        ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //runChildrenThread(getString(R.string.server_exception));
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonData = response.body().string().toString();
+                if (JsonUtils.isGoodJson(jsonData)) {
+                    try {
+                        JSONObject obj = new JSONObject(jsonData);
+                        boolean resultFlag = obj.getBoolean("success");
+                        final String msg = obj.getString("message");
+                        final String code = obj.getString("code");
+                        if (resultFlag) {
+                            Gson gson = new Gson();
+                            final WorkingModel model = gson.fromJson(jsonData, WorkingModel.class);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    msgActivity.setDate(model.getData());
+                                }
+                            });
+                        } else {
+                            //LoadingUtils.hideLoading();
+                            tokenErr(code, msg);
+                        }
+                    } catch (JSONException e) {
+                        //runChildrenThread(getString(R.string.data_error));
+                        e.printStackTrace();
+                    }
+                } else {
+                    //runChildrenThread(getString(R.string.json_error));
+                }
+            }
+        });
     }
 
     /**
@@ -482,6 +544,7 @@ public class V_2MainActivity extends BaseActivity {
 
     /**
      * Token过期
+     *
      * @param code
      * @param msg
      */
@@ -509,13 +572,19 @@ public class V_2MainActivity extends BaseActivity {
 
     /**
      * 点击事件
+     *
      * @param v
      */
-    @Event({ R.id.btnMsg, R.id.btnProject, R.id.btnApplication, R.id.btnFriends, R.id.btnMe })
+    @Event({R.id.btnMsg, R.id.btnProject, R.id.btnApplication, R.id.btnFriends, R.id.btnMe})
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnMsg:
                 vpMain.setCurrentItem(0);
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                    getMsgData();
+                } else {
+                    msgActivity.setDate(new ArrayList<WorkingBean>());
+                }
                 break;
             case R.id.btnProject:
                 vpMain.setCurrentItem(1);
