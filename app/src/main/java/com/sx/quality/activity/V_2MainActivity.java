@@ -118,7 +118,7 @@ public class V_2MainActivity extends BaseActivity {
         // 消息
         msgActivity = new MsgActivity(mContext, layoutMsg);
         // 应用
-        appActivity = new AppActivity(mContext, layoutApp);
+        appActivity = new AppActivity(this, layoutApp);
         // 我的
         mySettingActivity = new MySettingActivity(mContext, layoutMe, choiceListener);
 

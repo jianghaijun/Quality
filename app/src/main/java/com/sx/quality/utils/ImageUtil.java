@@ -101,10 +101,32 @@ public class ImageUtil {
         int oneSizeHeight = (int) (fm.descent - fm.ascent);
         // 工程部位水印文字宽度
         int waterTextWith = watermarkWidth - computeMaxStringWidth(new String[]{"施工部位："}, pFont) - DensityUtil.dip2px(10);
-        int rows = computeMaxStringWidth(new String[]{level}, pFont) / waterTextWith;
-        if (computeMaxStringWidth(new String[]{level}, pFont) % waterTextWith != 0) {
-            rows += 1;
-        }
+        TextPaint mPaint = new TextPaint();
+        // 文字矩阵区域
+        Rect textBounds = new Rect();
+        // 水印的字体大小
+        mPaint.setTextSize(16 * widthMultiple);
+        // 抗锯齿
+        mPaint.setAntiAlias(true);
+        // 水印的区域
+        mPaint.getTextBounds(level, 0, level.length(), textBounds);
+        // 水印的颜色
+        mPaint.setColor(Color.BLACK);
+
+        // 计算工程部位所占行数
+        Bitmap gcbwBitmap = Bitmap.createBitmap(watermarkWidth, watermarkHeight, Bitmap.Config.ARGB_8888);
+        Canvas can = new Canvas(gcbwBitmap);
+        can.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+        can.drawColor(Color.argb(255, 255, 255, 255));
+        StaticLayout gcbwLayout = new StaticLayout(level, 0, level.length(), mPaint, waterTextWith, Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.5F, true);
+        // 文字开始的坐标
+        float x = width - gcbwBitmap.getWidth() + computeMaxStringWidth(new String[]{"施工部位："}, pFont) + DensityUtil.dip2px(5);
+        float y = height - 0;
+        // 画文字
+        can.translate(x, y);
+        gcbwLayout.draw(can);
+
+        int rows = gcbwLayout.getLineCount();
         // 设置水印高度
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         Rect r = new Rect();
@@ -165,17 +187,6 @@ public class ImageUtil {
         //在画布上绘制水印图片
         canvas.drawBitmap(watermarkBitmap, width - watermarkBitmap.getWidth(), height - watermarkBitmap.getHeight(), null);
 
-        TextPaint mPaint = new TextPaint();
-        // 文字矩阵区域
-        Rect textBounds = new Rect();
-        // 水印的字体大小
-        mPaint.setTextSize(16 * widthMultiple);
-        // 抗锯齿
-        mPaint.setAntiAlias(true);
-        // 水印的区域
-        mPaint.getTextBounds(level, 0, level.length(), textBounds);
-        // 水印的颜色
-        mPaint.setColor(Color.BLACK);
         StaticLayout layout = new StaticLayout(level, 0, level.length(), mPaint, waterTextWith, Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.5F, true);
         // 文字开始的坐标
         float textX = width - watermarkBitmap.getWidth() + computeMaxStringWidth(new String[]{"施工部位："}, pFont) + DensityUtil.dip2px(5);

@@ -211,8 +211,8 @@ public class MySettingActivity extends BaseActivity {
                     Gson gson = new Gson();
                     final CheckVersionModel model = gson.fromJson(data, CheckVersionModel.class);
                     if (model.isSuccess()) {
-                        float serverVersion = Float.valueOf(model.getVersion());
-                        if (serverVersion > Float.valueOf(AppInfoUtil.getVersion(mContext))) {
+                        int version = AppInfoUtil.compareVersion(model.getVersion(), AppInfoUtil.getVersion(mContext));
+                        if (version == 1) {
                             // 发现新版本
                             mActivity.runOnUiThread(new Runnable() {
                                 @Override
