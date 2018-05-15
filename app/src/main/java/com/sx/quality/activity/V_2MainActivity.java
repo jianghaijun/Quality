@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -13,8 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -22,7 +21,6 @@ import com.google.gson.Gson;
 import com.sx.quality.bean.UserInfo;
 import com.sx.quality.bean.WorkingBean;
 import com.sx.quality.listener.ChoiceListener;
-import com.sx.quality.model.WorkingModel;
 import com.sx.quality.model.WorkingNewModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
@@ -55,16 +53,25 @@ import okhttp3.Response;
 public class V_2MainActivity extends BaseActivity {
     @ViewInject(R.id.vpMain)
     private ViewPager vpMain;
-    @ViewInject(R.id.btnMsg)
-    private Button btnMsg;
-    @ViewInject(R.id.btnApplication)
-    private Button btnApplication;
-    @ViewInject(R.id.btnProject)
-    private Button btnProject;
-    @ViewInject(R.id.btnFriends)
-    private Button btnFriends;
-    @ViewInject(R.id.btnMe)
-    private Button btnMe;
+    @ViewInject(R.id.imgMsg)
+    private ImageView imgMsg;
+    @ViewInject(R.id.txtMsg)
+    private TextView txtMsg;
+
+    @ViewInject(R.id.imgApplication)
+    private ImageView imgApplication;
+    @ViewInject(R.id.txtApplication)
+    private TextView txtApplication;
+
+    @ViewInject(R.id.imgFriends)
+    private ImageView imgFriends;
+    @ViewInject(R.id.txtFriends)
+    private TextView txtFriends;
+
+    @ViewInject(R.id.imgMe)
+    private ImageView imgMe;
+    @ViewInject(R.id.txtMe)
+    private TextView txtMe;
 
     private ImageView imgViewUserAvatar;
 
@@ -72,14 +79,15 @@ public class V_2MainActivity extends BaseActivity {
     private List<Integer> objList;
 
     // 子布局
-    private View layoutMsg, layoutApp, layoutProject, layoutFriends, layoutMe;
-    private MsgActivity msgActivity;
+    private View layoutMsg, layoutApp,  layoutFriends, layoutMe;
+    private MsgMainActivity msgMainActivity;
     private AppActivity appActivity;
     private MySettingActivity mySettingActivity;
     // View列表
     private ArrayList<View> views;
 
     private boolean isUploadHead = false;
+    private WorkingBean data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +99,8 @@ public class V_2MainActivity extends BaseActivity {
 
         //将要分页显示的View装入数组中
         LayoutInflater viewLI = LayoutInflater.from(this);
-        layoutMsg = viewLI.inflate(R.layout.layout_msg, null);
+        layoutMsg = viewLI.inflate(R.layout.layout_msg_main, null);
         layoutApp = viewLI.inflate(R.layout.activity_app, null);
-        layoutProject = viewLI.inflate(R.layout.layout_empty, null);
         layoutFriends = viewLI.inflate(R.layout.layout_empty, null);
         layoutMe = viewLI.inflate(R.layout.activity_my_setting, null);
         // 用户头像
@@ -116,7 +123,7 @@ public class V_2MainActivity extends BaseActivity {
         SpUtil.put(mContext, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenHeight());
 
         // 消息
-        msgActivity = new MsgActivity(mContext, layoutMsg);
+        msgMainActivity = new MsgMainActivity(mContext, layoutMsg);
         // 应用
         appActivity = new AppActivity(this, layoutApp);
         // 我的
@@ -129,14 +136,13 @@ public class V_2MainActivity extends BaseActivity {
         //每个页面的view数据
         views = new ArrayList<>();
         views.add(layoutMsg);
-        views.add(layoutProject);
         views.add(layoutApp);
         views.add(layoutFriends);
         views.add(layoutMe);
 
         vpMain.setOnPageChangeListener(new MyOnPageChangeListener());
         vpMain.setAdapter(mPagerAdapter);
-        vpMain.setCurrentItem(2);
+        vpMain.setCurrentItem(1);
     }
 
     /**
@@ -156,7 +162,6 @@ public class V_2MainActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LoadingUtils.hideLoading();
                         runChildrenThread(getString(R.string.server_exception));
                     }
                 });
@@ -179,6 +184,9 @@ public class V_2MainActivity extends BaseActivity {
                                 public void run() {
                                     LoadingUtils.hideLoading();
                                     appActivity.setDate(objList, model.getData());
+                                    mySettingActivity.checkVersion();
+                                    data = model.getData();
+                                    msgMainActivity.setDate(model.getData());
                                 }
                             });
                         } else {
@@ -186,12 +194,10 @@ public class V_2MainActivity extends BaseActivity {
                             tokenErr(code, msg);
                         }
                     } catch (JSONException e) {
-                        LoadingUtils.hideLoading();
                         runChildrenThread(getString(R.string.data_error));
                         e.printStackTrace();
                     }
                 } else {
-                    LoadingUtils.hideLoading();
                     runChildrenThread(getString(R.string.json_error));
                 }
             }
@@ -218,6 +224,8 @@ public class V_2MainActivity extends BaseActivity {
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             if (!isUploadHead) {
                 getData();
+            } else {
+                mySettingActivity.checkVersion();
             }
         } else {
             appActivity.setDate(objList, null);
@@ -274,67 +282,37 @@ public class V_2MainActivity extends BaseActivity {
      * @param option
      */
     private void setStates(int option) {
-        Drawable top = ContextCompat.getDrawable(mContext, R.drawable.msg_un_select);
-        top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-        btnMsg.setCompoundDrawables(null, top, null, null);
-        btnMsg.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_color));
+        imgMsg.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.msg_un_select));
+        txtMsg.setTextColor(ContextCompat.getColor(mContext, R.color.tab_color));
 
-        top = ContextCompat.getDrawable(mContext, R.drawable.application_un_select);
-        top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-        btnApplication.setCompoundDrawables(null, top, null, null);
-        btnApplication.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_color));
+        imgApplication.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.application_un_select));
+        txtApplication.setTextColor(ContextCompat.getColor(mContext, R.color.tab_color));
 
-        top = ContextCompat.getDrawable(mContext, R.drawable.project_un_select);
-        top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-        btnProject.setCompoundDrawables(null, top, null, null);
-        btnProject.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_color));
+        imgFriends.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.friend_un_select));
+        txtFriends.setTextColor(ContextCompat.getColor(mContext, R.color.tab_color));
 
-        top = ContextCompat.getDrawable(mContext, R.drawable.friend_un_select);
-        top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-        btnFriends.setCompoundDrawables(null, top, null, null);
-        btnFriends.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_color));
-
-        top = ContextCompat.getDrawable(mContext, R.drawable.me_un_select);
-        top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-        btnMe.setCompoundDrawables(null, top, null, null);
-        btnMe.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_color));
+        imgMe.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.me_un_select));
+        txtMe.setTextColor(ContextCompat.getColor(mContext, R.color.tab_color));
 
         switch (option) {
             case 0:
-                top = ContextCompat.getDrawable(mContext, R.drawable.msg_select);
-                top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-                btnMsg.setCompoundDrawables(null, top, null, null);
-                btnMsg.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
-                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
-                    getMsgData();
-                } else {
-                    msgActivity.setDate(new ArrayList<WorkingBean>());
-                }
+                imgMsg.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.msg_select));
+                txtMsg.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                msgMainActivity.setDate(data);
                 break;
             case 1:
-                top = ContextCompat.getDrawable(mContext, R.drawable.project_select);
-                top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-                btnProject.setCompoundDrawables(null, top, null, null);
-                btnProject.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                appActivity.startBanner();
+                imgApplication.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.application_select));
+                txtApplication.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
                 break;
             case 2:
-                appActivity.startBanner();
-                top = ContextCompat.getDrawable(mContext, R.drawable.application_select);
-                top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-                btnApplication.setCompoundDrawables(null, top, null, null);
-                btnApplication.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                imgFriends.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.friend_select));
+                txtFriends.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
                 break;
             case 3:
-                top = ContextCompat.getDrawable(mContext, R.drawable.friend_select);
-                top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-                btnFriends.setCompoundDrawables(null, top, null, null);
-                btnFriends.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
-                break;
-            case 4:
-                top = ContextCompat.getDrawable(mContext, R.drawable.me_select);
-                top.setBounds(0, 0, top.getMinimumWidth(), top.getMinimumHeight());
-                btnMe.setCompoundDrawables(null, top, null, null);
-                btnMe.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                imgMe.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.me_select));
+                txtMe.setTextColor(ContextCompat.getColor(mContext, R.color.v_2_tab_select_color));
+                mySettingActivity.setVersion();
                 break;
         }
     }
@@ -476,60 +454,6 @@ public class V_2MainActivity extends BaseActivity {
     }
 
     /**
-     * 获取消息列表
-     */
-    private void getMsgData() {
-        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, "");
-        Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_TIMER_TASK_LIST)
-                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
-                .post(requestBody)
-                .build();
-        ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //runChildrenThread(getString(R.string.server_exception));
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonData = response.body().string().toString();
-                if (JsonUtils.isGoodJson(jsonData)) {
-                    try {
-                        JSONObject obj = new JSONObject(jsonData);
-                        boolean resultFlag = obj.getBoolean("success");
-                        final String msg = obj.getString("message");
-                        final String code = obj.getString("code");
-                        if (resultFlag) {
-                            Gson gson = new Gson();
-                            final WorkingModel model = gson.fromJson(jsonData, WorkingModel.class);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    msgActivity.setDate(model.getData());
-                                }
-                            });
-                        } else {
-                            //LoadingUtils.hideLoading();
-                            tokenErr(code, msg);
-                        }
-                    } catch (JSONException e) {
-                        //runChildrenThread(getString(R.string.data_error));
-                        e.printStackTrace();
-                    }
-                } else {
-                    //runChildrenThread(getString(R.string.json_error));
-                }
-            }
-        });
-    }
-
-    /**
      * 子线程运行
      */
     private void runChildrenThread(final String msg) {
@@ -575,29 +499,24 @@ public class V_2MainActivity extends BaseActivity {
      *
      * @param v
      */
-    @Event({R.id.btnMsg, R.id.btnProject, R.id.btnApplication, R.id.btnFriends, R.id.btnMe})
+    @Event({R.id.llMsg, /*R.id.btnProject,*/ R.id.llApplication, R.id.llFriends, R.id.llMe})
     private void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnMsg:
+            case R.id.llMsg:
                 vpMain.setCurrentItem(0);
-                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
-                    getMsgData();
-                } else {
-                    msgActivity.setDate(new ArrayList<WorkingBean>());
-                }
                 break;
-            case R.id.btnProject:
+            /*case R.id.btnProject:
+                vpMain.setCurrentItem(1);
+                break;*/
+            case R.id.llApplication:
+                appActivity.startBanner();
                 vpMain.setCurrentItem(1);
                 break;
-            case R.id.btnApplication:
-                appActivity.startBanner();
+            case R.id.llFriends:
                 vpMain.setCurrentItem(2);
                 break;
-            case R.id.btnFriends:
+            case R.id.llMe:
                 vpMain.setCurrentItem(3);
-                break;
-            case R.id.btnMe:
-                vpMain.setCurrentItem(4);
                 break;
             default:
                 break;

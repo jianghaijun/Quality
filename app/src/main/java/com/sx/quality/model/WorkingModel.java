@@ -12,7 +12,16 @@ public class WorkingModel {
     private boolean success;
     private String message;
     private int code;
+    private int totalNumber;
     private List<WorkingBean> data;
+
+    public int getTotalNumber() {
+        return totalNumber;
+    }
+
+    public void setTotalNumber(int totalNumber) {
+        this.totalNumber = totalNumber;
+    }
 
     public boolean isSuccess() {
         return success;

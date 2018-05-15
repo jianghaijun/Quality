@@ -117,6 +117,7 @@ public class LoginActivity extends BaseActivity {
                                 SpUtil.put(mContext, ConstantsUtil.USER_ID, user.getUserId());
                                 SpUtil.put(mContext, ConstantsUtil.TOKEN, user.getToken());
                                 SpUtil.put(mContext, ConstantsUtil.USER_HEAD, user.getImageUrl() == null ? "" : user.getImageUrl().toString());
+                                SpUtil.put(mContext, ConstantsUtil.IS_LOGIN_SUCCESSFUL, true);
                                 startActivity(new Intent(mContext, V_2MainActivity.class));
                                 LoginActivity.this.finish();
                                 edtUserPassWord.setText("");

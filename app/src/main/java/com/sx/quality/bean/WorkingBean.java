@@ -30,7 +30,11 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String dismissal;        // 驳回原因
     private long sendTime;
     private String content;
+    private String taskId;
+    private String personalNum;
+    private String systemNum;
     private String createUserName;
+    private String isRead;
     private String ext1;        // 层厚
     private String ext2;        // 层厚
     private String ext3;        // 层厚
@@ -41,6 +45,38 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String ext8;        // 层厚
     private String ext9;        // 层厚
     private String ext10;        // 层厚
+
+    public String getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(String isRead) {
+        this.isRead = isRead;
+    }
+
+    public String getPersonalNum() {
+        return personalNum;
+    }
+
+    public void setPersonalNum(String personalNum) {
+        this.personalNum = personalNum;
+    }
+
+    public String getSystemNum() {
+        return systemNum;
+    }
+
+    public void setSystemNum(String systemNum) {
+        this.systemNum = systemNum;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
     public String getCreateUserName() {
         return createUserName;

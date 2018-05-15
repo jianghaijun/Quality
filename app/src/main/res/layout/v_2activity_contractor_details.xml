@@ -56,12 +56,25 @@
                 android:visibility="gone" />
 
             <Button
-                android:id="@+id/btnMeasuredRecord"
+                android:id="@+id/btnLocalPreservation"
                 android:layout_width="@dimen/sevenTy_dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/five_dp"
                 android:layout_toLeftOf="@+id/btnLocalSave"
+                android:background="@drawable/btn_blue"
+                android:text="@string/localPreservation"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnMeasuredRecord"
+                android:layout_width="@dimen/sevenTy_dp"
+                android:layout_height="@dimen/thirty"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/five_dp"
+                android:layout_toLeftOf="@+id/btnLocalPreservation"
                 android:background="@drawable/btn_blue"
                 android:text="@string/measured_record"
                 android:textColor="@color/white"
@@ -723,22 +736,45 @@
                         android:layout_toRightOf="@+id/photos"
                         android:background="@drawable/search_bg">
 
-                        <ImageButton
-                            android:id="@+id/imgBtnAdd"
-                            android:layout_width="@dimen/eighty_dp"
-                            android:layout_height="@dimen/eighty_dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/ten_dp"
-                            android:background="@drawable/add" />
+                        <RelativeLayout
+                            android:id="@+id/rlButtons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true">
+
+                            <Button
+                                android:id="@+id/imgBtnPhotos"
+                                android:layout_width="@dimen/eighty_dp"
+                                android:layout_height="@dimen/eighty_dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="@dimen/ten_dp"
+                                android:background="@drawable/search_bg"
+                                android:drawableTop="@drawable/files"
+                                android:paddingBottom="@dimen/five_dp"
+                                android:paddingTop="@dimen/five_dp"
+                                android:text="@string/temporary_photo"
+                                android:textSize="@dimen/fourteen_sp"
+                                android:visibility="gone" />
+
+                            <ImageButton
+                                android:id="@+id/imgBtnAdd"
+                                android:layout_width="@dimen/eighty_dp"
+                                android:layout_height="@dimen/eighty_dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="@dimen/ten_dp"
+                                android:layout_toRightOf="@+id/imgBtnPhotos"
+                                android:background="@drawable/add" />
+                        </RelativeLayout>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rvContractorDetails"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="@dimen/ten_dp"
-                            android:layout_marginRight="@dimen/five_dp"
-                            android:layout_toLeftOf="@+id/imgBtnAdd"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginEnd="6dp"
+                            android:layout_marginRight="6dp"
+                            android:layout_toLeftOf="@+id/rlButtons"
+                            android:layout_toStartOf="@+id/rlButtons"
                             android:background="@null"
                             android:scrollbars="none" />
                     </RelativeLayout>

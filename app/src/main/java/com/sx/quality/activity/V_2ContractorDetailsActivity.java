@@ -50,7 +50,6 @@ import com.sx.quality.model.PictureModel;
 import com.sx.quality.service.LocationService;
 import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
-import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
 import com.sx.quality.utils.JsonUtils;
@@ -76,8 +75,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -122,6 +119,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     private Button btnMeasuredRecord;
     @ViewInject(R.id.imgBtnAdd)
     private ImageButton imgBtnAdd;
+    @ViewInject(R.id.btnLocalPreservation)
+    private Button btnLocalPreservation;
     @ViewInject(R.id.rlRejectPhotos)
     private RelativeLayout rlRejectPhotos;
     @ViewInject(R.id.rlFixedPoint)
@@ -155,11 +154,14 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     private EditText edtPositionOfPileNumber5;
     @ViewInject(R.id.edtElevation5)
     private EditText edtElevation5;
+    @ViewInject(R.id.imgBtnPhotos)
+    private Button imgBtnPhotos;
     /*图片信息*/
     @ViewInject(R.id.rvContractorDetails)
     private RecyclerView rvContractorDetails;
     private V_2ContractorDetailsAdapter adapter;
     private List<ContractorListPhotosBean> phoneList = new ArrayList<>();
+    private List<ContractorListPhotosBean> localPhotoList = new ArrayList<>();
     /*定位信息*/
     private LocationService locationService;
     private final int SDK_PERMISSION_REQUEST = 127;
@@ -180,8 +182,6 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 是否已点击上报按钮
      */
     public static boolean isCanSelect = false;
-
-    private long createTime = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,7 +228,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             btnSavePhoto.setText("保存层厚\n定点位置");
         }
 
-        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
+        // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
         String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
         switch (userLevel) {
             // 1:质检部长(驳回--提交)
@@ -253,6 +253,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 2:监理(驳回--完成)
             case "2":
+                btnLocalPreservation.setVisibility(View.VISIBLE);
                 // 监理--->显示驳回按钮和完成按钮
                 btnLocalSave.setVisibility(View.VISIBLE);
                 if (rlFixedPoint.getVisibility() != View.VISIBLE) {
@@ -260,11 +261,12 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     btnLocalSave.setLayoutParams(params);
                 }
+
                 // 实测记录
                 if (rlFixedPoint.getVisibility() != View.VISIBLE) {
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
                     params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    params.setMargins(0, 0, DensityUtil.dip2px(60), 0);
+                    params.setMargins(0, 0, DensityUtil.dip2px(135), 0);
                     btnMeasuredRecord.setLayoutParams(params);
                 }
                 btnRight.setVisibility(View.VISIBLE);
@@ -272,6 +274,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 3:领导(查看)
             case "3":
+            case "21":
+            case "22":
                 // 领导-->隐藏拍照功能
                 imgBtnAdd.setVisibility(View.GONE);
                 // 实测记录按钮
@@ -283,10 +287,19 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 其它(提交审核)
             default:
+                btnLocalPreservation.setVisibility(View.VISIBLE);
                 // 班组，施工人员--->显示审核按钮
+                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalPreservation.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    btnLocalPreservation.setLayoutParams(params);
+                }
+
+                // 实测记录
                 if (rlFixedPoint.getVisibility() != View.VISIBLE) {
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
                     params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.setMargins(0, 0, DensityUtil.dip2px(80), 0);
                     btnMeasuredRecord.setLayoutParams(params);
                 }
                 btnRight.setVisibility(View.VISIBLE);
@@ -302,8 +315,9 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         } else {
             // 查询本地保存的照片
             phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+            localPhotoList = phoneList;
             if (phoneList != null && phoneList.size() > 0) {
-                createTime =  phoneList.get(phoneList.size() - 1).getCreateTime();
+                imgBtnPhotos.setVisibility(View.VISIBLE);
             }
             setData();
         }
@@ -350,11 +364,14 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 public void run() {
                                     // 查询本地保存的照片
                                     phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+                                    localPhotoList = phoneList;
+                                    // 本地照片
+                                    if (phoneList != null && phoneList.size() > 0) {
+                                        imgBtnPhotos.setVisibility(View.VISIBLE);
+                                    }
+
                                     for (ContractorListPhotosBean photo : model.getData()) {
                                         phoneList.add(photo);
-                                    }
-                                    if (phoneList != null && phoneList.size() > 0) {
-                                        createTime =  phoneList.get(phoneList.size() - 1).getCreateTime();
                                     }
                                     setData();
                                     LoadingUtils.hideLoading();
@@ -762,18 +779,14 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             addPhotoBean.setLocation(sLocation);
             addPhotoBean.setUserId((String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""));
             addPhotoBean.setPhotoType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
-            // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-            String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
-            if (userLevel.equals("2")) {
-                addPhotoBean.setCreateTime(createTime);
-            } else {
-                addPhotoBean.setCreateTime(System.currentTimeMillis());
-            }
+            addPhotoBean.setCreateTime(System.currentTimeMillis());
             String[] strings = new String[]{engineeringName, rootNodeName};
             addPhotoBean.setIsToBeUpLoad(1);
             addPhotoBean.save();
             // 添加图片按钮
             phoneList.add(0, addPhotoBean);
+            // 显示本地保存照片文件夹
+            imgBtnPhotos.setVisibility(View.VISIBLE);
             // 异步将图片存储到SD卡指定文件夹下
             new V_2ContractorDetailsActivity.StorageTask().execute(strings);
         }
@@ -1032,6 +1045,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     @Override
                     public void returnTrueOrFalse(boolean trueOrFalse) {
                         if (trueOrFalse) {
+                            //localPhotoList.clear();
+                            btnLocalPreservation.setVisibility(View.GONE);
                             if (isFinish) {
                                 // 完成工序接口
                                 for (ContractorListPhotosBean phone : phoneList) {
@@ -1464,7 +1479,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
     }
 
-    @Event({R.id.imgBtnLeft, R.id.btnRight, R.id.btnRightOne, R.id.imgBtnAdd, R.id.btnMeasuredRecord, R.id.btnLocalSave, R.id.btnSavePhoto})
+    @Event({R.id.imgBtnLeft, R.id.btnRight, R.id.btnRightOne, R.id.imgBtnAdd, R.id.btnMeasuredRecord, R.id.btnLocalSave, R.id.btnSavePhoto, R.id.imgBtnPhotos, R.id.btnLocalPreservation })
     private void onClick(View v) {
         String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
         String s;
@@ -1578,6 +1593,28 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         }
                     }, "提示", "当前无可用网络，是否先保存至本地？", "否", "是");
                     promptDialog.show();
+                }
+                break;
+            // 本地保存文件夹
+            case R.id.imgBtnPhotos:
+                localPhotoList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+                // 图片浏览
+                ArrayList<String> urls = new ArrayList<>();
+                int len = localPhotoList.size();
+                for (int i = 0; i < len; i++) {
+                    String fileUrl = localPhotoList.get(i).getPhotoAddress();
+                    urls.add(fileUrl);
+                }
+                Intent intent = new Intent(mContext, ShowPhotosActivity.class);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(0));
+                startActivity(intent);
+                break;
+            case R.id.btnLocalPreservation:
+                if (localPhotoList.size() == 0) {
+                    ToastUtil.showShort(mContext, "您还未拍摄照片，请拍照后在进行保存！");
+                } else {
+                    ToastUtil.showShort(mContext, "照片已成功保存至本地！");
                 }
                 break;
         }

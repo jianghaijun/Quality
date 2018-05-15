@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +24,6 @@ import com.sx.quality.utils.GlideCatchUtil;
 import com.sx.quality.utils.JsonUtils;
 import com.sx.quality.utils.JudgeNetworkIsAvailable;
 import com.sx.quality.utils.LoadingUtils;
-import com.sx.quality.utils.ProviderUtil;
 import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
@@ -40,7 +36,6 @@ import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -76,6 +71,10 @@ public class MySettingActivity extends BaseActivity {
         });
 
         setData();
+    }
+
+    public void setVersion() {
+        myHolder.txtVersion.setText("当前版本" + AppInfoUtil.getVersion(mContext));
     }
 
     /**
@@ -168,7 +167,8 @@ public class MySettingActivity extends BaseActivity {
                 // 清除已加载工序列表
                 SpUtil.put(mContext, ConstantsUtil.LEVEL_ID, "");
                 DataSupport.deleteAll(NewContractorListBean.class);
-                DataSupport.deleteAll(ContractorListPhotosBean.class);
+                /*清除工序下的图片*/
+                //DataSupport.deleteAll(ContractorListPhotosBean.class);
                 DataSupport.deleteAll(WorkingBean.class);
                 //DataSupport.deleteAll(UserInfo.class);
                 boolean isClean = GlideCatchUtil.cleanCatchDisk();
@@ -186,7 +186,7 @@ public class MySettingActivity extends BaseActivity {
     /**
      * 版本检查
      */
-    private void checkVersion() {
+    public void checkVersion() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.CHECK_VERSION)

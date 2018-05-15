@@ -22,6 +22,7 @@ import com.vinaygaba.rubberstamp.RubberStampPosition;
 import org.litepal.crud.DataSupport;
 import org.xutils.common.util.DensityUtil;
 
+import java.util.Calendar;
 import java.util.List;
 
 import cn.hutool.core.date.DateUtil;
@@ -66,30 +67,57 @@ public class ImageUtil {
         int len = level.length();
         String qualityUserName = "";
         if (len > 3) {
-            String rootLevel = level.substring(2, 3);
+            List<QualityInspectionBean> qualityBeanList;
+            String rootLevel = level.substring(3, 4);
             switch (rootLevel) {
                 case "一":
-                    rootLevel = "1";
+                    qualityBeanList = DataSupport.where("rootLevelId=1").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "王皓";
+                    }
                     break;
                 case "二":
-                    rootLevel = "2";
+                    qualityBeanList = DataSupport.where("rootLevelId=2").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "李欣";
+                    }
                     break;
                 case "三":
-                    rootLevel = "3";
+                    qualityBeanList = DataSupport.where("rootLevelId=3").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "赵泽明";
+                    }
                     break;
                 case "四":
-                    rootLevel = "4";
+                    qualityBeanList = DataSupport.where("rootLevelId=4").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "王和平";
+                    }
                     break;
                 case "五":
-                    rootLevel = "5";
+                    qualityBeanList = DataSupport.where("rootLevelId=5").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "李立山";
+                    }
                     break;
                 case "六":
-                    rootLevel = "6";
+                    qualityBeanList = DataSupport.where("rootLevelId=6").find(QualityInspectionBean.class);
+                    if (qualityBeanList != null && qualityBeanList.size() > 0) {
+                        qualityUserName = qualityBeanList.get(0).getRealName();
+                    } else {
+                        qualityUserName = "马平";
+                    }
                     break;
-            }
-            List<QualityInspectionBean> qualityBeanList = DataSupport.where("rootLevelId=?", rootLevel).find(QualityInspectionBean.class);
-            if (qualityBeanList != null && qualityBeanList.size() > 0) {
-                qualityUserName = qualityBeanList.get(0).getRealName();
             }
         }
         // 计算一个16sp中文所占像素
@@ -166,16 +194,26 @@ public class ImageUtil {
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
         String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
         String userName = (String) SpUtil.get(mContext, "UserName", "");
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.setTimeInMillis(photosBean.getCreateTime());
+        int apm = mCalendar.get(Calendar.AM_PM);
+        String am_pm = "";
+        if (apm == 0) {
+            am_pm = "AM";
+        } else {
+            am_pm = "PM";
+        }
+
         if (userLevel.equals("0")) {
-            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场技术员：" + userName + " 时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))), pFont, rect, DensityUtil.dip2px(5), mar);
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场技术员：" + userName + "    质检负责人：" + qualityUserName, pFont, rect, DensityUtil.dip2px(5), mar);
             mar += oneSizeHeight;
-            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "质检负责人：" + qualityUserName, pFont, rect, DensityUtil.dip2px(5), mar);
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "拍照时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))) + "  " + am_pm, pFont, rect, DensityUtil.dip2px(5), mar);
         }
 
         if (userLevel.equals("2")) {
-            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "质检负责人：" + qualityUserName + " 时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))), pFont, rect, DensityUtil.dip2px(5), mar);
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场监理：" + userName + "    质检负责人：" + qualityUserName, pFont, rect, DensityUtil.dip2px(5), mar);
             mar += oneSizeHeight;
-            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "现场监理：" + userName, pFont, rect, DensityUtil.dip2px(5), mar);
+            watermarkBitmap = drawTextToLeftTop(watermarkBitmap, "拍照时间：" + DateUtil.formatDateTime(DateUtil.date(DateUtil.date(photosBean.getCreateTime()))) + "  " + am_pm, pFont, rect, DensityUtil.dip2px(5), mar);
         }
 
         // 创建一个新的和SRC长度宽度一样的位图

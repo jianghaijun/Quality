@@ -7,6 +7,7 @@
     <dimen name="two_point_five_dp">2.5dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
+    <dimen name="fifteen_dp">15dp</dimen>
     <dimen name="twenty_dp">20dp</dimen>
     <dimen name="twenty_five_dp">25dp</dimen>
     <dimen name="thirty">30dp</dimen>
@@ -14,6 +15,8 @@
     <dimen name="forty">40dp</dimen>
     <dimen name="forty_five_dp">45dp</dimen>
     <dimen name="fifty_dp">50dp</dimen>
+    <dimen name="fifty_one_dp">51dp</dimen>
+    <dimen name="fifty_five_dp">55dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
     <dimen name="sixty_one_dp">61dp</dimen>
     <dimen name="sevenTy_dp">70dp</dimen>
@@ -22,6 +25,7 @@
     <dimen name="ninety_dp">90dp</dimen>
     <dimen name="one_hundred_dp">100dp</dimen>
 
+    <dimen name="eight_sp">8sp</dimen>
     <dimen name="ten_sp">10sp</dimen>
     <dimen name="twelve_sp">12sp</dimen>
     <dimen name="fourteen_sp">14sp</dimen>

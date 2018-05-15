@@ -9,7 +9,8 @@
     <color name="main_check_bg">#0a2f40</color>
     <color name="v_2_main_check_bg">#0191f1</color>
     <color name="v_2_tab_color">#8a8a8a</color>
-    <color name="v_2_tab_select_color">#06CD3E</color>
+    <color name="tab_color">#F78E62</color>
+    <color name="v_2_tab_select_color">#13227A</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#D9D9D9</color>
     <color name="black">#000000</color>

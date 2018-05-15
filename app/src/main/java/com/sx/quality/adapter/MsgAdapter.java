@@ -36,13 +36,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.MsgHolder> {
+public class MsgAdapter extends BaseAdapter<List<WorkingBean>> {
     private Activity mContext;
-    private List<WorkingBean> msgList;
 
-    public MsgAdapter(Context mContext, List<WorkingBean> msgList) {
+    public MsgAdapter(Context mContext) {
         this.mContext = (Activity) mContext;
-        this.msgList = msgList;
     }
 
     @Override
@@ -51,23 +49,8 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.MsgHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MsgHolder holder, int position) {
-        final WorkingBean data = msgList.get(position);
-
-        holder.txtTitle.setText(msgList.get(position).getCreateUserName());
-        holder.txtDate.setText(DateUtil.formatDateTime(DateUtil.date(msgList.get(position).getSendTime())));
-        holder.txtContext.setText(msgList.get(position).getContent().contains("进入app") ? msgList.get(position).getContent().replace("进入app", "点击") : msgList.get(position).getContent());
-        holder.txtContext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getProcessDetails(data.getProcessId());
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return msgList == null ? 0 : msgList.size();
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ((MsgHolder) holder).bind((WorkingBean) getDataSet().get(position));
     }
 
     public class MsgHolder extends RecyclerView.ViewHolder {
@@ -81,13 +64,27 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.MsgHolder> {
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtContext = itemView.findViewById(R.id.txtContext);
         }
+
+        public void bind(final WorkingBean data) {
+            String ready = data.getIsRead().equals("1") ? "已读" : "未读";
+            txtTitle.setText(data.getCreateUserName() + "(" + ready + ")");
+            txtDate.setText(DateUtil.formatDateTime(DateUtil.date(data.getSendTime())));
+            txtContext.setText(data.getContent().contains("进入app") ? data.getContent().replace("进入app", "点击") : data.getContent());
+            txtContext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getProcessDetails(data.getProcessId(), data.getTaskId());
+                }
+            });
+        }
     }
 
-    private void getProcessDetails(String processId) {
+    private void getProcessDetails(String processId, String taskId) {
         LoadingUtils.showLoading(mContext);
         JSONObject obj = new JSONObject();
         try {
             obj.put("processId", processId);
+            obj.put("taskId", taskId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
