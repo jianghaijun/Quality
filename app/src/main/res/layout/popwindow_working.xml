@@ -25,7 +25,7 @@
             android:layout_marginBottom="@dimen/one_dp">
             <TextView
                 android:id="@+id/txtNo"
-                android:layout_width="@dimen/fifty_dp"
+                android:layout_width="39dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"
@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="@dimen/one_hundred_dp"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"
@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/txtPhotosNum"
-                android:layout_width="@dimen/eighty_dp"
+                android:layout_width="79dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"
@@ -58,7 +58,7 @@
 
             <TextView
                 android:id="@+id/txtPhotographers"
-                android:layout_width="@dimen/eighty_dp"
+                android:layout_width="79dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"
@@ -69,7 +69,7 @@
 
             <TextView
                 android:id="@+id/txtValidator"
-                android:layout_width="@dimen/eighty_dp"
+                android:layout_width="79dp"
                 android:layout_height="@dimen/thirty"
                 android:layout_marginRight="@dimen/one_dp"
                 android:background="@color/white"

@@ -57,7 +57,7 @@
     <string name="query_reported">确认上报</string>
     <string name="cancel_reported">取消上报</string>
     <string name="auditors">审核人员</string>
-    <string name="json_error">JSON数据格式不正确！</string>
+    <string name="json_error">服务器异常！</string>
     <string name="download_context">文件下载</string>
     <string name="security">安全</string>
     <string name="quality">质量</string>
@@ -136,4 +136,9 @@
     <string name="no_msg">暂无消息！</string>
     <string name="local_msg">系统消息</string>
     <string name="personal_msg">个人消息</string>
+    <string name="same_day">各分部历史完成工序查询</string>
+    <string name="working_info">截止目前各分部工序完成总统计图</string>
+    <string name="search">查询\n工序</string>
+    <string name="beginDate">开始时间</string>
+    <string name="endDate">结束时间</string>
 </resources>

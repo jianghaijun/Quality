@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@null">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,9 +69,9 @@
                         android:layout_toLeftOf="@+id/btnSaveInfo"
                         android:background="@drawable/btn_blue"
                         android:text="@string/standard"
-                        android:visibility="gone"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/fourteen_sp" />
+                        android:textSize="@dimen/fourteen_sp"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/txtWorkingName"
@@ -180,11 +181,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/one_dp"
+                android:layout_margin="@dimen/one_dp"
                 android:layout_marginBottom="@dimen/one_dp"
+                android:layout_marginTop="@dimen/one_dp"
                 android:background="@color/v_2_main_bg"
                 android:orientation="vertical"
-                android:layout_margin="@dimen/one_dp"
                 android:padding="@dimen/one_dp">
 
                 <LinearLayout
@@ -425,7 +426,7 @@
                     android:id="@+id/tabLayStandard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/v_2_main_check_bg"/>
+                    android:background="@color/v_2_main_check_bg" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

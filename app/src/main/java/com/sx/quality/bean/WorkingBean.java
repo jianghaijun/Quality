@@ -45,6 +45,15 @@ public class WorkingBean extends DataSupport implements Serializable {
     private String ext8;        // 层厚
     private String ext9;        // 层厚
     private String ext10;        // 层厚
+    private String canCheck;
+
+    public String getCanCheck() {
+        return canCheck;
+    }
+
+    public void setCanCheck(String canCheck) {
+        this.canCheck = canCheck;
+    }
 
     public String getIsRead() {
         return isRead;

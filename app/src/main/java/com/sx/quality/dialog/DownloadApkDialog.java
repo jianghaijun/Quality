@@ -48,8 +48,8 @@ public class DownloadApkDialog extends Dialog{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.dialog_donload_apk);
 
-		progressBarDownload = this.findViewById(R.id.progressBarDownload);
-		txtResult = this.findViewById(R.id.txtResult);
+		progressBarDownload = (ProgressBar) this.findViewById(R.id.progressBarDownload);
+		txtResult = (TextView) this.findViewById(R.id.txtResult);
 
 		progressBarDownload.setMax(100);
 		txtResult.setText("已下载" + 0 + "%");
@@ -79,6 +79,7 @@ public class DownloadApkDialog extends Dialog{
 					intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 				}
 				intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                ConstantsUtil.isDownloadApk = false;
 				mActivity.startActivity(intent);
 			}
 
@@ -90,6 +91,7 @@ public class DownloadApkDialog extends Dialog{
 
 			@Override
 			public void onDownloadFailed() {
+                ConstantsUtil.isDownloadApk = false;
 				ToastUtil.showShort(mContext, "文件下载失败！");
 			}
 		});

@@ -229,6 +229,7 @@ public class AppActivity extends BaseActivity {
                                     intent.putExtra("ext8", data.getExt8());
                                     intent.putExtra("ext9", data.getExt9());
                                     intent.putExtra("ext10", data.getExt10());
+                                    intent.putExtra("canCheck", data.getCanCheck());
                                     mContext.startActivity(intent);
                                 }
                             });

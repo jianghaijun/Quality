@@ -258,7 +258,10 @@ public class MySettingActivity extends BaseActivity {
         @Override
         public void returnTrueOrFalse(boolean trueOrFalse) {
             if (trueOrFalse) {
+                ConstantsUtil.isDownloadApk = true;
                 checkListener.returnTrueOrFalse(true);
+            } else {
+                ConstantsUtil.isDownloadApk = false;
             }
         }
     };

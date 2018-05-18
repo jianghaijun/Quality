@@ -60,9 +60,9 @@ public class MsgAdapter extends BaseAdapter<List<WorkingBean>> {
 
         public MsgHolder(View itemView) {
             super(itemView);
-            txtDate = itemView.findViewById(R.id.txtDate);
-            txtTitle = itemView.findViewById(R.id.txtTitle);
-            txtContext = itemView.findViewById(R.id.txtContext);
+            txtDate = (TextView) itemView.findViewById(R.id.txtDate);
+            txtTitle = (TextView) itemView.findViewById(R.id.txtTitle);
+            txtContext = (TextView) itemView.findViewById(R.id.txtContext);
         }
 
         public void bind(final WorkingBean data) {
@@ -153,6 +153,7 @@ public class MsgAdapter extends BaseAdapter<List<WorkingBean>> {
                                     intent.putExtra("ext8", data.getExt8());
                                     intent.putExtra("ext9", data.getExt9());
                                     intent.putExtra("ext10", data.getExt10());
+                                    intent.putExtra("canCheck", data.getCanCheck());
                                     mContext.startActivity(intent);
                                 }
                             });

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.sx.quality.bean.UserInfo;
 import com.sx.quality.bean.WorkingBean;
 import com.sx.quality.listener.ChoiceListener;
@@ -104,7 +107,7 @@ public class V_2MainActivity extends BaseActivity {
         layoutFriends = viewLI.inflate(R.layout.layout_empty, null);
         layoutMe = viewLI.inflate(R.layout.activity_my_setting, null);
         // 用户头像
-        imgViewUserAvatar = layoutMe.findViewById(R.id.imgViewUserAvatar);
+        imgViewUserAvatar = (ImageView) layoutMe.findViewById(R.id.imgViewUserAvatar);
         List<UserInfo> userList = DataSupport.where("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, ""))).find(UserInfo.class);
         String userHead = "";
         if (userList != null && userList.size() > 0) {
@@ -119,8 +122,13 @@ public class V_2MainActivity extends BaseActivity {
             Glide.with(this).load(userHead).apply(options).into(imgViewUserAvatar);
         }
 
+        DisplayMetrics dm = new DisplayMetrics();
+        //取得窗口属性
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        //窗口高度
+        int screenHeight = dm.heightPixels;
         // 获取屏幕高度
-        SpUtil.put(mContext, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenHeight());
+        SpUtil.put(mContext, ConstantsUtil.SCREEN_HEIGHT, screenHeight);
 
         // 消息
         msgMainActivity = new MsgMainActivity(mContext, layoutMsg);
@@ -221,14 +229,14 @@ public class V_2MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
-            if (!isUploadHead) {
-                getData();
+        if (!ConstantsUtil.isDownloadApk) {
+            if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
+                if (!isUploadHead) {
+                    getData();
+                }
             } else {
-                mySettingActivity.checkVersion();
+                appActivity.setDate(objList, null);
             }
-        } else {
-            appActivity.setDate(objList, null);
         }
     }
 
@@ -336,6 +344,7 @@ public class V_2MainActivity extends BaseActivity {
             // 读写权限
             addPermission(permissions, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
             addPermission(permissions, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            addPermission(permissions, android.Manifest.permission.REQUEST_INSTALL_PACKAGES);
             if (permissions.size() > 0) {
                 requestPermissions(permissions.toArray(new String[permissions.size()]), 127);
             } else {

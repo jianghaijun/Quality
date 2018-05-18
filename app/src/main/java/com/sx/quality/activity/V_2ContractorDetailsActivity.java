@@ -1125,6 +1125,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行提交!");
                 return;
         }
+        if (getIntent().getStringExtra("canCheck").equals("0")) {
+            ToastUtil.showLong(mContext, "该工序已提交给其它人审核，您不能执行抽检完成操作!");
+            return;
+        }
         toExaminePhoto(true);
     }
 
@@ -1516,10 +1520,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请等待质检部长驳回修改后再进行审核!");
                                     return;
                                 case "4":
-                                    ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能次提交审核!");
+                                    ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能再次提交审核!");
                                     return;
                                 case "2":
-                                    ToastUtil.showLong(mContext, "该" + s + "已提交审核，您不能次提交审核!");
+                                    ToastUtil.showLong(mContext, "该" + s + "已提交审核，您不能再次提交审核!");
                                     return;
                             }
                         } else if (userLevel.equals("1")) {
@@ -1541,6 +1545,11 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     ToastUtil.showLong(mContext, "该" + s + "还未进行初审，进行初审后才能进行审核操作!");
                                     return;
                             }
+
+                            if (getIntent().getStringExtra("canCheck").equals("0")) {
+                                ToastUtil.showLong(mContext, "该" + s + "已提交给其它人审核，您不能提交审核!");
+                                return;
+                            }
                         }
                         toExaminePhoto(false);
                     } else {
@@ -1551,6 +1560,10 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 拍照
             case R.id.imgBtnAdd:
+                if (getIntent().getStringExtra("canCheck").equals("0")) {
+                    ToastUtil.showLong(mContext, "该工序已提交给其它人处理，您不能拍照上传!");
+                    return;
+                }
                 String sdSize = AppInfoUtil.getSDAvailableSize();
                 if (Integer.valueOf(sdSize) < 10) {
                     ToastUtil.showShort(mContext, "当前手机内存卡已无可用空间，请清理后再进行拍照！");

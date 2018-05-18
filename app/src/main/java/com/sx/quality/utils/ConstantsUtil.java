@@ -1,5 +1,8 @@
 package com.sx.quality.utils;
 
+import com.sx.quality.bean.SameDayBean;
+
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -27,6 +30,10 @@ public class ConstantsUtil {
     /**登录accountId*/
     public static String ACCOUNT_ID = "sx_qyh_deh_id";
     //public static String ACCOUNT_ID = "sx_qyh_woa_id";
+
+    /**参数格式*/
+    public static SameDayBean sameDayBean;
+    public static boolean isDownloadApk = false;
 
     /**参数格式*/
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -95,6 +102,12 @@ public class ConstantsUtil {
     public static final String GET_PROCESS_DETAIL = prefix + "getSxZlProcessDetail";
     /** 修改密码 */
     public static final String UPDATE_PASSWORD = prefix + "updateUserPassword";
+    /** 工序报表获取首页数据 */
+    public static final String PROCESS_REPORT_TODAY = prefix + "getProcessReportToday";
+    /** 按分部获取当日报表详情 */
+    public static final String PROCESS_PROCESS_REPORT_TODAY = prefix + "getProcessReportDetailToday";
+    /** 按分部获取当日报表详情 */
+    public static final String PROCESS_AND_PHOTO_LIST_TODAY = prefix + "getProcessAndPhotoListToday  ";
 
     /**
      * 文件存储路径

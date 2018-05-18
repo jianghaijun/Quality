@@ -294,7 +294,8 @@ public class ActualMeasurementActivity extends BaseActivity {
         if (measuredList == null) {
             measuredList = new ArrayList<>();
         }
-        int width = (DensityUtil.getScreenWidth() - (DensityUtil.dip2px(51 * 3 + 101 + 4 + 8))) / 10;
+        int width = (int) SpUtil.get(mContext, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenWidth());
+        width = (width - (DensityUtil.dip2px(51 * 3 + 101 + 4 + 8))) / 10;
         for (int n = 0; n < measuredList.size(); n++) {
             MeasuredRecordBean measured = measuredList.get(n);
 

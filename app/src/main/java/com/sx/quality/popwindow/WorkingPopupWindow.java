@@ -52,6 +52,7 @@ public class WorkingPopupWindow extends PopupWindow {
     private View mView;
     private String nodeName;
     private String levelId;
+    private int width;
     private List<Boolean> isSave = new ArrayList<>();
 
     public WorkingPopupWindow(Activity mActivity, String nodeName, String levelId) {
@@ -75,7 +76,7 @@ public class WorkingPopupWindow extends PopupWindow {
         LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mView = inflater.inflate(R.layout.popwindow_working, null);
         this.setContentView(mView);
-        int width = (int) SpUtil.get(mActivity, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenWidth());
+        width = (int) SpUtil.get(mActivity, ConstantsUtil.SCREEN_HEIGHT, DensityUtil.getScreenWidth());
         this.setWidth((int) (width * 0.8));
         this.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
         this.setTouchable(true);
@@ -86,7 +87,7 @@ public class WorkingPopupWindow extends PopupWindow {
         this.setBackgroundDrawable(background);
         this.draw();
 
-        TextView txtName = mView.findViewById(R.id.txtName);
+        TextView txtName = (TextView) mView.findViewById(R.id.txtName);
         String type = (String) SpUtil.get(mActivity, ConstantsUtil.USER_TYPE, "");
         if (type.equals("1")) {
             txtName.setText("隐患内容");
@@ -201,7 +202,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtNo.setTextSize(14);
             txtNo.setGravity(Gravity.CENTER);
             txtNo.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(DensityUtil.dip2px(50), DensityUtil.dip2px(30));
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(DensityUtil.dip2px(39), DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
@@ -215,14 +216,14 @@ public class WorkingPopupWindow extends PopupWindow {
             txtWorkingName.setText(bean.getProcessName());
             txtWorkingName.setTextSize(14);
             txtWorkingName.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            int width = (int) ((DensityUtil.getScreenWidth() * 0.8) - DensityUtil.dip2px(2 + 51 + 81 + 81 * 2 + 80 + 10 + 1));
-            lp = new TableRow.LayoutParams(width, DensityUtil.dip2px(30));
+            int widthSize = (int) ((width * 0.8) - DensityUtil.dip2px(10 + 40 + 80*4 + 3));
+            lp = new TableRow.LayoutParams(widthSize, DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
                 lp.setMargins(0, DensityUtil.dip2px(1), DensityUtil.dip2px(1), 0);
             }
-            txtWorkingName.setPadding(DensityUtil.dip2px(5), 0, 0, 0);
+            txtWorkingName.setPadding(DensityUtil.dip2px(5), 0, DensityUtil.dip2px(5), 0);
             txtWorkingName.setSingleLine(false);
             txtWorkingName.setHorizontallyScrolling(true);
             txtWorkingName.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -235,7 +236,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtPhotoNum.setText(bean.getActualNumber());
             txtPhotoNum.setTextSize(14);
             txtPhotoNum.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            lp = new TableRow.LayoutParams(DensityUtil.dip2px(80), DensityUtil.dip2px(30));
+            lp = new TableRow.LayoutParams(DensityUtil.dip2px(79), DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
@@ -250,7 +251,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtPhotographers.setText(bean.getPhotoerAll());
             txtPhotographers.setTextSize(14);
             txtPhotographers.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            lp = new TableRow.LayoutParams(DensityUtil.dip2px(80), DensityUtil.dip2px(30));
+            lp = new TableRow.LayoutParams(DensityUtil.dip2px(79), DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
@@ -269,7 +270,7 @@ public class WorkingPopupWindow extends PopupWindow {
             txtValidator.setText(bean.getCheckNameAll());
             txtValidator.setTextSize(14);
             txtValidator.setTextColor(ContextCompat.getColor(mActivity, R.color.black));
-            lp = new TableRow.LayoutParams(DensityUtil.dip2px(80), DensityUtil.dip2px(30));
+            lp = new TableRow.LayoutParams(DensityUtil.dip2px(79), DensityUtil.dip2px(30));
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
             } else {
@@ -347,6 +348,7 @@ public class WorkingPopupWindow extends PopupWindow {
                     intent.putExtra("ext8", bean.getExt8());
                     intent.putExtra("ext9", bean.getExt9());
                     intent.putExtra("ext10", bean.getExt10());
+                    intent.putExtra("canCheck", bean.getCanCheck());
                     List<WorkingBean> list = DataSupport.where("processId = ?", bean.getProcessId()).find(WorkingBean.class);
                     if (list != null && list.size() > 0) {
                         intent.putExtra("check", isSave.get(point));
