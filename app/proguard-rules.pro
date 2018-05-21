@@ -116,3 +116,6 @@
 
 -dontwarn cn.hutool.**
 -keep class cn.hutool.** { *; }
+
+-dontwarn com.github.**
+-keep class com.github.mikephil.charting.** { *; }

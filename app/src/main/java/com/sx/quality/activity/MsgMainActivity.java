@@ -137,6 +137,7 @@ public class MsgMainActivity extends BaseActivity {
         holder.txtPersonalNum.setText(workingBean == null || workingBean.getPersonalNum() == null ? "0" : workingBean.getPersonalNum());
         holder.vpMsgMain.setCurrentItem(0);
         localMsgActivity.setDate(true);
+        personalMsgActivity.setDate(true);
     }
 
     /**

@@ -108,7 +108,7 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
                     holder.txtStatus.setText("已上传");
                     break;
                 case "2":
-                    holder.txtStatus.setText("审核中");
+                    holder.txtStatus.setText("初审中");
                     break;
                 case "3":
                     holder.txtStatus.setText("初审驳回");
@@ -124,6 +124,12 @@ public class V_2ContractorDetailsAdapter extends RecyclerView.Adapter<V_2Contrac
                     holder.txtStatus.setText("复审驳回");
                     break;
                 case "6":
+                    holder.txtStatus.setText("终审中");
+                    break;
+                case "7":
+                    holder.txtStatus.setText("终审驳回");
+                    break;
+                case "8":
                     if (!phoneListBean.get(position).getRoleFlag().equals("2")) {
                         holder.txtStatus.setText("自检完成");
                     } else {

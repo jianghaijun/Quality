@@ -125,8 +125,10 @@ public class ReportDialog extends Dialog {
             String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
             if (userLevel.equals("0")) {
                 json.put("roleFlag", ConstantsUtil.roleFlag);
-            } else {
+            } else if (userLevel.equals("1")) {
                 json.put("roleFlag", ConstantsUtil.roleFlag_2);
+            } else {
+                json.put("roleFlag", ConstantsUtil.roleFlag_3);
             }
             json.put("userType", SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
         } catch (JSONException e) {

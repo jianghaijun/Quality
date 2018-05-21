@@ -27,68 +27,70 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/prompt_dialog_reminder_bg"
-            android:minHeight="@dimen/forty"
+            android:minHeight="@dimen/fifty_dp"
             android:padding="@dimen/five_dp">
-
-            <Button
-                android:id="@+id/btnSavePhoto"
-                android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="@dimen/thirty"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/btn_blue"
-                android:text="@string/submit_yun"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btnLocalSave"
-                android:layout_width="@dimen/fifty_dp"
-                android:layout_height="@dimen/thirty"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/five_dp"
-                android:layout_toLeftOf="@+id/btnSavePhoto"
-                android:background="@drawable/btn_blue"
-                android:text="@string/reject"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btnLocalPreservation"
-                android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="@dimen/thirty"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/five_dp"
-                android:layout_toLeftOf="@+id/btnLocalSave"
-                android:background="@drawable/btn_blue"
-                android:text="@string/localPreservation"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btnMeasuredRecord"
-                android:layout_width="@dimen/sevenTy_dp"
-                android:layout_height="@dimen/thirty"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/five_dp"
-                android:layout_toLeftOf="@+id/btnLocalPreservation"
-                android:background="@drawable/btn_blue"
-                android:text="@string/measured_record"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp" />
 
             <TextView
                 android:id="@+id/txtWorkingPath"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/five_dp"
-                android:layout_toLeftOf="@+id/btnMeasuredRecord"
+                android:layout_toLeftOf="@+id/llMain"
                 android:gravity="left|center"
+                android:minHeight="@dimen/forty"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fourteen_sp" />
+
+            <LinearLayout
+                android:id="@+id/llMain"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/forty"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnMeasuredRecord"
+                    android:layout_width="@dimen/sevenTy_dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/five_dp"
+                    android:background="@drawable/btn_blue"
+                    android:text="@string/measured_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twelve_sp" />
+
+                <Button
+                    android:id="@+id/btnSavePhoto"
+                    android:layout_width="@dimen/sevenTy_dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/five_dp"
+                    android:background="@drawable/btn_blue"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnLocalSave"
+                    android:layout_width="@dimen/fifty_dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/five_dp"
+                    android:background="@drawable/btn_blue"
+                    android:text="@string/reject"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnLocalPreservation"
+                    android:layout_width="@dimen/sevenTy_dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/five_dp"
+                    android:background="@drawable/btn_blue"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -770,8 +772,8 @@
                             android:id="@+id/rvContractorDetails"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_toLeftOf="@+id/rlButtons"
                             android:layout_margin="@dimen/ten_dp"
+                            android:layout_toLeftOf="@+id/rlButtons"
                             android:background="@null"
                             android:scrollbars="none" />
                     </RelativeLayout>

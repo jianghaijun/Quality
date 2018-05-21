@@ -295,7 +295,7 @@ public class WorkingPopupWindow extends PopupWindow {
                     txtStatus.setText("已拍照");
                     break;
                 case "2":
-                    txtStatus.setText("审核中");
+                    txtStatus.setText("初审中");
                     break;
                 case "3":
                     txtStatus.setText("初审驳回");
@@ -307,6 +307,12 @@ public class WorkingPopupWindow extends PopupWindow {
                     txtStatus.setText("复审驳回");
                     break;
                 case "6":
+                    txtStatus.setText("终审中");
+                    break;
+                case "7":
+                    txtStatus.setText("终审驳回");
+                    break;
+                case "8":
                     txtStatus.setText("抽检完成");
                     break;
             }

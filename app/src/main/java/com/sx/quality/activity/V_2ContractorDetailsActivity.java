@@ -177,6 +177,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     private String processId, rootNodeName, status, processName;
     private double longitude, latitude;
     private String sLocation;
+    private String userLevel;
 
     /**
      * 是否已点击上报按钮
@@ -208,8 +209,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         status = getIntent().getStringExtra("status");
         processName = getIntent().getStringExtra("processName");
 
-        // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过)
-        if (status.equals("3") || status.equals("5")) {
+        // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
+        if (status.equals("3") || status.equals("5") || status.equals("7")) {
             rlRejectPhotos.setVisibility(View.VISIBLE);
             txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
         }
@@ -229,79 +230,39 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
 
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
-        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
         switch (userLevel) {
-            // 1:质检部长(驳回--提交)
+            // 1:质检部长(驳回--审核)
             case "1":
-                // 领导-->隐藏拍照功能
-                imgBtnAdd.setVisibility(View.GONE);
-                btnLocalSave.setVisibility(View.VISIBLE);
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalSave.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    btnLocalSave.setLayoutParams(params);
-                }
-                // 实测记录
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    params.setMargins(0, 0, DensityUtil.dip2px(60), 0);
-                    btnMeasuredRecord.setLayoutParams(params);
-                }
-                btnRight.setVisibility(View.VISIBLE);
+                imgBtnAdd.setVisibility(View.GONE); // 隐藏拍照按钮
+                btnLocalSave.setVisibility(View.VISIBLE);  // 显示驳回按钮
+                btnRight.setVisibility(View.VISIBLE); // 审核
                 btnRight.setText("审核");
                 break;
-            // 2:监理(驳回--完成)
+            // 2:监理(驳回--审核--保存照片到本地)
             case "2":
                 btnLocalPreservation.setVisibility(View.VISIBLE);
-                // 监理--->显示驳回按钮和完成按钮
-                btnLocalSave.setVisibility(View.VISIBLE);
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalSave.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    btnLocalSave.setLayoutParams(params);
-                }
-
-                // 实测记录
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    params.setMargins(0, 0, DensityUtil.dip2px(135), 0);
-                    btnMeasuredRecord.setLayoutParams(params);
-                }
-                btnRight.setVisibility(View.VISIBLE);
-                btnRight.setText("抽检完成");
+                btnLocalPreservation.setText("保存照片\n至本地");
+                btnLocalSave.setVisibility(View.VISIBLE); // 显示驳回按钮
+                btnRight.setVisibility(View.VISIBLE); // 审核
+                btnRight.setText("审核");
                 break;
             // 3:领导(查看)
             case "3":
-            case "21":
             case "22":
-                // 领导-->隐藏拍照功能
-                imgBtnAdd.setVisibility(View.GONE);
-                // 实测记录按钮
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    btnMeasuredRecord.setLayoutParams(params);
-                }
+                imgBtnAdd.setVisibility(View.GONE); // 领导-->隐藏拍照功能
                 break;
-            // 其它(提交审核)
+            // 21:监理组长审核
+            case "21":
+                imgBtnAdd.setVisibility(View.GONE); // 领导-->隐藏拍照功能
+                btnLocalSave.setVisibility(View.VISIBLE); // 显示驳回按钮
+                btnRight.setVisibility(View.VISIBLE); // 审核
+                btnRight.setText("终审通过");
+                break;
+            // 其它(审核)
             default:
+                btnLocalPreservation.setText("保存照片\n至本地");
                 btnLocalPreservation.setVisibility(View.VISIBLE);
-                // 班组，施工人员--->显示审核按钮
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnLocalPreservation.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    btnLocalPreservation.setLayoutParams(params);
-                }
-
-                // 实测记录
-                if (rlFixedPoint.getVisibility() != View.VISIBLE) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnMeasuredRecord.getLayoutParams();
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    params.setMargins(0, 0, DensityUtil.dip2px(80), 0);
-                    btnMeasuredRecord.setLayoutParams(params);
-                }
                 btnRight.setVisibility(View.VISIBLE);
                 btnRight.setText("审核");
                 break;
@@ -435,9 +396,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             rvContractorDetails.setAdapter(adapter);
         }
 
-        // 有网络时提交层厚定点位置信息
-        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
-        // 有网络并且不是领导
+        // 有网络并且不是领导 提交层厚定点位置信息
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this) && !userLevel.equals("3")) {
             if (!getIntent().getBooleanExtra("check", true)) {
                 PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
@@ -510,10 +469,11 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         ReportDialog reportDialog = new ReportDialog(mContext, new ReportListener() {
             @Override
             public void returnUserId(String userId) {
-                submitElevation(false);
+                if (!StrUtil.isEmpty(userId)) {
+                    submitElevation(false);
 
-                // 设置为已上传
-                for (ContractorListPhotosBean newBean : submitPictureList) {
+                    // 设置为已上传
+                /*for (ContractorListPhotosBean newBean : submitPictureList) {
                     // 待审核
                     PictureBean pictureBean = new PictureBean();
                     pictureBean.setPhotoId(newBean.getPhotoId());
@@ -527,19 +487,32 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                             bean.setCheckFlag("0");
                         }
                     }
-                }
+                }*/
 
-                status = "1";
+                    // 0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监
+                    // 0:待拍照 1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过
+                    /*if (userLevel.equals("0")) {
+                        status = "2";
+                    } else if (userLevel.equals("1")) {
+                        status = "4";
+                    } else if (userLevel.equals("2")) {
+                        status = "6";
+                    }
 
-                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                    for (ContractorListPhotosBean bean : phoneList) {
+                        bean.setRoleFlag("0");
+                    }*/
 
-                LinearLayoutManager ms = new LinearLayoutManager(mContext);
-                ms.setOrientation(LinearLayoutManager.HORIZONTAL);
-                rvContractorDetails.setLayoutManager(ms);
-                rvContractorDetails.setAdapter(adapter);
+                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
 
-                if (StrUtil.isNotEmpty(userId)) {
-                    submitReported(userId, pictureBeanList);
+                    LinearLayoutManager ms = new LinearLayoutManager(mContext);
+                    ms.setOrientation(LinearLayoutManager.HORIZONTAL);
+                    rvContractorDetails.setLayoutManager(ms);
+                    rvContractorDetails.setAdapter(adapter);
+
+                    if (StrUtil.isNotEmpty(userId)) {
+                        submitReported(userId, pictureBeanList);
+                    }
                 }
             }
         });
@@ -563,7 +536,6 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         model.setRecordType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, "0"));
         Gson gson = new Gson();
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, gson.toJson(model).toString());
-        String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
         String url;
         if (userLevel.equals("0")) {
             url = ConstantsUtil.SUBMIT_AUDITORS_PICTURE;
@@ -610,12 +582,16 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                     }
 
                                     // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-                                    String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
-
                                     if (userLevel.equals("0")) {
                                         status = "2";
-                                    } else {
+                                    } else if (userLevel.equals("1")) {
                                         status = "4";
+                                    } else {
+                                        status = "6";
+                                    }
+
+                                    for (ContractorListPhotosBean bean : phoneList) {
+                                        bean.setRoleFlag("0");
                                     }
 
                                     adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
@@ -1045,27 +1021,23 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     @Override
                     public void returnTrueOrFalse(boolean trueOrFalse) {
                         if (trueOrFalse) {
-                            //localPhotoList.clear();
+                            // 隐藏本地图片菜单
+                            imgBtnPhotos.setVisibility(View.GONE);
                             btnLocalPreservation.setVisibility(View.GONE);
+
+                            // 完成工序接口
+                            for (ContractorListPhotosBean phone : phoneList) {
+                                phone.setIsToBeUpLoad(-1);
+                                phone.setIsNewAdd(-1);
+                                phone.setCheckFlag("0");
+                            }
+
+                            // 更新adapter
+                            for (ContractorListPhotosBean phone : submitPictureList) {
+                                phone.setRoleFlag("2");
+                            }
+
                             if (isFinish) {
-                                // 完成工序接口
-                                for (ContractorListPhotosBean phone : phoneList) {
-                                    phone.setIsToBeUpLoad(-1);
-                                    phone.setIsNewAdd(-1);
-                                    phone.setCheckFlag("0");
-                                }
-
-                                for (ContractorListPhotosBean phone : submitPictureList) {
-                                    phone.setRoleFlag("2");
-                                }
-
-                                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
-
-                                LinearLayoutManager ms = new LinearLayoutManager(mContext);
-                                ms.setOrientation(LinearLayoutManager.HORIZONTAL);
-                                rvContractorDetails.setLayoutManager(ms);
-                                rvContractorDetails.setAdapter(adapter);
-
                                 RejectDialog rejectDialog = new RejectDialog(mContext, new ReportListener() {
                                     @Override
                                     public void returnUserId(String userId) {
@@ -1074,6 +1046,21 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                 }, "处理意见", "取消", "确认");
                                 rejectDialog.show();
                             } else {
+                                // 设置工序状态
+                                switch (userLevel) {
+                                    case "0":
+                                        status = "1";
+                                        break;
+                                    case "2":
+                                        status = "4";
+                                        break;
+                                }
+                                // 更新adapter
+                                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                                LinearLayoutManager ms = new LinearLayoutManager(mContext);
+                                ms.setOrientation(LinearLayoutManager.HORIZONTAL);
+                                rvContractorDetails.setLayoutManager(ms);
+                                rvContractorDetails.setAdapter(adapter);
                                 reported(checkPictureList, submitPictureList);
                             }
                         }
@@ -1106,23 +1093,24 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      */
     private void finishPhoto() {
         switch (status) {
-            case "6":
+            case "8":
                 ToastUtil.showLong(mContext, "该工序已抽检完成，不能再次提交!");
                 return;
+            case "7":
+                ToastUtil.showLong(mContext, "该工序终审被驳回，请等待班组人员重新办理后再审核!");
+                return;
             case "5":
-                ToastUtil.showLong(mContext, "该工序复审被驳回，请等待班组人员办理重新办理后再提交!");
+                ToastUtil.showLong(mContext, "该工序复审被驳回，请等待班组人员重新办理后再审核!");
                 return;
             case "3":
-                ToastUtil.showLong(mContext, "该工序初审被驳回，请等待班组人员办理重新办理后再提交!");
+                ToastUtil.showLong(mContext, "该工序初审被驳回，请等待班组人员重新办理后再审核!");
                 return;
             case "2":
-                ToastUtil.showLong(mContext, "该工序正在审核中，请等待班组人员提交复审后再进行提交!");
+                ToastUtil.showLong(mContext, "该工序正在审核中，请等待班组人员提交复审后再进行审核!");
                 return;
             case "1":
-                ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行提交!");
-                return;
             case "0":
-                ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行提交!");
+                ToastUtil.showLong(mContext, "该工序还未进行审核，请等待班组人员提交初审后再进行审核!");
                 return;
         }
         if (getIntent().getStringExtra("canCheck").equals("0")) {
@@ -1137,27 +1125,31 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      */
     private void takePhotos() {
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
         String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
         // 0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过
-        if (status.equals("6")) {
-            if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "抽检完成的隐患不能再进行拍照!");
+        String s;
+        if (type.equals("1")) {
+            s = "隐患";
+        } else {
+            s = "工序";
+        }
+
+        if (status.equals("8")) {
+            ToastUtil.showLong(mContext, "抽检完成的" + s +"不能再进行拍照!");
+        } else if (status.equals("7")) {
+            if (userLevel.equals("2")) {
+                ToastUtil.showLong(mContext, "该" + s +"已被监理组长驳回，请驳回给施工人员修改后再进行拍照!");
             } else {
-                ToastUtil.showLong(mContext, "抽检完成的工序不能再进行拍照!");
+                ToastUtil.showLong(mContext, "该" + s +"还未驳回给您，请等待质检部长驳回给您后再进行拍照!");
             }
-        } else if(status.equals("2") && userLevel.equals("0")) {
-            if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "审核中的隐患不能再进行拍照!");
-            } else {
-                ToastUtil.showLong(mContext, "审核中的工序不能再进行拍照!");
-            }
-        } else if(status.equals("4") && userLevel.equals("0")) {
-            if (type.equals("1")) {
-                ToastUtil.showLong(mContext, "该隐患已提交至监理审核，不能再进行拍照!");
-            } else {
-                ToastUtil.showLong(mContext, "该工序已提交至监理审核,不能再进行拍照!");
-            }
+        } else if (status.equals("6")) {
+            ToastUtil.showLong(mContext, "该" + s +"已复审通过，您不能再进行拍照!");
+        }  else if (status.equals("5")) {
+            ToastUtil.showLong(mContext, "该" + s +"还未驳回给您，请等待质检部长驳回给您后再进行拍照!");
+        }  else if (status.equals("4") && userLevel.equals("0")) {
+            ToastUtil.showLong(mContext, "该" + s +"已提交至监理审核,不能再进行拍照!");
+        } else if(status.equals("2")) {
+            ToastUtil.showLong(mContext, "该" + s +"已提交至质检部长审核,不能再进行拍照!");
         } else {
             if (Build.VERSION.SDK_INT >= 23) {
                 requestAuthority(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA}, new PermissionListener() {
@@ -1212,11 +1204,17 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
 
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-        String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        // 0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过
         if (userLevel.equals("1")) {
             switch (status) {
-                case "6":
+                case "8":
                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                    return;
+                case "7":
+                    ToastUtil.showLong(mContext, "该" + s + "监理还未驳回给您，您不能进行驳回操作!");
+                    return;
+                case "6":
+                    ToastUtil.showLong(mContext, "该" + s + "复审已通过，您不能进行驳回操作!");
                     return;
                 case "4":
                     ToastUtil.showLong(mContext, "该" + s + "已提交至监理审核，您不能进行驳回操作!");
@@ -1231,11 +1229,37 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             }
         } else if (userLevel.equals("2")) {
             switch (status) {
-                case "6":
+                case "8":
                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                    return;
+                case "6":
+                    ToastUtil.showLong(mContext, "该" + s + "复审已通过，您不能进行驳回操作!");
                     return;
                 case "5":
                     ToastUtil.showLong(mContext, "该" + s + "已被驳回，不能再次进行驳回操作!");
+                    return;
+                case "3":
+                    ToastUtil.showLong(mContext, "该" + s + "已被初审人员驳回，不能再次进行驳回操作!");
+                    return;
+                case "2":
+                case "1":
+                case "0":
+                    ToastUtil.showLong(mContext, "该" + s + "还未进行审核，进行审核后才能进行驳回操作!");
+                    return;
+            }
+        } else if (userLevel.equals("21")) {
+            switch (status) {
+                case "8":
+                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                    return;
+                case "7":
+                    ToastUtil.showLong(mContext, "该" + s + "已被驳回，您不能进行驳回操作!");
+                    return;
+                case "5":
+                    ToastUtil.showLong(mContext, "该" + s + "已被驳回，不能再次进行驳回操作!");
+                    return;
+                case "4":
+                    ToastUtil.showLong(mContext, "该" + s + "还未提交终审，不能进行驳回操作!");
                     return;
                 case "3":
                     ToastUtil.showLong(mContext, "该" + s + "已被初审人员驳回，不能再次进行驳回操作!");
@@ -1306,18 +1330,20 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                                         WorkingBean bean = workList.get(0);
                                         if (stateFlag.equals("0")) {
                                             // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-                                            String userLevel = (String) SpUtil.get(mContext, ConstantsUtil.USER_LEVEL, "");
                                             // 质检部长驳回
                                             if (userLevel.equals("1")) {
                                                 status = "3";
                                                 bean.setProcessState("3");
-                                            } else {
+                                            } else if (userLevel.equals("2")) {
                                                 status = "5";
                                                 bean.setProcessState("5");
+                                            } else {
+                                                status = "7";
+                                                bean.setProcessState("7");
                                             }
                                         } else {
-                                            status = "6";
-                                            bean.setProcessState("6");
+                                            status = "8";
+                                            bean.setProcessState("8");
                                         }
                                         bean.saveOrUpdate("processId = ?", bean.getProcessId());
                                     }
@@ -1498,10 +1524,17 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 审核
             case R.id.btnRight:
-                // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
-                String userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
-                if (userLevel.equals("1") && (status.equals("1") || status.equals("0"))) {
-                    ToastUtil.showLong(mContext, "该" + s + "还未进行审核，进行审核后才能进行复审操作!");
+                // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
+                // 工序状态 (0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
+                if ((userLevel.equals("1") || userLevel.equals("2")) && (status.equals("1") || status.equals("0"))) {
+                    ToastUtil.showLong(mContext, "该" + s + "施工人员还未提交审核，您还不能进行审核!");
+                    return;
+                }
+                if (userLevel.equals("2") && status.equals("2")) {
+                    ToastUtil.showLong(mContext, "该" + s + "质检负责人还未进行审核，您还不能进行审核!");
+                    return;
+                } else if (userLevel.equals("2") && status.equals("3")) {
+                    ToastUtil.showLong(mContext, "该" + s + "已被质检负责人驳回给施工人员，您还不能进行审核!");
                     return;
                 }
 
@@ -1513,11 +1546,17 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                         // 审核照片
                         if (userLevel.equals("0")) {
                             switch (status) {
-                                case "6":
+                                case "8":
                                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
                                     return;
+                                case "7":
+                                    ToastUtil.showLong(mContext, "该" + s + "终审未通过，请等待监理驳回修改后再进行审核!");
+                                    return;
+                                case "6":
+                                    ToastUtil.showLong(mContext, "该" + s + "监理已审核通过，您不能再次提交审核!");
+                                    return;
                                 case "5":
-                                    ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请等待质检部长驳回修改后再进行审核!");
+                                    ToastUtil.showLong(mContext, "该" + s + "复审未通过，请等待质检部长驳回修改后再进行审核!");
                                     return;
                                 case "4":
                                     ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能再次提交审核!");
@@ -1528,14 +1567,47 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                             }
                         } else if (userLevel.equals("1")) {
                             switch (status) {
+                                case "8":
+                                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
+                                    return;
+                                case "7":
+                                    ToastUtil.showLong(mContext, "该" + s + "终审未通过，请等待监理驳回修改后再进行审核!");
+                                    return;
                                 case "6":
-                                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
+                                    ToastUtil.showLong(mContext, "该" + s + "监理已审核通过，您不能进行驳回操作!");
                                     return;
                                 case "5":
                                     ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请先驳回给施工人员修改后再进行审核!");
                                     return;
                                 case "4":
-                                    ToastUtil.showLong(mContext, "该" + s + "正在复审中，您不能次提交审核!");
+                                    ToastUtil.showLong(mContext, "该" + s + "监理正在审核，您不能再次提交审核!");
+                                    return;
+                                case "3":
+                                    ToastUtil.showLong(mContext, "该" + s + "初审被驳回，请等待施工人员修改后再进行审核!");
+                                    return;
+                                case "1":
+                                case "0":
+                                    ToastUtil.showLong(mContext, "该" + s + "还未进行初审，进行初审后才能进行审核操作!");
+                                    return;
+                            }
+
+                            if (getIntent().getStringExtra("canCheck").equals("0")) {
+                                ToastUtil.showLong(mContext, "该" + s + "已提交给其它人审核，您不能提交审核!");
+                                return;
+                            }
+                        } else if (userLevel.equals("2")) {
+                            switch (status) {
+                                case "8":
+                                    ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
+                                    return;
+                                case "7":
+                                    ToastUtil.showLong(mContext, "该" + s + "终审未通过，请驳回给质检负责人修改后再进行审核!");
+                                    return;
+                                case "6":
+                                    ToastUtil.showLong(mContext, "该" + s + "复审已通过，您不能进行驳回操作!");
+                                    return;
+                                case "5":
+                                    ToastUtil.showLong(mContext, "该" + s + "复审被驳回，请先驳回给施工人员修改后再进行审核!");
                                     return;
                                 case "3":
                                     ToastUtil.showLong(mContext, "该" + s + "初审被驳回，请等待施工人员修改后再进行审核!");
@@ -1560,7 +1632,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 拍照
             case R.id.imgBtnAdd:
-                if (getIntent().getStringExtra("canCheck").equals("0")) {
+                if (getIntent().getStringExtra("canCheck").equals("0") && !userLevel.equals("0")) {
                     ToastUtil.showLong(mContext, "该工序已提交给其它人处理，您不能拍照上传!");
                     return;
                 }

@@ -96,7 +96,6 @@
     <string name="save">保存</string>
     <string name="local_save">本地保存</string>
     <string name="measured_record">实测记录</string>
-    <string name="localPreservation">保存照片\n至本地</string>
     <string name="temporary_photo">暂存照片</string>
     <string name="working_no">工序编号</string>
     <string name="entry_time">录入时间</string>
@@ -138,7 +137,7 @@
     <string name="personal_msg">个人消息</string>
     <string name="same_day">各分部历史完成工序查询</string>
     <string name="working_info">截止目前各分部工序完成总统计图</string>
-    <string name="search">查询\n工序</string>
+    <string name="search">工序\n查询</string>
     <string name="beginDate">开始时间</string>
     <string name="endDate">结束时间</string>
 </resources>
