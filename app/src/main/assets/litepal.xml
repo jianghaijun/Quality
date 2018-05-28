@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <litepal>
     <dbname value="SX_Quality"/>
-    <version value="35"/>
+    <version value="36"/>
 
     <list>
         <mapping class="com.sx.quality.bean.ContractorListPhotosBean"></mapping>

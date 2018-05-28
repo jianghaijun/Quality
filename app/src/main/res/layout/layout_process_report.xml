@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_bg"
+    android:background="@color/report_bg"
     android:orientation="vertical"
     tools:context="com.sx.quality.activity.ProcessReportActivity">
 
@@ -29,12 +29,11 @@
             android:background="@null"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
-                android:background="@drawable/search_bg"
+                android:background="@null"
                 android:orientation="vertical"
                 android:padding="@dimen/five_dp">
 
@@ -43,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/working_info"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/fourteen_sp" />
 
                 <com.github.mikephil.charting.charts.BarChart
@@ -54,13 +53,20 @@
                     android:background="@null" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/one_px"
+                android:layout_marginLeft="@dimen/ten_dp"
+                android:layout_marginRight="@dimen/ten_dp"
+                android:background="@color/white" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/ten_dp"
                 android:layout_marginLeft="@dimen/ten_dp"
                 android:layout_marginRight="@dimen/ten_dp"
-                android:background="@drawable/search_bg"
+                android:background="@null"
                 android:orientation="vertical"
                 android:padding="@dimen/five_dp">
 
@@ -69,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/fourteen_sp" />
 
                 <com.github.mikephil.charting.charts.BarChart
@@ -79,12 +85,17 @@
                     android:background="@null" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/one_px"
+                android:layout_marginLeft="@dimen/ten_dp"
+                android:layout_marginRight="@dimen/ten_dp"
+                android:background="@color/white" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/ten_dp"
-                android:layout_marginRight="@dimen/ten_dp"
-                android:background="@drawable/search_bg"
+                android:background="@null"
                 android:orientation="vertical"
                 android:padding="@dimen/five_dp">
 
@@ -94,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/same_day"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/fourteen_sp" />
 
 
@@ -102,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sevenTy_dp"
                     android:layout_marginTop="@dimen/ten_dp"
-                    android:background="@drawable/search_bg"
+                    android:background="@null"
                     android:padding="@dimen/five_dp">
 
                     <Button
@@ -110,7 +121,7 @@
                         android:layout_width="@dimen/sixty_dp"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/btn_blue"
+                        android:background="#004672"
                         android:text="@string/search"
                         android:textColor="@color/white"
                         android:textSize="@dimen/fourteen_sp" />
@@ -127,7 +138,6 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginBottom="@dimen/one_dp"
                             android:layout_weight="1"
                             android:background="@null">
 
@@ -135,7 +145,7 @@
                                 android:id="@+id/txtBegan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="#3399FE"
+                                android:background="#004672"
                                 android:gravity="center"
                                 android:paddingLeft="@dimen/five_dp"
                                 android:paddingRight="@dimen/five_dp"
@@ -147,12 +157,11 @@
                                 android:id="@+id/txtBeganDate"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="@dimen/five_dp"
                                 android:layout_toRightOf="@+id/txtBegan"
-                                android:background="@drawable/search_bg"
+                                android:background="#004672"
                                 android:gravity="center"
                                 android:padding="@dimen/five_dp"
-                                android:textColor="@color/black"
+                                android:textColor="@color/white"
                                 android:textSize="@dimen/fourteen_sp" />
 
                         </RelativeLayout>
@@ -160,7 +169,6 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/one_dp"
                             android:layout_weight="1"
                             android:background="@null">
 
@@ -168,7 +176,7 @@
                                 android:id="@+id/txtEnd"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="#3399FE"
+                                android:background="#004672"
                                 android:gravity="center"
                                 android:paddingLeft="@dimen/five_dp"
                                 android:paddingRight="@dimen/five_dp"
@@ -180,12 +188,11 @@
                                 android:id="@+id/txtEndDate"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="@dimen/five_dp"
                                 android:layout_toRightOf="@+id/txtEnd"
-                                android:background="@drawable/search_bg"
+                                android:background="#004672"
                                 android:gravity="center"
                                 android:padding="@dimen/five_dp"
-                                android:textColor="@color/black"
+                                android:textColor="@color/white"
                                 android:textSize="@dimen/fourteen_sp" />
 
                         </RelativeLayout>
@@ -196,8 +203,10 @@
                     android:id="@+id/tbSameDay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/ten_dp"
+                    android:layout_marginRight="@dimen/ten_dp"
                     android:layout_marginTop="@dimen/ten_dp"
-                    android:background="@color/v_2_main_bg"
+                    android:background="#004672"
                     android:padding="@dimen/one_dp" />
             </LinearLayout>
         </LinearLayout>

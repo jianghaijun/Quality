@@ -15,6 +15,7 @@
     <color name="gray">#D9D9D9</color>
     <color name="black">#000000</color>
     <color name="gray_bg">#E8E8E8</color>
+    <color name="report_bg">#00315B</color>
 
     <!--各人设置-->
     <color name="person_setting">#64019C</color>

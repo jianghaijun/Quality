@@ -131,7 +131,9 @@ public class ProcessReportActivity extends BaseActivity {
         entries.add(new BarEntry(5f, Float.parseFloat(bean.getTotalNum6())));
 
         BarDataSet set = new BarDataSet(entries, "");
-        set.setColors(new int[]{Color.argb(255, 0, 154, 255)});
+        set.setColors(new int[]{Color.argb(255, 247, 142, 98)});
+        set.setHighlightEnabled(false);
+        set.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
         set.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -146,8 +148,7 @@ public class ProcessReportActivity extends BaseActivity {
         barChartMonth.invalidate();
         barChartMonth.getAxisRight().setEnabled(false); //右侧不显示Y轴
         barChartMonth.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM); //设置X轴的位置
-        barChartMonth.getLegend().setForm(Legend.LegendForm.NONE); //这是左边显示小图标的形状
-        barChartMonth.getLegend().setPosition(Legend.LegendPosition.PIECHART_CENTER);//设置注解的位置在左上方
+        barChartMonth.getLegend().setEnabled(false);
         barChartMonth.getXAxis().setDrawGridLines(false);//是否显示竖直标尺线
         barChartMonth.getXAxis().setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -182,6 +183,9 @@ public class ProcessReportActivity extends BaseActivity {
         Description desc = new Description();
         desc.setText("");
         barChartMonth.setDescription(desc);//设置描述
+        barChartMonth.getAxisLeft().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        barChartMonth.getXAxis().setTextColor(ContextCompat.getColor(mContext, R.color.white)); // X轴文字颜色
+        barChartMonth.setBackgroundColor(ContextCompat.getColor(mContext, R.color.report_bg));
         //设置动画
         barChartMonth.animateXY(0, 2000);
     }
@@ -224,11 +228,11 @@ public class ProcessReportActivity extends BaseActivity {
             TableRow tableRow = new TableRow(this);
             // 分部名称
             TextView divisionName = new TextView(this);
-            divisionName.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            divisionName.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             divisionName.setText(TextUtils.isEmpty(sameDayBean.getRootLevelName()) ? "" : sameDayBean.getRootLevelName().substring(3));
             divisionName.setTextSize(12);
             divisionName.setGravity(Gravity.CENTER);
-            divisionName.setTextColor(ContextCompat.getColor(this, R.color.black));
+            divisionName.setTextColor(ContextCompat.getColor(this, R.color.white));
             TableRow.LayoutParams lp = new TableRow.LayoutParams(DensityUtil.dip2px(49), height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -239,11 +243,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 路基完成数
             TextView ljFinishNum = new TextView(this);
-            ljFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            ljFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             ljFinishNum.setText(sameDayBean.getRoadbedNum());
             ljFinishNum.setTextSize(12);
             ljFinishNum.setGravity(Gravity.CENTER);
-            ljFinishNum.setTextColor(ContextCompat.getColor(this, R.color.black));
+            ljFinishNum.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -254,11 +258,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 桥梁完成数
             TextView qlFinishNum = new TextView(this);
-            qlFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            qlFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             qlFinishNum.setText(sameDayBean.getBridgeNum());
             qlFinishNum.setTextSize(12);
             qlFinishNum.setGravity(Gravity.CENTER);
-            qlFinishNum.setTextColor(ContextCompat.getColor(this, R.color.black));
+            qlFinishNum.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -269,11 +273,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 涵洞完成数
             TextView hdFinishNum = new TextView(this);
-            hdFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            hdFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             hdFinishNum.setText(sameDayBean.getCulvertNum());
             hdFinishNum.setTextSize(12);
             hdFinishNum.setGravity(Gravity.CENTER);
-            hdFinishNum.setTextColor(ContextCompat.getColor(this, R.color.black));
+            hdFinishNum.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -284,11 +288,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 排水完成数
             TextView psFinishNum = new TextView(this);
-            psFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            psFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             psFinishNum.setText(sameDayBean.getWaterNum());
             psFinishNum.setTextSize(12);
             psFinishNum.setGravity(Gravity.CENTER);
-            psFinishNum.setTextColor(ContextCompat.getColor(this, R.color.black));
+            psFinishNum.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -299,11 +303,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 防护完成数
             TextView pfhFinishNum = new TextView(this);
-            pfhFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            pfhFinishNum.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             pfhFinishNum.setText(sameDayBean.getProtectNum());
             pfhFinishNum.setTextSize(12);
             pfhFinishNum.setGravity(Gravity.CENTER);
-            pfhFinishNum.setTextColor(ContextCompat.getColor(this, R.color.black));
+            pfhFinishNum.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -314,11 +318,11 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 合计
             TextView subTotal = new TextView(this);
-            subTotal.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            subTotal.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             subTotal.setText(sameDayBean.getSubtotal());
             subTotal.setTextSize(12);
             subTotal.setGravity(Gravity.CENTER);
-            subTotal.setTextColor(ContextCompat.getColor(this, R.color.black));
+            subTotal.setTextColor(ContextCompat.getColor(this, R.color.white));
             lp = new TableRow.LayoutParams(width, height);
             if (i == 0) {
                 lp.setMargins(0, 0, DensityUtil.dip2px(1), 0);
@@ -329,12 +333,12 @@ public class ProcessReportActivity extends BaseActivity {
 
             // 操作
             TextView operation = new TextView(this);
-            operation.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            operation.setBackgroundColor(ContextCompat.getColor(this, R.color.report_bg));
             operation.setText(sameDayBean.getOperation());
             operation.setTextSize(12);
             lp = new TableRow.LayoutParams(DensityUtil.dip2px(40), height);
             if (i == 0) {
-                operation.setTextColor(ContextCompat.getColor(this, R.color.black));
+                operation.setTextColor(ContextCompat.getColor(this, R.color.white));
                 lp.setMargins(0, 0, 0, 0);
             } else {
                 operation.setTextColor(ContextCompat.getColor(this, R.color.v_2_main_check_bg));
@@ -369,29 +373,25 @@ public class ProcessReportActivity extends BaseActivity {
      */
     private void initHistoryData(List<SameDayBean> beanList) {
         List<Float> list1 = new ArrayList<>();
-        //List<Float> list2 = new ArrayList<>();
         List<Float> list3 = new ArrayList<>();
         int size = beanList.size();
         for (int i = 0; i < size; i++) {
             list1.add(Float.valueOf(beanList.get(i).getFinishedNum()));
-            //list2.add(Float.valueOf(beanList.get(i).getUnfinishedNum()));
             list3.add(Float.valueOf(beanList.get(i).getTotalNum()));
         }
 
         List<BarEntry> entriesGroup1 = new ArrayList<>();
-        //List<BarEntry> entriesGroup2 = new ArrayList<>();
         List<BarEntry> entriesGroup3 = new ArrayList<>();
 
         for (int i = 0; i < list1.size(); i++) {
             entriesGroup1.add(new BarEntry(i, list1.get(i)));
-            //entriesGroup2.add(new BarEntry(i, list2.get(i)));
             entriesGroup3.add(new BarEntry(i, list3.get(i)));
         }
 
         BarDataSet set1 = new BarDataSet(entriesGroup1, "已完成工序数");
         set1.setColors(new int[]{Color.argb(255, 0, 176, 80)}); // 设置每条柱子的颜色
-        //set1.setHighLightColor(Color.argb(255, 1, 145, 241));
-        //set1.setHighLightAlpha(255);
+        set1.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
+        set1.setHighlightEnabled(false);
         set1.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -400,20 +400,10 @@ public class ProcessReportActivity extends BaseActivity {
             }
         });
 
-        /*BarDataSet set2 = new BarDataSet(entriesGroup2, "未完成");
-        set2.setColors(new int[]{Color.argb(255, 0, 154, 255)}); // 设置每条柱子的颜色
-        set2.setValueFormatter(new IValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                String s = String.valueOf(value).substring(0, String.valueOf(value).indexOf("."));
-                return s;
-            }
-        });*/
-
         BarDataSet set3 = new BarDataSet(entriesGroup3, "总工序数");
         set3.setColors(new int[]{Color.argb(255, 247, 142, 98)}); // 设置每条柱子的颜色
-        //set3.setHighLightColor(Color.argb(255, 247, 139, 94));
-        //set3.setHighLightAlpha(255);
+        set3.setHighlightEnabled(false);
+        set3.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
         set3.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -437,6 +427,7 @@ public class ProcessReportActivity extends BaseActivity {
         barChart.getAxisRight().setEnabled(false); //右侧不显示Y轴
         barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM); //设置X轴的位置
         barChart.getLegend().setForm(Legend.LegendForm.SQUARE); //这是左边显示小图标的形状
+        barChart.getLegend().setTextColor(ContextCompat.getColor(mContext, R.color.white));
         barChart.getLegend().setPosition(Legend.LegendPosition.ABOVE_CHART_LEFT);//设置注解的位置在左上方
         barChart.getXAxis().setDrawGridLines(false);//是否显示竖直标尺线
         barChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
@@ -475,6 +466,9 @@ public class ProcessReportActivity extends BaseActivity {
         Description desc = new Description();
         desc.setText("");
         barChart.setDescription(desc);//设置描述
+        barChart.setBackgroundColor(ContextCompat.getColor(mContext, R.color.report_bg));
+        barChart.getAxisLeft().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        barChart.getXAxis().setTextColor(ContextCompat.getColor(mContext, R.color.white)); // X轴文字颜色
         //设置动画
         barChart.animateXY(0, 2000);
     }

@@ -80,7 +80,7 @@ public class V_2ContractorActivity extends BaseActivity {
         lvContractorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((V_2ContractorTreeAdapter) parent.getAdapter()).ExpandOrCollapse(position);
+                ((V_2ContractorTreeAdapter) parent.getAdapter()).CheckIsHave(position);
             }
         });
 
@@ -258,6 +258,7 @@ public class V_2ContractorActivity extends BaseActivity {
             n.setFolderFlag(contractorListBean.getFolderFlag());
             n.setExpanded(false);
             n.setLoading(false);
+            n.setCanClick(contractorListBean.getHaveProcess().equals("1"));
             n.setIsFinish(contractorListBean.getIsFinish());
             root.add(n);
         } catch (Exception e) {
@@ -411,6 +412,7 @@ public class V_2ContractorActivity extends BaseActivity {
             n.setFolderFlag(contractor.getFolderFlag());
             n.setExpanded(false);
             n.setLoading(false);
+            n.setCanClick(contractor.getHaveProcess().equals("1"));
             n.setIsFinish(contractor.getIsFinish());
             nodes.add(n);
         }

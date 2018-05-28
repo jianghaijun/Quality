@@ -16,7 +16,16 @@ public class NewContractorListBean extends DataSupport implements Serializable {
     private int processNum;         // 工序数量
     private int finishedNum;        // 已完成工序数量
     private String isFinish;        // 是否已审核完
-    private String levelType;        // 质量或安全
+    private String levelType;       // 质量或安全
+    private String haveProcess;     // 是否有子工序 0:有 1：无
+
+    public String getHaveProcess() {
+        return haveProcess;
+    }
+
+    public void setHaveProcess(String haveProcess) {
+        this.haveProcess = haveProcess;
+    }
 
     public String getLevelType() {
         return levelType;

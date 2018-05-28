@@ -16,8 +16,17 @@ public class Node {
     private String parentId;                            // 父ID
     private String folderFlag;                          // 是否是文件夹flag 0:不是文件夹 1：是文件夹
     private String isFinish;                            // 是否已完成
+    private boolean isCanClick;                         // 是否有子工序
     private boolean isLoading = false;                  // 是否已经加载
     private boolean isExpanded = true;                  // 是否处于展开状态
+
+    public boolean isCanClick() {
+        return isCanClick;
+    }
+
+    public void setCanClick(boolean canClick) {
+        isCanClick = canClick;
+    }
 
     public String getIsFinish() {
         return TextUtils.isEmpty(isFinish) ? "" : isFinish;

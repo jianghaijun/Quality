@@ -24,9 +24,9 @@ public class ConstantsUtil {
     public static String roleFlag = "1";
     /**山西路桥传2  长陵机电传2*/
     public static String roleFlag_2 = "2";
-    /**山西路桥传3  长陵机电传2*/
+    /**山西路桥传21  长陵机电传2*/
     public static String roleFlag_3 = "21";
-    /**山西路桥传  长陵机电传*/
+    /**前缀*/
     public static String prefix = "/apisxdehzl/";
     //public static String prefix = "";
     /**登录accountId*/
@@ -58,7 +58,6 @@ public class ConstantsUtil {
             .connectTimeout(30000L, TimeUnit.MILLISECONDS)
             .readTimeout(30000L, TimeUnit.MILLISECONDS)
             .build();
-
     /** 是否登录成功 */
     public static final String IS_LOGIN_SUCCESSFUL = "IS_LOGIN_SUCCESSFUL";
 

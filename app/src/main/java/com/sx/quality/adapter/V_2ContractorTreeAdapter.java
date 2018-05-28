@@ -2,6 +2,7 @@ package com.sx.quality.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
     private int collapsedIcon = -1;
     private Activity mContext;
 
-    private View view;
+    private View viewMain;
     private Node rootNode;
     private List<String> nodeName = new ArrayList<>();
     private ContractorListener listener;
@@ -47,7 +48,7 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
         this.listener = listener;
         this.lif = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         addNode(rootNode);
-        this.view = view;
+        this.viewMain = view;
     }
 
     /**
@@ -178,8 +179,38 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
                     }
                 }
                 WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
-                workingPop.showAtDropDownRight(view);
+                workingPop.showAtDropDownRight(viewMain);
             }
+        }
+    }
+
+    /**
+     * 是否有工序
+     * @param position
+     */
+    public void CheckIsHave(int position) {
+        Node n = all.get(position);
+        if (!n.isCanClick()) {
+            ExpandOrCollapse(position);
+        } else {
+            nodeName.clear();
+            nodeName.add(n.getLevelName());
+            getNodeRootNode(n);
+            StringBuffer sb = new StringBuffer();
+            int len = nodeName.size() - 1;
+            for (int i = len; i >= 0; i--) {
+                String name = nodeName.get(i);
+                if (name.contains("(")) {
+                    name = name.substring(0, name.lastIndexOf("("));
+                }
+                if (i != 0) {
+                    sb.append(name.trim() + "→");
+                } else {
+                    sb.append(name.trim());
+                }
+            }
+            WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
+            workingPop.showAtDropDownRight(viewMain);
         }
     }
 
@@ -211,20 +242,12 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
         }
 
         // 得到当前节点
-        Node n = all.get(position);
+        final Node n = all.get(position);
 
         if (n != null) {
             // 显示文本
             String roleName = n.getLevelName();
             // 去掉节点上该节点下有多少工序，是否已完成
-            /*if (!n.getFolderFlag().equals("1")) {
-                if (n.getIsFinish().equals("1")) {
-                    roleName = roleName.substring(0, roleName.indexOf("(")) + "(已完成)";
-                } else {
-                    roleName = roleName.substring(0, roleName.indexOf("(")) + "(未完成)";
-                }
-            }*/
-
             holder.txtTitle.setText(roleName == null || "null".equals(roleName) ? "" : roleName);
             if (!n.getFolderFlag().equals("1")) {
                 // 是叶节点 不显示展开和折叠状态图标
@@ -238,13 +261,27 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
             /* 单击时控制子节点展开和折叠,状态图标改变  */
             if (n.isExpanded()) {
                 if (expandedIcon != -1) {
-                    holder.imgViewState.setImageResource(expandedIcon);
+                    holder.imgViewState.setImageDrawable(ContextCompat.getDrawable(mContext, expandedIcon));
                 }
             } else {
                 if (collapsedIcon != -1) {
-                    holder.imgViewState.setImageResource(collapsedIcon);
+                    holder.imgViewState.setImageDrawable(ContextCompat.getDrawable(mContext, collapsedIcon));
                 }
             }
+
+            holder.rlNodeState.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ExpandOrCollapse(position);
+                }
+            });
+
+            /*holder.txtTitle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckIsHave(position);
+                }
+            });*/
 
             // 控制缩进
             if (n.getLevel() != 1) {
@@ -271,6 +308,8 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
         private TextView txtTitle;
         @ViewInject(R.id.rlItemTree)
         private RelativeLayout rlItemTree;
+        @ViewInject(R.id.rlNodeState)
+        private RelativeLayout rlNodeState;
     }
 
 }
