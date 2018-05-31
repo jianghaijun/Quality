@@ -17,7 +17,7 @@ public class ConstantsUtil {
     /**长陵机电路径*/
     //public static final String BASE_URL = "http://jd.sxlqjt.cn:8002/";
     /**山西路桥路径*/
-    public static final String BASE_URL = "http://jd.sxlqjt.cn:8002";   // http://sx.apih5.com:8088/
+    public static final String BASE_URL = "http://jd.sxlqjt.cn:8002";
     //public static final String BASE_URL = "http://192.168.1.155:8080/";
 
     /**山西路桥传1  长陵机电传2*/
