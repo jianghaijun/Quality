@@ -2,7 +2,6 @@ package com.sx.quality.utils;
 
 import com.sx.quality.bean.SameDayBean;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
