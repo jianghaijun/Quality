@@ -84,7 +84,6 @@ public class V_2ContractorActivity extends BaseActivity {
             }
         });
 
-        //String alreadyLoadNode = (String) SpUtil.get(mContext, ConstantsUtil.LEVEL_ID, "");
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)/* && !alreadyLoadNode.contains("&")*/) {
             getData();
         } else {
@@ -158,8 +157,6 @@ public class V_2ContractorActivity extends BaseActivity {
                                     bean.setLevelType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, ""));
                                     bean.saveOrUpdate("levelId=?", bean.getLevelId());
                                 }
-                                // 添加已加载的LevelId
-                                //SpUtil.put(mContext, ConstantsUtil.LEVEL_ID, SpUtil.get(mContext, ConstantsUtil.LEVEL_ID, "") + "&");
                                 // 设置节点
                                 setContractorNode(model.getData());
                                 LoadingUtils.hideLoading();
@@ -222,7 +219,7 @@ public class V_2ContractorActivity extends BaseActivity {
 
                 ta = new V_2ContractorTreeAdapter(this, root, listener, btnRight);
                 /* 设置展开和折叠时图标 */
-                ta.setExpandedCollapsedIcon(R.drawable.reduce, R.drawable.plus);
+                ta.setExpandedCollapsedIcon(R.drawable.open, R.drawable.fold);
 				/* 设置默认展开级别 */
                 ta.setExpandLevel(1);
                 lvContractorList.setAdapter(ta);

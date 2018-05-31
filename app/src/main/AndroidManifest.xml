@@ -102,7 +102,7 @@
         <activity
             android:name=".ShowPhotosActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <!-- 横屏拍照 -->
         <activity
             android:name=".PhotographActivity"
@@ -124,17 +124,17 @@
         <activity
             android:name=".V_2ContractorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <!-- 工序详情 -->
         <activity
             android:name=".V_2ContractorDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <!-- 实测记录 -->
         <activity
             android:name=".ActualMeasurementActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <!-- 工序报表 -->
         <activity
             android:name=".ProcessReportActivity"
