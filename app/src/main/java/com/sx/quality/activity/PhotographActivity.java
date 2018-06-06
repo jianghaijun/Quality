@@ -29,6 +29,9 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.sx.quality.dialog.HorizontalScreenHintDialog;
 import com.sx.quality.utils.Constants;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.LoadingUtils;
@@ -68,9 +71,12 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
     // 消息常量值
     private static final int PHOTOGRAPH = Constants.MESSAGE_ONE;
     private Bitmap mBitmap;
+    private Context mContext;
 
     private int mOrientation = 270;
     private AlbumOrientationEventListener mAlbumOrientationEventListener;
+    private HorizontalScreenHintDialog screenHintDialog;
+
     // 拍照
     private Handler handler = new Handler() {
         @Override
@@ -102,7 +108,7 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
         //初始化界面
         init();
         Monitor();
-
+        mContext = this;
         ScreenManagerUtil.pushActivity(this);
 
         // 屏幕方向监听
@@ -137,12 +143,20 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
                 // 返回的mOrientation就是手机方向，为0°、90°、180°和270°中的一个
                 mOrientation = newOrientation;
                 if (mCamera != null) {
-                    Intent intent = new Intent();
                     switch (mOrientation) {
                         case 0:
                         case 180:
-                            intent.setClass(PhotographActivity.this, PhotographVerticalActivity.class);
-                            startActivityForResult(intent, 1);
+                            if (screenHintDialog == null) {
+                                screenHintDialog = new HorizontalScreenHintDialog(mContext, false);
+                            }
+                            screenHintDialog.show();
+                            break;
+                        case 90:
+                        case 270:
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                            if (screenHintDialog != null && screenHintDialog.isShowing()) {
+                                screenHintDialog.dismiss();
+                            }
                             break;
                     }
                 }
@@ -635,7 +649,9 @@ public class PhotographActivity extends AppCompatActivity implements SurfaceHold
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAlbumOrientationEventListener.disable();
+        if (mAlbumOrientationEventListener != null) {
+            mAlbumOrientationEventListener.disable();
+        }
         ScreenManagerUtil.popActivity(this);
     }
 

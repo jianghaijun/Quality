@@ -228,6 +228,46 @@ public class WorkingPopupWindow extends PopupWindow {
             txtWorkingName.setHorizontallyScrolling(true);
             txtWorkingName.setMovementMethod(ScrollingMovementMethod.getInstance());
             txtWorkingName.setGravity(Gravity.CENTER_VERTICAL);
+            txtWorkingName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mActivity, V_2ContractorDetailsActivity.class);
+                    intent.putExtra("status", bean.getProcessState());
+                    intent.putExtra("nodeName", nodeName + "→" + bean.getProcessName());
+                    intent.putExtra("processCode", bean.getProcessCode());
+                    intent.putExtra("processName", bean.getProcessName());
+                    long dateLong = bean.getEnterTime() > 0 ? bean.getEnterTime() : System.currentTimeMillis();
+                    intent.putExtra("enterTime", DataUtils.getDataToStr(DateUtil.date(dateLong)));
+                    intent.putExtra("actualNumber", bean.getPhotoNumber());
+                    intent.putExtra("photoContent", bean.getPhotoContent());
+                    intent.putExtra("distanceAngle", bean.getPhotoDistance());
+                    intent.putExtra("processId", bean.getProcessId());
+                    intent.putExtra("levelId", bean.getLevelId());
+                    intent.putExtra("location", bean.getLocation());
+                    intent.putExtra("dismissal", bean.getDismissal());
+                    intent.putExtra("userType", (String) SpUtil.get(mActivity, ConstantsUtil.USER_TYPE, ""));
+                    intent.putExtra("ext1", bean.getExt1());
+                    intent.putExtra("ext2", bean.getExt2());
+                    intent.putExtra("ext3", bean.getExt3());
+                    intent.putExtra("ext4", bean.getExt4());
+                    intent.putExtra("ext5", bean.getExt5());
+                    intent.putExtra("ext6", bean.getExt6());
+                    intent.putExtra("ext7", bean.getExt7());
+                    intent.putExtra("ext8", bean.getExt8());
+                    intent.putExtra("ext9", bean.getExt9());
+                    intent.putExtra("ext10", bean.getExt10());
+                    intent.putExtra("canCheck", bean.getCanCheck());
+                    List<WorkingBean> list = DataSupport.where("processId = ?", bean.getProcessId()).find(WorkingBean.class);
+                    if (list != null && list.size() > 0) {
+                        intent.putExtra("check", isSave.get(point));
+                    } else {
+                        intent.putExtra("check", true);
+                    }
+
+                    mActivity.startActivity(intent);
+                    dismiss();
+                }
+            });
             tableRow.addView(txtWorkingName, lp);
 
             // 照片数量
@@ -326,46 +366,7 @@ public class WorkingPopupWindow extends PopupWindow {
                 lp.setMargins(0, DensityUtil.dip2px(1), 0, 0);
             }
             txtStatus.setGravity(Gravity.CENTER);
-            txtStatus.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mActivity, V_2ContractorDetailsActivity.class);
-                    intent.putExtra("status", status);
-                    intent.putExtra("nodeName", nodeName + "→" + bean.getProcessName());
-                    intent.putExtra("processCode", bean.getProcessCode());
-                    intent.putExtra("processName", bean.getProcessName());
-                    long dateLong = bean.getEnterTime() > 0 ? bean.getEnterTime() : System.currentTimeMillis();
-                    intent.putExtra("enterTime", DataUtils.getDataToStr(DateUtil.date(dateLong)));
-                    intent.putExtra("actualNumber", bean.getPhotoNumber());
-                    intent.putExtra("photoContent", bean.getPhotoContent());
-                    intent.putExtra("distanceAngle", bean.getPhotoDistance());
-                    intent.putExtra("processId", bean.getProcessId());
-                    intent.putExtra("levelId", bean.getLevelId());
-                    intent.putExtra("location", bean.getLocation());
-                    intent.putExtra("dismissal", bean.getDismissal());
-                    intent.putExtra("userType", (String) SpUtil.get(mActivity, ConstantsUtil.USER_TYPE, ""));
-                    intent.putExtra("ext1", bean.getExt1());
-                    intent.putExtra("ext2", bean.getExt2());
-                    intent.putExtra("ext3", bean.getExt3());
-                    intent.putExtra("ext4", bean.getExt4());
-                    intent.putExtra("ext5", bean.getExt5());
-                    intent.putExtra("ext6", bean.getExt6());
-                    intent.putExtra("ext7", bean.getExt7());
-                    intent.putExtra("ext8", bean.getExt8());
-                    intent.putExtra("ext9", bean.getExt9());
-                    intent.putExtra("ext10", bean.getExt10());
-                    intent.putExtra("canCheck", bean.getCanCheck());
-                    List<WorkingBean> list = DataSupport.where("processId = ?", bean.getProcessId()).find(WorkingBean.class);
-                    if (list != null && list.size() > 0) {
-                        intent.putExtra("check", isSave.get(point));
-                    } else {
-                        intent.putExtra("check", true);
-                    }
 
-                    mActivity.startActivity(intent);
-                    dismiss();
-                }
-            });
             tableRow.addView(txtStatus, lp);
 
             tabLay.addView(tableRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));

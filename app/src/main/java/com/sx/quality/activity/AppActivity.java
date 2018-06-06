@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -75,7 +76,7 @@ public class AppActivity extends BaseActivity {
         hold.banner.setImages(objList);
         hold.banner.start();
         // 跑马灯文字
-        if (data != null) {
+        if (data != null && StrUtil.isNotEmpty(data.getProcessId())) {
             hold.mMarqueeView.setText("最新上传照片工序位置：" + data.getLevelNameAll().replaceAll(",", "→") + "→" + data.getProcessName());
             hold.mMarqueeView.setOnClickListener(new View.OnClickListener() {
                 @Override

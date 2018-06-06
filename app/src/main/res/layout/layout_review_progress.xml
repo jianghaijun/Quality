@@ -8,18 +8,18 @@
 
     <include
         android:id="@+id/actionBar"
-        layout="@layout/layout_navigation_bar"
+        layout="@layout/v_2_layout_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_dp"
         android:layout_alignParentTop="true"
-        app:layout_heightPercent="12%" />
+        app:layout_heightPercent="8%" />
 
-    <ListView
-        android:id="@+id/lvAuditors"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvTimeLineWaterfallFlow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/ten_dp"
         android:background="@null"
-        android:divider="@color/gray"
-        android:dividerHeight="@dimen/one_px"
         android:scrollbars="none" />
+
 </com.zhy.android.percent.support.PercentLinearLayout>

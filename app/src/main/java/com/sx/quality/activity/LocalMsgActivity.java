@@ -27,6 +27,7 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -65,11 +66,11 @@ public class LocalMsgActivity extends BaseActivity {
                 mAdapter = new LoadMoreAdapterWrapper(msgAdapter, new OnLoad() {
                     @Override
                     public void load(int pagePosition, int pageSize, ILoadCallback callback) {
-                        if (pagePosition != 1 && (pagePosition-1) * pageSize > sum) {
+                        /*if (pagePosition != 1 && (pagePosition-1) * pageSize > sum) {
                             callback.onFailure();
-                        } else {
-                            getMsgData(pagePosition, pageSize, callback);
-                        }
+                        } else {*/
+                            getMsgData(pagePosition, pageSize, callback, pagePosition != 1 && (pagePosition-1) * pageSize > sum);
+                        /*}*/
                     }
                 });
                 holder.rvMsg.setAdapter(mAdapter);
@@ -81,11 +82,11 @@ public class LocalMsgActivity extends BaseActivity {
                     mAdapter = new LoadMoreAdapterWrapper(msgAdapter, new OnLoad() {
                         @Override
                         public void load(int pagePosition, int pageSize, ILoadCallback callback) {
-                            if (pagePosition != 1 && (pagePosition-1) * pageSize > sum) {
+                            /*if (pagePosition != 1 && (pagePosition-1) * pageSize > sum) {
                                 callback.onFailure();
-                            } else {
-                                getMsgData(pagePosition, pageSize, callback);
-                            }
+                            } else {*/
+                                getMsgData(pagePosition, pageSize, callback, pagePosition != 1 && (pagePosition-1) * pageSize > sum);
+                            /*}*/
                         }
                     });
                     holder.rvMsg.setAdapter(mAdapter);
@@ -100,7 +101,7 @@ public class LocalMsgActivity extends BaseActivity {
      * @param pagePosition
      * @param callback
      */
-    private void getMsgData(int pagePosition, int pageSize, final ILoadCallback callback) {
+    private void getMsgData(int pagePosition, int pageSize, final ILoadCallback callback, final boolean isHave) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("page", pagePosition);
@@ -139,12 +140,21 @@ public class LocalMsgActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sum = model.getTotalNumber();
-                                    // 数据的处理最终还是交给被装饰的adapter来处理
-                                    msgAdapter.appendData(model.getData());
-                                    callback.onSuccess();
+                                    if (!isHave) {
+                                        sum = model.getTotalNumber();
+                                        // 数据的处理最终还是交给被装饰的adapter来处理
+                                        msgAdapter.appendData(model.getData());
+                                        callback.onSuccess();
 
-                                    if (model == null || model.getData() == null || model.getData().size() == 0 || model.getData().size() < size) {
+                                        if (model == null || model.getData() == null || model.getData().size() == 0 || model.getData().size() < size) {
+                                            callback.onFailure();
+                                        }
+                                    } else {
+                                        sum = model.getTotalNumber();
+                                        // 数据的处理最终还是交给被装饰的adapter来处理
+                                        msgAdapter.appendData(new ArrayList());
+                                        callback.onSuccess();
+
                                         callback.onFailure();
                                     }
                                 }

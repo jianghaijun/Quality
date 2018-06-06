@@ -28,7 +28,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- SD卡读取权限，用户写入离线定位数据 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <!--安装未知来源APP-->
+    <!-- 安装未知来源APP -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -59,19 +59,23 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
         <!-- Glide -->
         <meta-data
             android:name="com.sx.quality.utils.GlideConfiguration"
             android:value="GlideModule" />
+
         <!-- 百度定位 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="Lz1STOFek7mISzWyWIjvR1V7LVVyMpGU" />
+
         <!-- 百度定位 -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
+
         <!-- 程序入口 -->
         <activity
             android:name=".SplashScreenActivity"
@@ -108,7 +112,7 @@
             android:name=".PhotographActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|navigation"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <!-- 竖屏拍照 -->
         <activity
             android:name=".PhotographVerticalActivity"
@@ -144,6 +148,30 @@
             android:name=".SameDayProjectDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+        <!-- 3.0工序列表 -->
+        <activity
+            android:name=".V_3WorkingProcedureActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <!-- 常用工序 -->
+        <activity
+            android:name=".CommonWorkingProcedureActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <!-- 工序详情 -->
+        <activity
+            android:name=".V_3ContractorDetailsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <!--审批流程-->
+        <activity
+            android:name=".ReviewProgressActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
 </manifest>

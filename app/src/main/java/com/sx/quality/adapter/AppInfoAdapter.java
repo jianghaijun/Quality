@@ -18,6 +18,7 @@ import com.sx.quality.activity.ProcessReportActivity;
 import com.sx.quality.activity.R;
 import com.sx.quality.activity.UpLoadPhotosActivity;
 import com.sx.quality.activity.V_2ContractorActivity;
+import com.sx.quality.activity.V_3WorkingProcedureActivity;
 import com.sx.quality.bean.AppInfoBean;
 import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.model.SameDayModel;
@@ -34,7 +35,6 @@ import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import cn.hutool.core.date.DateUtil;
@@ -86,7 +86,10 @@ public class AppInfoAdapter extends RecyclerView.Adapter<AppInfoAdapter.AppInfoH
                 switch (position) {
                     // 工序检查
                     case 0:
-                        intent = new Intent(mContext, V_2ContractorActivity.class);
+                        /*intent = new Intent(mContext, V_2ContractorActivity.class);
+                        SpUtil.put(mContext, ConstantsUtil.USER_TYPE, "0");
+                        mContext.startActivity(intent);*/
+                        intent = new Intent(mContext, V_3WorkingProcedureActivity.class);
                         SpUtil.put(mContext, ConstantsUtil.USER_TYPE, "0");
                         mContext.startActivity(intent);
                         break;

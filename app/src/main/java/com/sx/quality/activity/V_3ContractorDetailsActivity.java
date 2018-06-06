@@ -4,10 +4,13 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,10 +33,14 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
 import com.sx.quality.adapter.V_2ContractorDetailsAdapter;
+import com.sx.quality.adapter.V_3TimeLineAdapter;
 import com.sx.quality.application.MyApplication;
 import com.sx.quality.bean.ContractorListPhotosBean;
+import com.sx.quality.bean.OrderStatus;
 import com.sx.quality.bean.PictureBean;
+import com.sx.quality.bean.TimeLineModel;
 import com.sx.quality.bean.WorkingBean;
+import com.sx.quality.dialog.HorizontalScreenHintDialog;
 import com.sx.quality.dialog.MeasuredProjectDialog;
 import com.sx.quality.dialog.PromptDialog;
 import com.sx.quality.dialog.RejectDialog;
@@ -86,7 +94,7 @@ import okhttp3.Response;
 /**
  * 承包商详情
  */
-public class V_2ContractorDetailsActivity extends BaseActivity {
+public class V_3ContractorDetailsActivity extends BaseActivity {
     @ViewInject(R.id.imgBtnLeft)
     private ImageButton imgBtnLeft;
     @ViewInject(R.id.txtTitle)
@@ -157,6 +165,21 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     private EditText edtElevation5;
     @ViewInject(R.id.imgBtnPhotos)
     private Button imgBtnPhotos;
+
+
+    /*------------------------------时间轴-----------------------------*/
+    @ViewInject(R.id.rvTimeMarker)
+    private RecyclerView rvTimeMarker;
+    private List<TimeLineModel> mDataList = new ArrayList<>();
+    private V_3TimeLineAdapter timeLineAdapter;
+    /*------------------------------时间轴-----------------------------*/
+
+    /*------------------------------屏幕方向监听-----------------------------*/
+    private AlbumOrientationEventListener mAlbumOrientationEventListener;
+    private int mOrientation = 0;
+    private boolean isHorizontalScreen = false;
+    /*------------------------------屏幕方向监听-----------------------------*/
+
     /*图片信息*/
     @ViewInject(R.id.rvContractorDetails)
     private RecyclerView rvContractorDetails;
@@ -180,6 +203,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     private String sLocation;
     private String userLevel;
 
+
+
     /**
      * 是否已点击上报按钮
      */
@@ -188,7 +213,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.v_2activity_contractor_details);
+        setContentView(R.layout.activity_v_3_contractor_details);
 
         mContext = this;
         x.view().inject(this);
@@ -205,13 +230,13 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             imgFile.mkdirs();
         }
 
-        processId = getIntent().getStringExtra("processId");
+        /*processId = getIntent().getStringExtra("processId");
         rootNodeName = getIntent().getStringExtra("nodeName");
         status = getIntent().getStringExtra("status");
-        processName = getIntent().getStringExtra("processName");
+        processName = getIntent().getStringExtra("processName");*/
 
         // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
-        if (status.equals("3") || status.equals("5") || status.equals("7")) {
+        /*if (status.equals("3") || status.equals("5") || status.equals("7")) {
             rlRejectPhotos.setVisibility(View.VISIBLE);
             txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
         }
@@ -282,7 +307,44 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 imgBtnPhotos.setVisibility(View.VISIBLE);
             }
             setData();
+        }*/
+
+        rvTimeMarker.setLayoutManager(getLinearLayoutManager());
+        rvTimeMarker.setHasFixedSize(true);
+        initTimeLineView();
+
+        // 屏幕方向监听
+        mAlbumOrientationEventListener = new AlbumOrientationEventListener(mContext, SensorManager.SENSOR_DELAY_NORMAL);
+        if (mAlbumOrientationEventListener.canDetectOrientation()) {
+            mAlbumOrientationEventListener.enable();
         }
+    }
+
+    /**
+     * 设置列表方向
+     * @return
+     */
+    private LinearLayoutManager getLinearLayoutManager() {
+        return new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    }
+
+    /**
+     * 初始化时间轴
+     */
+    private void initTimeLineView() {
+        setDataListItems();
+        timeLineAdapter = new V_3TimeLineAdapter(mDataList);
+        rvTimeMarker.setAdapter(timeLineAdapter);
+    }
+
+    /**
+     * 添加时间轴数据
+     */
+    private void setDataListItems() {
+        mDataList.add(new TimeLineModel("Courier is out to delivery your order", "2017-02-12 08:00", OrderStatus.ACTIVE));
+        mDataList.add(new TimeLineModel("Item has reached courier facility at New Delhir facility at New Delhi", "2017-02-11 21:00", OrderStatus.COMPLETED));
+        mDataList.add(new TimeLineModel("Order confirmed by seller", "2017-02-10 14:30", OrderStatus.COMPLETED));
+        mDataList.add(new TimeLineModel("Order placed successfully", "2017-02-10 14:00", OrderStatus.COMPLETED));
     }
 
     /**
@@ -624,15 +686,52 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 拍照
      */
     private void takePictures() {
-        /*Intent intent = new Intent();
-        intent.setClass(mContext, PhotographActivity.class);
-        startActivityForResult(intent, 1);*/
+        if (!isHorizontalScreen) {
+            HorizontalScreenHintDialog screenHintDialog = new HorizontalScreenHintDialog(mContext, true);
+            screenHintDialog.show();
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(mContext, PhotographActivity.class);
+            startActivityForResult(intent, 1);
+        }
+    }
 
-        // 指定开启系统相机的Action
-        Intent intent = new Intent();
-        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        startActivityForResult(intent, 1);
+    /**
+     * 屏幕方向旋转监听
+     */
+    private class AlbumOrientationEventListener extends OrientationEventListener {
+        public AlbumOrientationEventListener(Context context) {
+            super(context);
+        }
+
+        public AlbumOrientationEventListener(Context context, int rate) {
+            super(context, rate);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+                return;
+            }
+
+            //保证只返回四个方向
+            int newOrientation = ((orientation + 45) / 90 * 90) % 360;
+
+            if (newOrientation != mOrientation) {
+                // 返回的mOrientation就是手机方向，为0°、90°、180°和270°中的一个
+                mOrientation = newOrientation;
+                switch (mOrientation) {
+                    case 0:
+                    case 180:
+                        isHorizontalScreen = false;
+                        break;
+                    case 90:
+                    case 270:
+                        isHorizontalScreen = true;
+                        break;
+                }
+            }
+        }
     }
 
     @Override
@@ -771,7 +870,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             // 显示本地保存照片文件夹
             imgBtnPhotos.setVisibility(View.VISIBLE);
             // 异步将图片存储到SD卡指定文件夹下
-            new V_2ContractorDetailsActivity.StorageTask().execute(strings);
+            new StorageTask().execute(strings);
         }
     };
 
@@ -889,7 +988,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
             if (permissions.size() > 0) {
                 requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
             } else {
-                if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
+                if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
                     locationService = ((MyApplication) getApplication()).locationService;
                     locationService.registerListener(mListener);
                     //注册监听
@@ -927,7 +1026,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
+        if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             locationService = ((MyApplication) getApplication()).locationService;
             locationService.registerListener(mListener);
             //注册监听
@@ -1021,7 +1120,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         }
 
         // 上报审核
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
+        if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             if (submitPictureList.size() > 0) {
                 // 上传
                 UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, submitPictureList, new ChoiceListener() {
@@ -1180,7 +1279,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
      * 实测记录
      */
     private void measuredRecord() {
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
+        if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             MeasuredProjectDialog measuredProjectDialog = new MeasuredProjectDialog(mContext, new ReportListener() {
                 @Override
                 public void returnUserId(String projectId) {
@@ -1639,7 +1738,8 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 拍照
             case R.id.imgBtnAdd:
-                if (getIntent().getStringExtra("canCheck").equals("0") && !userLevel.equals("0")) {
+                takePictures();
+                /*if (getIntent().getStringExtra("canCheck").equals("0") && !userLevel.equals("0")) {
                     ToastUtil.showLong(mContext, "该工序已提交给其它人处理，您不能拍照上传!");
                     return;
                 }
@@ -1660,7 +1760,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                     } else {
                         takePhotos();
                     }
-                }
+                }*/
                 break;
             // 实测记录
             case R.id.btnMeasuredRecord:
@@ -1722,7 +1822,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         super.onDestroy();
         isCanSelect = false;
         ScreenManagerUtil.popActivity(this);
-
+        mAlbumOrientationEventListener.disable();
         //在onPause()方法终止定位
         if (gpsLocationManager != null) {
             gpsLocationManager.stop();

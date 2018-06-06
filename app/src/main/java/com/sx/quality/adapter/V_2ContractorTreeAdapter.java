@@ -2,6 +2,7 @@ package com.sx.quality.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,8 +179,13 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
                         sb.append(name.trim());
                     }
                 }
-                WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
-                workingPop.showAtDropDownRight(viewMain);
+                Intent intent = new Intent();
+                intent.putExtra("procedureName", n.getLevelName());
+                mContext.setResult(Activity.RESULT_OK, intent);
+                mContext.finish();
+
+                /*WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
+                workingPop.showAtDropDownRight(viewMain);*/
             }
         }
     }
@@ -209,8 +215,12 @@ public class V_2ContractorTreeAdapter extends BaseAdapter {
                     sb.append(name.trim());
                 }
             }
-            WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
-            workingPop.showAtDropDownRight(viewMain);
+            Intent intent = new Intent();
+            intent.putExtra("procedureName", n.getLevelName());
+            mContext.setResult(Activity.RESULT_OK, intent);
+            mContext.finish();
+            /*WorkingPopupWindow workingPop = new WorkingPopupWindow(mContext, sb.toString(), n.getLevelId());
+            workingPop.showAtDropDownRight(viewMain);*/
         }
     }
 

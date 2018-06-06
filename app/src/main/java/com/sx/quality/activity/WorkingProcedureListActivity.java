@@ -1,7 +1,6 @@
 package com.sx.quality.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,8 +10,8 @@ import com.google.gson.Gson;
 import com.sx.quality.adapter.BaseAdapter;
 import com.sx.quality.adapter.ILoadCallback;
 import com.sx.quality.adapter.LoadMoreAdapterWrapper;
-import com.sx.quality.adapter.MsgAdapter;
 import com.sx.quality.adapter.OnLoad;
+import com.sx.quality.adapter.WorkingProcedureListAdapter;
 import com.sx.quality.model.WorkingModel;
 import com.sx.quality.utils.ConstantsUtil;
 import com.sx.quality.utils.JsonUtils;
@@ -34,64 +33,41 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PersonalMsgActivity extends BaseActivity {
-    private MsgHolder holder;
-    private Context mContext;
-    private MsgAdapter msgAdapter;
-    private BaseAdapter mAdapter;
-    private int size = 5;
+public class WorkingProcedureListActivity extends BaseActivity {
+    private WorkingProcedureListAdapter mAdapter;
+    private WorkingProcedureHolder holder;
+    private BaseAdapter baseAdapter;
+    private Activity mContext;
+    private int size = 4;
     private int sum;
 
-    public PersonalMsgActivity(Context mContext, View layoutMsg) {
+    public WorkingProcedureListActivity(Activity mContext, View layoutWorkingProcedure) {
         this.mContext = mContext;
-        holder = new MsgHolder();
-        x.view().inject(holder, layoutMsg);
-        size = (int) ((DensityUtil.getScreenHeight() - DensityUtil.getScreenHeight() * 0.18 - DensityUtil.dip2px(5)) / DensityUtil.dip2px(96));
+        holder = new WorkingProcedureHolder();
+        x.view().inject(holder, layoutWorkingProcedure);
+        size = (int) ((DensityUtil.getScreenHeight() - DensityUtil.getScreenHeight() * 0.08 - DensityUtil.dip2px(101)) / DensityUtil.dip2px(152)) + 1;
     }
 
-    public void setDate(boolean isLoading) {
-        if (!JudgeNetworkIsAvailable.isNetworkAvailable((Activity) mContext)) {
+    public void setDate() {
+        if (!JudgeNetworkIsAvailable.isNetworkAvailable(mContext)) {
             holder.rvMsg.setVisibility(View.GONE);
             holder.txtMsg.setVisibility(View.VISIBLE);
         } else {
             holder.rvMsg.setVisibility(View.VISIBLE);
             holder.txtMsg.setVisibility(View.GONE);
-
             // 创建被装饰者类实例
-            if (isLoading) {
-                msgAdapter = new MsgAdapter(mContext);
-                msgAdapter.updateData();
-                // 创建装饰者实例，并传入被装饰者和回调接口
-                mAdapter = new LoadMoreAdapterWrapper(msgAdapter, new OnLoad() {
-                    @Override
-                    public void load(int pagePosition, int pageSize, ILoadCallback callback) {
-                        /*if () {
-                            callback.onFailure();
-                        } else {*/
-                            getMsgData(pagePosition, pageSize, callback, pagePosition != 1 && (pagePosition-1) * pageSize > sum);
-                        /*}*/
-                    }
-                });
-                holder.rvMsg.setAdapter(mAdapter);
-                holder.rvMsg.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-            } else {
-                if (msgAdapter == null) {
-                    msgAdapter = new MsgAdapter(mContext);
-                    // 创建装饰者实例，并传入被装饰者和回调接口
-                    mAdapter = new LoadMoreAdapterWrapper(msgAdapter, new OnLoad() {
-                        @Override
-                        public void load(int pagePosition, int pageSize, ILoadCallback callback) {
-                            /*if (pagePosition != 1 && (pagePosition-1) * pageSize > sum) {
-                                callback.onFailure();
-                            } else {*/
-                                getMsgData(pagePosition, pageSize, callback, pagePosition != 1 && (pagePosition-1) * pageSize > sum);
-                            /*}*/
-                        }
-                    });
-                    holder.rvMsg.setAdapter(mAdapter);
-                    holder.rvMsg.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+            mAdapter = new WorkingProcedureListAdapter(mContext);
+            mAdapter.updateData();
+            // 创建装饰者实例，并传入被装饰者和回调接口
+            baseAdapter = new LoadMoreAdapterWrapper(mAdapter, new OnLoad() {
+                @Override
+                public void load(int pagePosition, int pageSize, ILoadCallback callback) {
+                    boolean isHave = pagePosition != 1 && (pagePosition-1) * pageSize > sum;
+                    getData(pagePosition, pageSize, callback, isHave);
                 }
-            }
+            });
+            holder.rvMsg.setAdapter(baseAdapter);
+            holder.rvMsg.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         }
     }
 
@@ -100,12 +76,12 @@ public class PersonalMsgActivity extends BaseActivity {
      * @param pagePosition
      * @param callback
      */
-    private void getMsgData(int pagePosition, int pageSize, final ILoadCallback callback, final boolean isHave) {
+    private void getData(int pagePosition, int pageSize, final ILoadCallback callback, final boolean isHave) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("page", pagePosition);
             obj.put("limit", pageSize);
-            obj.put("msgLevel", "0");
+            obj.put("msgLevel", "1");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -139,24 +115,17 @@ public class PersonalMsgActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    sum = model.getTotalNumber();
+                                    // 数据的处理最终还是交给被装饰的adapter来处理
+                                    mAdapter.appendData(model.getData());
+                                    callback.onSuccess();
                                     if (!isHave) {
-                                        sum = model.getTotalNumber();
-                                        // 数据的处理最终还是交给被装饰的adapter来处理
-                                        msgAdapter.appendData(model.getData());
-                                        callback.onSuccess();
-
                                         if (model == null || model.getData() == null || model.getData().size() == 0 || model.getData().size() < size) {
                                             callback.onFailure();
                                         }
                                     } else {
-                                        sum = model.getTotalNumber();
-                                        // 数据的处理最终还是交给被装饰的adapter来处理
-                                        msgAdapter.appendData(new ArrayList());
-                                        callback.onSuccess();
-
                                         callback.onFailure();
                                     }
-
                                 }
                             });
                         } else {
@@ -175,7 +144,7 @@ public class PersonalMsgActivity extends BaseActivity {
     /**
      * 容纳器
      */
-    private class MsgHolder {
+    private class WorkingProcedureHolder {
         @ViewInject(R.id.rvMsg)
         private RecyclerView rvMsg;
         @ViewInject(R.id.txtMsg)

@@ -1,11 +1,12 @@
 package com.sx.quality.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Environment;
 import android.os.StatFs;
-import android.text.format.Formatter;
 
 import java.io.File;
 
@@ -104,4 +105,6 @@ public class AppInfoUtil {
             return diff > 0 ? 1 : -1;
         }
     }
+
+
 }

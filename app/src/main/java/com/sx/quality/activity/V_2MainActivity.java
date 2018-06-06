@@ -194,7 +194,7 @@ public class V_2MainActivity extends BaseActivity {
                                     appActivity.setDate(objList, model.getData());
                                     mySettingActivity.checkVersion();
                                     data = model.getData();
-                                    msgMainActivity.setDate(model.getData());
+                                    //msgMainActivity.setDate(model.getData());
                                 }
                             });
                         } else {
