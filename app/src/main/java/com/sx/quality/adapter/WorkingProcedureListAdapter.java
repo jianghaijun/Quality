@@ -14,14 +14,19 @@ import android.widget.TextView;
 import com.sx.quality.activity.R;
 import com.sx.quality.activity.ReviewProgressActivity;
 import com.sx.quality.activity.V_3ContractorDetailsActivity;
+import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.bean.WorkingBean;
 import com.sx.quality.dialog.PhotoRequirementsDialog;
 import com.sx.quality.listener.ChoiceListener;
+import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.SpUtil;
 
-import java.util.Date;
+import org.litepal.crud.DataSupport;
+
 import java.util.List;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 
 public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> {
     private Activity mContext;
@@ -66,11 +71,11 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
 
         public void bind(WorkingBean data) {
             txtReviewProgress.setText("待审核");
-            txtProcedureName.setText("灌注桩");
-            txtProcedurePath.setText("路基第一分部→桥梁工程→桩基→桥梁→桩基1-1");
+            txtProcedureName.setText(data.getProcessName());
+            txtProcedurePath.setText(data.getLevelNameAll().replace(",", "→"));
             txtProcedureState.setText("待拍照");
-            txtPersonals.setText("裴元庆");
-            txtCheckTime.setText(DateUtil.format(new Date(), "yyyy-MM-dd hh:mm:ss"));
+            txtPersonals.setText(StrUtil.isEmpty(data.getCheckNameAll()) ? "未审核" : data.getCheckNameAll());
+            txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getEnterTime() == 0.0 || data.getEnterTime() == 0 ? System.currentTimeMillis() : data.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));
             imgViewTakePhoto.setOnClickListener(new onClick(data));
             imgViewProgress.setOnClickListener(new onClick(data));
             txtReviewProgress.setOnClickListener(new onClick(data));
@@ -92,9 +97,11 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.imgViewTakePhoto:
-                    if (workingBean.getProcessState().equals("0")) {
+                    List<ContractorListPhotosBean> phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ?", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), workingBean.getProcessId()).find(ContractorListPhotosBean.class);
+                    boolean isHave = phoneList == null || phoneList.size() == 0 ? false : true;
+                    if (!workingBean.getProcessState().equals("0") || isHave) {
                         // 直接拍照--->详情
-                        takePhotoActivity(workingBean.getProcessId());
+                        takePhotoActivity(workingBean.getProcessId(), true);
                     } else {
                         // 提示拍照要求--->详情
                         workingBean.setProcessName("混凝土");
@@ -105,7 +112,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                             @Override
                             public void returnTrueOrFalse(boolean trueOrFalse) {
                                 if (trueOrFalse) {
-                                    takePhotoActivity(workingBean.getProcessId());
+                                    takePhotoActivity(workingBean.getProcessId(), true);
                                 }
                             }
                         }, workingBean);
@@ -117,7 +124,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                     reviewProgressActivity(workingBean.getProcessId());
                     break;
                 case R.id.rlProcedurePath:
-                    takePhotoActivity(workingBean.getProcessId());
+                    takePhotoActivity(workingBean.getProcessId(), false);
                     break;
             }
         }
@@ -126,9 +133,10 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
     /**
      * 跳转到详情
      */
-    private void takePhotoActivity(String processId) {
+    private void takePhotoActivity(String processId, boolean isPopTakePhoto) {
         Intent intent = new Intent(mContext, V_3ContractorDetailsActivity.class);
         intent.putExtra("processId", processId);
+        intent.putExtra("isPopTakePhoto", isPopTakePhoto);
         mContext.startActivity(intent);
     }
 

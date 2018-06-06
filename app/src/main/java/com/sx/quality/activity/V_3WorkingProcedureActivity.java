@@ -14,9 +14,12 @@ import android.widget.TextView;
 
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
+import com.sx.quality.bean.SearchRecordBean;
 import com.sx.quality.utils.ScreenManagerUtil;
+import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
+import org.litepal.crud.DataSupport;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -76,12 +79,12 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
         initViewPageData();
         initRecyclerViewData();
         initTabData();
+        initSearchRecord();
 
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
                 if (!enabled) {
-                    //searchBar.disableSearch();
                     searchBar.setVisibility(View.GONE);
                 }
             }
@@ -100,14 +103,31 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
         searchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
             public void OnItemClickListener(int position, View v) {
+                searchBar.setVisibility(View.GONE);
                 ToastUtil.showShort(mContext, position + "---click---" + v.getTag());
             }
 
             @Override
             public void OnItemDeleteListener(int position, View v) {
-                ToastUtil.showShort(mContext, position + "---dele---" + v.getTag());
+                DataSupport.deleteAll(SearchRecordBean.class, "searchTitle=?", String.valueOf(searchBar.getLastSuggestions().get(position)));
+                searchBar.getLastSuggestions().remove(position);
+                searchBar.updateLastSuggestions(searchBar.getLastSuggestions());
             }
         });
+    }
+
+    /**
+     * 设置搜索历史列表
+     */
+    private void initSearchRecord() {
+        List<SearchRecordBean> searchList = DataSupport.findAll(SearchRecordBean.class);
+        if (searchList != null) {
+            List<String> stringList = new ArrayList<>();
+            for (SearchRecordBean bean : searchList) {
+                stringList.add(bean.getSearchTitle());
+            }
+            searchBar.setLastSuggestions(stringList);
+        }
     }
 
     /**
@@ -287,5 +307,14 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         ScreenManagerUtil.popActivity(this);
+        List<String> stringList = searchBar.getLastSuggestions();
+        if (stringList != null) {
+            DataSupport.deleteAll(SearchRecordBean.class);
+            for (String str : stringList) {
+                SearchRecordBean bean = new SearchRecordBean();
+                bean.setSearchTitle(str);
+                bean.save();
+            }
+        }
     }
 }

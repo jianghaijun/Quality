@@ -165,38 +165,37 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private EditText edtElevation5;
     @ViewInject(R.id.imgBtnPhotos)
     private Button imgBtnPhotos;
+    @ViewInject(R.id.rvContractorDetails)
+    private RecyclerView rvContractorDetails;
 
-
-    /*------------------------------时间轴-----------------------------*/
+    /*------------------------------时间轴Start-----------------------------------*/
     @ViewInject(R.id.rvTimeMarker)
     private RecyclerView rvTimeMarker;
     private List<TimeLineModel> mDataList = new ArrayList<>();
     private V_3TimeLineAdapter timeLineAdapter;
-    /*------------------------------时间轴-----------------------------*/
-
-    /*------------------------------屏幕方向监听-----------------------------*/
+    /*------------------------------时间轴End-------------------------------------*/
+    /*------------------------------屏幕方向监听Start------------------------------*/
     private AlbumOrientationEventListener mAlbumOrientationEventListener;
     private int mOrientation = 0;
     private boolean isHorizontalScreen = false;
-    /*------------------------------屏幕方向监听-----------------------------*/
-
-    /*图片信息*/
-    @ViewInject(R.id.rvContractorDetails)
-    private RecyclerView rvContractorDetails;
+    /*------------------------------屏幕方向监听End--------------------------------*/
+    /*------------------------------图片信息Start---------------------------------*/
     private V_2ContractorDetailsAdapter adapter;
     private List<ContractorListPhotosBean> phoneList = new ArrayList<>();
     private List<ContractorListPhotosBean> localPhotoList = new ArrayList<>();
-    /*定位信息*/
+    /*------------------------------图片信息End-----------------------------------*/
+    /*------------------------------定位信息Start---------------------------------*/
     private LocationService locationService;
     private final int SDK_PERMISSION_REQUEST = 127;
     private GPSLocationManager gpsLocationManager;
-    /*拍照*/
+    /*------------------------------定位信息End-----------------------------------*/
+    /*------------------------------拍照Start-------------------------------------*/
     private Uri uri = null;
     private String fileUrlName;
     private ContractorListPhotosBean addPhotoBean;
     private String strFilePath;
     private File imgFile;
-
+    /*------------------------------拍照End---------------------------------------*/
     private Context mContext;
     private String processId, rootNodeName, status, processName;
     private double longitude, latitude;
@@ -221,16 +220,15 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
 
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
-
         txtTitle.setText(R.string.app_name);
 
-        strFilePath = mContext.getExternalCacheDir().getAbsolutePath() + "/";
-        imgFile = new File(strFilePath);
-        if (!imgFile.exists()) {
-            imgFile.mkdirs();
-        }
+        initFilePath();
 
-        /*processId = getIntent().getStringExtra("processId");
+        processId = getIntent().getStringExtra("processId");
+
+
+
+        /*
         rootNodeName = getIntent().getStringExtra("nodeName");
         status = getIntent().getStringExtra("status");
         processName = getIntent().getStringExtra("processName");*/
@@ -318,6 +316,12 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         if (mAlbumOrientationEventListener.canDetectOrientation()) {
             mAlbumOrientationEventListener.enable();
         }
+
+        // 是否直接弹出相机
+        boolean isPopTakePhoto = getIntent().getBooleanExtra("isPopTakePhoto", false);
+        if (isPopTakePhoto) {
+            takePictures();
+        }
     }
 
     /**
@@ -345,6 +349,17 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         mDataList.add(new TimeLineModel("Item has reached courier facility at New Delhir facility at New Delhi", "2017-02-11 21:00", OrderStatus.COMPLETED));
         mDataList.add(new TimeLineModel("Order confirmed by seller", "2017-02-10 14:30", OrderStatus.COMPLETED));
         mDataList.add(new TimeLineModel("Order placed successfully", "2017-02-10 14:00", OrderStatus.COMPLETED));
+    }
+
+    /**
+     * 初始化照片存储位置
+     */
+    private void initFilePath() {
+        strFilePath = mContext.getExternalCacheDir().getAbsolutePath() + "/";
+        imgFile = new File(strFilePath);
+        if (!imgFile.exists()) {
+            imgFile.mkdirs();
+        }
     }
 
     /**

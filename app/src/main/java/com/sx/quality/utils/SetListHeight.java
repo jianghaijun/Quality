@@ -1,9 +1,12 @@
 package com.sx.quality.utils;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.sx.quality.adapter.WorkingProcedureListAdapter;
 
 /**
  * 动态设置ListView高度

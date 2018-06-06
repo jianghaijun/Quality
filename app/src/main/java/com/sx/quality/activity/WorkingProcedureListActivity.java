@@ -25,7 +25,6 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -38,14 +37,12 @@ public class WorkingProcedureListActivity extends BaseActivity {
     private WorkingProcedureHolder holder;
     private BaseAdapter baseAdapter;
     private Activity mContext;
-    private int size = 4;
-    private int sum;
+    private int sum = 0;
 
     public WorkingProcedureListActivity(Activity mContext, View layoutWorkingProcedure) {
         this.mContext = mContext;
         holder = new WorkingProcedureHolder();
         x.view().inject(holder, layoutWorkingProcedure);
-        size = (int) ((DensityUtil.getScreenHeight() - DensityUtil.getScreenHeight() * 0.08 - DensityUtil.dip2px(101)) / DensityUtil.dip2px(152)) + 1;
     }
 
     public void setDate() {
@@ -81,13 +78,13 @@ public class WorkingProcedureListActivity extends BaseActivity {
         try {
             obj.put("page", pagePosition);
             obj.put("limit", pageSize);
-            obj.put("msgLevel", "1");
+            obj.put("levelId", "1CE49FQJ4SMK6501A8C00000ED406270");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, obj.toString());
         Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_TIMER_TASK_LIST)
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.PROCESS_LIST)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
@@ -117,10 +114,17 @@ public class WorkingProcedureListActivity extends BaseActivity {
                                 public void run() {
                                     sum = model.getTotalNumber();
                                     // 数据的处理最终还是交给被装饰的adapter来处理
-                                    mAdapter.appendData(model.getData());
-                                    callback.onSuccess();
                                     if (!isHave) {
-                                        if (model == null || model.getData() == null || model.getData().size() == 0 || model.getData().size() < size) {
+                                        mAdapter.appendData(model.getData());
+                                    }
+
+                                    callback.onSuccess();
+
+                                    if (!isHave) {
+                                        int sumSize = holder.rvMsg.computeVerticalScrollRange();
+                                        int size = mAdapter.getItemCount() * DensityUtil.dip2px(144);
+                                        boolean isFull = size >= sumSize ? true : false;
+                                        if (model == null || model.getData() == null || model.getData().size() == 0 || !isFull) {
                                             callback.onFailure();
                                         }
                                     } else {
