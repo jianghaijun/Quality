@@ -22,6 +22,7 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 3.0版本工序列表
@@ -74,13 +75,7 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
 
         initViewPageData();
         initRecyclerViewData();
-
-        String s = "待拍照（20000）";
-        btnTakePicture.setText(s);
-        s = "待审核（10000）";
-        btnToBeAudited.setText(s);
-        s = "已完成（15000）";
-        btnFinish.setText(s);
+        initTabData();
 
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
@@ -113,6 +108,18 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
                 ToastUtil.showShort(mContext, position + "---dele---" + v.getTag());
             }
         });
+    }
+
+    /**
+     * 添加选项卡数据
+     */
+    private void initTabData() {
+        String s = "待拍照（20000）";
+        btnTakePicture.setText(s);
+        s = "待审核（10000）";
+        btnToBeAudited.setText(s);
+        s = "已完成（15000）";
+        btnFinish.setText(s);
     }
 
     /**
