@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -82,7 +83,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.hutool.core.util.StrUtil;
 import okhttp3.Call;
@@ -99,8 +102,6 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private ImageButton imgBtnLeft;
     @ViewInject(R.id.txtTitle)
     private TextView txtTitle;
-    @ViewInject(R.id.btnRight)
-    private Button btnRight;
     /*数据信息*/
     @ViewInject(R.id.txtWorkingPath)
     private TextView txtWorkingPath;
@@ -112,30 +113,33 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private TextView txtEntryTime;
     @ViewInject(R.id.txtLocation)
     private TextView txtLocation;
-    @ViewInject(R.id.txtLocationPosition)
-    private TextView txtLocationPosition;
     @ViewInject(R.id.txtDistanceAngle)
     private TextView txtDistanceAngle;
     @ViewInject(R.id.txtTakePhotoNum)
     private TextView txtTakePhotoNum;
     @ViewInject(R.id.txtTakePhotoRequirement)
     private EditText txtTakePhotoRequirement;
+
     @ViewInject(R.id.btnLocalSave)
     private Button btnLocalSave;
-    @ViewInject(R.id.btnSavePhoto)
-    private Button btnSavePhoto;
-    @ViewInject(R.id.btnMeasuredRecord)
-    private Button btnMeasuredRecord;
-    @ViewInject(R.id.imgBtnAdd)
-    private ImageButton imgBtnAdd;
+    @ViewInject(R.id.btnReject)
+    private Button btnReject;
+    @ViewInject(R.id.btnExamine)
+    private Button btnExamine;
     @ViewInject(R.id.btnLocalPreservation)
     private Button btnLocalPreservation;
+
+
+    @ViewInject(R.id.imgBtnAdd)
+    private ImageButton imgBtnAdd;
     @ViewInject(R.id.rlRejectPhotos)
     private RelativeLayout rlRejectPhotos;
     @ViewInject(R.id.rlFixedPoint)
     private RelativeLayout rlFixedPoint;
     @ViewInject(R.id.rlLocationPosition)
     private RelativeLayout rlLocationPosition;
+    @ViewInject(R.id.llButton)
+    private LinearLayout llButton;
     @ViewInject(R.id.workingNo)
     private TextView workingNo;
     @ViewInject(R.id.workingName)
@@ -191,16 +195,13 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     /*------------------------------定位信息End-----------------------------------*/
     /*------------------------------拍照Start-------------------------------------*/
     private Uri uri = null;
-    private String fileUrlName;
+    private String fileUrlName, strFilePath;
     private ContractorListPhotosBean addPhotoBean;
-    private String strFilePath;
     private File imgFile;
     /*------------------------------拍照End---------------------------------------*/
     private Context mContext;
-    private String processId, rootNodeName, status, processName;
+    private String processId, taskId, processState, sLocation, userLevel, processPath;
     private double longitude, latitude;
-    private String sLocation;
-    private String userLevel;
 
 
 
@@ -222,79 +223,21 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.app_name);
 
-        initFilePath();
-
+        // 工序id
         processId = getIntent().getStringExtra("processId");
-
-
-
-        /*
-        rootNodeName = getIntent().getStringExtra("nodeName");
-        status = getIntent().getStringExtra("status");
-        processName = getIntent().getStringExtra("processName");*/
-
-        // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
-        /*if (status.equals("3") || status.equals("5") || status.equals("7")) {
-            rlRejectPhotos.setVisibility(View.VISIBLE);
-            txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
-        }
-
-        // 质量(0)--安全(1)
-        String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
-        if (type.equals("1")) {
-            workingNo.setText("隐患编号");
-            workingName.setText("隐患内容");
-        }
-
-        // 所有填方工序显示层厚定点位置 隐藏当前位置和定位位置
-        if (rootNodeName.contains("填方")) {
-            rlFixedPoint.setVisibility(View.VISIBLE);
-            btnSavePhoto.setVisibility(View.VISIBLE);
-            btnSavePhoto.setText("保存层厚\n定点位置");
-        }
-
+        // 任务id
+        taskId = getIntent().getStringExtra("taskId");
+        // 工序状态
+        processState = getIntent().getStringExtra("processState");
+        // 工序位置
+        processPath = getIntent().getStringExtra("processPath");
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
         userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
-        switch (userLevel) {
-            // 1:质检部长(驳回--审核)
-            case "1":
-                imgBtnAdd.setVisibility(View.GONE); // 隐藏拍照按钮
-                btnLocalSave.setVisibility(View.VISIBLE);  // 显示驳回按钮
-                btnRight.setVisibility(View.VISIBLE); // 审核
-                btnRight.setText("审核");
-                break;
-            // 2:监理(驳回--审核--保存照片到本地)
-            case "2":
-                btnLocalPreservation.setVisibility(View.VISIBLE);
-                btnLocalPreservation.setText("保存照片\n至本地");
-                btnLocalSave.setVisibility(View.VISIBLE); // 显示驳回按钮
-                btnRight.setVisibility(View.VISIBLE); // 审核
-                btnRight.setText("审核");
-                break;
-            // 3:领导(查看)
-            case "3":
-            case "22":
-                imgBtnAdd.setVisibility(View.GONE); // 领导-->隐藏拍照功能
-                break;
-            // 21:监理组长审核
-            case "21":
-                imgBtnAdd.setVisibility(View.GONE); // 领导-->隐藏拍照功能
-                btnLocalSave.setVisibility(View.VISIBLE); // 显示驳回按钮
-                btnRight.setVisibility(View.VISIBLE); // 审核
-                btnRight.setText("终审通过");
-                break;
-            // 其它(审核)
-            default:
-                btnLocalPreservation.setText("保存照片\n至本地");
-                btnLocalPreservation.setVisibility(View.VISIBLE);
-                btnRight.setVisibility(View.VISIBLE);
-                btnRight.setText("审核");
-                break;
-        }
 
+        initFilePath();
         getPermissions();
+        initData();
 
-        // 没有网络并且没有加载过
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             getData();
         } else {
@@ -305,10 +248,9 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 imgBtnPhotos.setVisibility(View.VISIBLE);
             }
             setData();
-        }*/
+        }
 
-        rvTimeMarker.setLayoutManager(getLinearLayoutManager());
-        rvTimeMarker.setHasFixedSize(true);
+
         initTimeLineView();
 
         // 屏幕方向监听
@@ -336,6 +278,8 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      * 初始化时间轴
      */
     private void initTimeLineView() {
+        rvTimeMarker.setLayoutManager(getLinearLayoutManager());
+        rvTimeMarker.setHasFixedSize(true);
         setDataListItems();
         timeLineAdapter = new V_3TimeLineAdapter(mDataList);
         rvTimeMarker.setAdapter(timeLineAdapter);
@@ -363,26 +307,73 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     }
 
     /**
+     * 初始化数据
+     */
+    private void initData() {
+        // 质量(0)--安全(1)
+        String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
+        if (type.equals("1")) {
+            workingNo.setText("隐患编号");
+            workingName.setText("隐患内容");
+        }
+
+        switch (userLevel) {
+            // 1:质检部长(驳回--审核)
+            case "1":
+                imgBtnAdd.setVisibility(View.GONE); // 隐藏拍照按钮
+                btnLocalSave.setVisibility(View.GONE);  // 隐藏保存照片至本地
+                break;
+            // 2:监理(驳回--审核--保存照片到本地)
+            case "2":
+                break;
+            // 3:领导(查看)
+            case "3":
+            case "22":
+                imgBtnAdd.setVisibility(View.GONE); // 隐藏拍照功能
+                llButton.setVisibility(View.GONE); // 隐藏功能按钮
+                break;
+            // 21:监理组长--审核
+            case "21":
+                imgBtnAdd.setVisibility(View.GONE); // 隐藏拍照功能
+                btnLocalSave.setVisibility(View.GONE);  // 隐藏保存照片至本地
+                btnExamine.setText("终审通过");
+                break;
+            // 其它(审核)
+            default:
+                btnReject.setVisibility(View.GONE);
+                break;
+        }
+
+        // 如果是驳回状态 显示驳回原因(0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
+        if (processState.equals("3") || processState.equals("5") || processState.equals("7")) {
+            rlRejectPhotos.setVisibility(View.VISIBLE);
+        }
+
+        // 所有填方工序显示层厚定点位置 隐藏当前位置和定位位置
+        if (processPath.contains("填方")) {
+            rlFixedPoint.setVisibility(View.VISIBLE);
+        } else {
+            btnLocalPreservation.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * 获取数据
      */
     private void getData() {
         LoadingUtils.showLoading(mContext);
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("processId", processId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, obj.toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("processId", processId);
+        map.put("taskId", taskId);
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, map.toString());
         Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_PHONE_LIST)
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_PROCESS_DETAIL)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
         ConstantsUtil.okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LoadingUtils.hideLoading();
                 runChildrenThread(getString(R.string.server_exception));
             }
 
@@ -390,13 +381,12 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonData = response.body().string().toString();
                 if (JsonUtils.isGoodJson(jsonData)) {
-                    try {
-                        JSONObject obj = new JSONObject(jsonData);
-                        boolean resultFlag = obj.getBoolean("success");
-                        final String msg = obj.getString("message");
-                        final String code = obj.getString("code");
-                        if (resultFlag) {
+                    List<String> strList = analysisJson(jsonData);
+                    if (strList.size() > 0) {
+                        if (strList.get(0).equals("true")) {
                             Gson gson = new Gson();
+
+
                             final ContractorDetailsModel model = gson.fromJson(jsonData, ContractorDetailsModel.class);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -417,16 +407,10 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                 }
                             });
                         } else {
-                            LoadingUtils.hideLoading();
-                            tokenErr(code, msg);
+                            tokenErr(strList.get(2), strList.get(1));
                         }
-                    } catch (JSONException e) {
-                        LoadingUtils.hideLoading();
-                        runChildrenThread(getString(R.string.data_error));
-                        e.printStackTrace();
                     }
                 } else {
-                    LoadingUtils.hideLoading();
                     runChildrenThread(getString(R.string.json_error));
                 }
             }
@@ -437,9 +421,11 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      * 赋值
      */
     private void setData() {
+        txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
+
         String distance = getIntent().getStringExtra("location") == null || TextUtils.isEmpty(getIntent().getStringExtra("location")) || getIntent().getStringExtra("location").equals("unknown") || getIntent().getStringExtra("location").equals("null") ? "" : getIntent().getStringExtra("location");
         txtLocation.setText(distance);
-        txtWorkingPath.setText(rootNodeName);
+        //txtWorkingPath.setText(rootNodeName);
         txtWorkingNo.setText(getIntent().getStringExtra("processCode"));
         txtWorkingName.setText(getIntent().getStringExtra("processName"));
         txtDistanceAngle.setText(getIntent().getStringExtra("distanceAngle"));
@@ -466,7 +452,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         edtElevation5.setText(checkData() ? bean == null ? "" : bean.getExt10() : getIntent().getStringExtra("ext10"));
 
         if (phoneList != null) {
-            adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+            adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
 
             LinearLayoutManager ms = new LinearLayoutManager(this);
             ms.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -581,7 +567,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                         bean.setRoleFlag("0");
                     }*/
 
-                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
 
                     LinearLayoutManager ms = new LinearLayoutManager(mContext);
                     ms.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -608,7 +594,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         LoadingUtils.showLoading(mContext);
         final PictureModel model = new PictureModel();
         model.setSelectUserId(userId);
-        model.setPushMessage(rootNodeName);
+        //model.setPushMessage(rootNodeName);
         model.setStateFlag("1");
         model.setProcessId(processId);
         model.setRecordType((String) SpUtil.get(mContext, ConstantsUtil.USER_TYPE, "0"));
@@ -661,18 +647,18 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
 
                                     // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
                                     if (userLevel.equals("0")) {
-                                        status = "2";
+                                        processState = "2";
                                     } else if (userLevel.equals("1")) {
-                                        status = "4";
+                                        processState = "4";
                                     } else {
-                                        status = "6";
+                                        processState = "6";
                                     }
 
                                     for (ContractorListPhotosBean bean : phoneList) {
                                         bean.setRoleFlag("0");
                                     }
 
-                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
 
                                     LinearLayoutManager ms = new LinearLayoutManager(mContext);
                                     ms.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -792,7 +778,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
 
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
-                    fileInfoListener.fileInfo("太原东二环高速公路", rootNodeName, "", "", false);
+                    //fileInfoListener.fileInfo("太原东二环高速公路", rootNodeName, "", "", false);
                     // 填写图片信息
                     /*fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();*/
@@ -959,26 +945,19 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         @Override
         public void onReceiveLocation(BDLocation location) {
             if (null != location && location.getLocType() != BDLocation.TypeServerError) {
-                final StringBuffer sb = new StringBuffer(256);
-                /*sb.append("经度 : ");// 经度
-                sb.append(location.getLongitude());
-                sb.append("  纬度 : ");// 纬度
-                sb.append(location.getLatitude());*/
+                StringBuffer sb = new StringBuffer(256);
                 sb.append(location.getAddrStr());
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
                 sLocation = sb.toString() == null || TextUtils.isEmpty(sb.toString()) || sb.toString().equals("null") ? "" : sb.toString();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtLocationPosition.setText(sLocation);
-                    }
-                });
             }
         }
 
     };
 
+    /**
+     * 获取定位权限
+     */
     @TargetApi(23)
     private void getPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1069,41 +1048,14 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
                 sLocation = "";
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtLocationPosition.setText("经度：" + longitude + " 纬度：" + latitude);
-                    }
-                });
             }
         }
 
         @Override
-        public void UpdateStatus(String provider, int status, Bundle extras) {
-            if ("gps" == provider) {
-            }
-        }
+        public void UpdateStatus(String provider, int status, Bundle extras) {}
 
         @Override
-        public void UpdateGPSProviderStatus(int gpsStatus) {
-            switch (gpsStatus) {
-                case GPSProviderStatus.GPS_ENABLED:
-                    //Toast.makeText(mContext, "GPS开启", Toast.LENGTH_SHORT).show();
-                    break;
-                case GPSProviderStatus.GPS_DISABLED:
-                    //Toast.makeText(mContext, "GPS关闭", Toast.LENGTH_SHORT).show();
-                    break;
-                case GPSProviderStatus.GPS_OUT_OF_SERVICE:
-                    //Toast.makeText(mContext, "GPS不可用", Toast.LENGTH_SHORT).show();
-                    break;
-                case GPSProviderStatus.GPS_TEMPORARILY_UNAVAILABLE:
-                    //Toast.makeText(mContext, "GPS暂时不可用", Toast.LENGTH_SHORT).show();
-                    break;
-                case GPSProviderStatus.GPS_AVAILABLE:
-                    //Toast.makeText(mContext, "GPS可用啦", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
+        public void UpdateGPSProviderStatus(int gpsStatus) {}
     }
 
     /**
@@ -1170,14 +1122,14 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                 // 设置工序状态
                                 switch (userLevel) {
                                     case "0":
-                                        status = "1";
+                                        processState = "1";
                                         break;
                                     case "2":
-                                        status = "4";
+                                        processState = "4";
                                         break;
                                 }
                                 // 更新adapter
-                                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                                adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
                                 LinearLayoutManager ms = new LinearLayoutManager(mContext);
                                 ms.setOrientation(LinearLayoutManager.HORIZONTAL);
                                 rvContractorDetails.setLayoutManager(ms);
@@ -1213,7 +1165,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      * 完成工序
      */
     private void finishPhoto() {
-        switch (status) {
+        switch (processState) {
             case "8":
                 ToastUtil.showLong(mContext, "该工序已抽检完成，不能再次提交!");
                 return;
@@ -1255,21 +1207,21 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             s = "工序";
         }
 
-        if (status.equals("8")) {
+        if (processState.equals("8")) {
             ToastUtil.showLong(mContext, "抽检完成的" + s +"不能再进行拍照!");
-        } else if (status.equals("7")) {
+        } else if (processState.equals("7")) {
             if (userLevel.equals("2")) {
                 ToastUtil.showLong(mContext, "该" + s +"已被监理组长驳回，请驳回给施工人员修改后再进行拍照!");
             } else {
                 ToastUtil.showLong(mContext, "该" + s +"还未驳回给您，请等待质检部长驳回给您后再进行拍照!");
             }
-        } else if (status.equals("6")) {
+        } else if (processState.equals("6")) {
             ToastUtil.showLong(mContext, "该" + s +"已复审通过，您不能再进行拍照!");
-        }  else if (status.equals("5")) {
+        }  else if (processState.equals("5")) {
             ToastUtil.showLong(mContext, "该" + s +"还未驳回给您，请等待质检部长驳回给您后再进行拍照!");
-        }  else if (status.equals("4") && userLevel.equals("0")) {
+        }  else if (processState.equals("4") && userLevel.equals("0")) {
             ToastUtil.showLong(mContext, "该" + s +"已提交至监理审核,不能再进行拍照!");
-        } else if(status.equals("2")) {
+        } else if(processState.equals("2")) {
             ToastUtil.showLong(mContext, "该" + s +"已提交至质检部长审核,不能再进行拍照!");
         } else {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -1301,8 +1253,8 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     Intent intent = new Intent(mContext, ActualMeasurementActivity.class);
                     intent.putExtra("processId", processId);
                     intent.putExtra("projectId", projectId);
-                    intent.putExtra("rootNodeName", rootNodeName);
-                    intent.putExtra("processName", processName);
+                    //intent.putExtra("rootNodeName", rootNodeName);
+                    //intent.putExtra("processName", processName);
                     startActivity(intent);
                 }
             });
@@ -1327,7 +1279,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
         // 0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过
         if (userLevel.equals("1")) {
-            switch (status) {
+            switch (processState) {
                 case "8":
                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
                     return;
@@ -1349,7 +1301,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     return;
             }
         } else if (userLevel.equals("2")) {
-            switch (status) {
+            switch (processState) {
                 case "8":
                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
                     return;
@@ -1369,7 +1321,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     return;
             }
         } else if (userLevel.equals("21")) {
-            switch (status) {
+            switch (processState) {
                 case "8":
                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能进行驳回操作!");
                     return;
@@ -1453,23 +1405,23 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                             // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导)
                                             // 质检部长驳回
                                             if (userLevel.equals("1")) {
-                                                status = "3";
+                                                processState = "3";
                                                 bean.setProcessState("3");
                                             } else if (userLevel.equals("2")) {
-                                                status = "5";
+                                                processState = "5";
                                                 bean.setProcessState("5");
                                             } else {
-                                                status = "7";
+                                                processState = "7";
                                                 bean.setProcessState("7");
                                             }
                                         } else {
-                                            status = "8";
+                                            processState = "8";
                                             bean.setProcessState("8");
                                         }
                                         bean.saveOrUpdate("processId = ?", bean.getProcessId());
                                     }
 
-                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), status);
+                                    adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
 
                                     LinearLayoutManager ms = new LinearLayoutManager(mContext);
                                     ms.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -1498,6 +1450,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      * 子线程运行
      */
     private void runChildrenThread(final String msg) {
+        LoadingUtils.hideLoading();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1513,10 +1466,10 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      * @param msg
      */
     private void tokenErr(final String code, final String msg) {
+        LoadingUtils.hideLoading();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LoadingUtils.hideLoading();
                 switch (code) {
                     case "3003":
                     case "3004":
@@ -1532,6 +1485,28 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    /**
+     * 解析后台返回数据
+     * @param json
+     * @return
+     */
+    private List<String> analysisJson(String json) {
+        List<String> strList = new ArrayList<>();
+        try {
+            JSONObject obj = new JSONObject(json);
+            boolean resultFlag = obj.getBoolean("success");
+            String code = obj.getString("code");
+            String msg = obj.getString("message");
+            strList.add(resultFlag + "");
+            strList.add(code);
+            strList.add(msg);
+        } catch (JSONException e) {
+            runChildrenThread(getString(R.string.data_error));
+            e.printStackTrace();
+        }
+        return strList;
     }
 
     /**
@@ -1647,14 +1622,14 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             case R.id.btnRight:
                 // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
                 // 工序状态 (0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
-                if ((userLevel.equals("1") || userLevel.equals("2")) && (status.equals("1") || status.equals("0"))) {
+                if ((userLevel.equals("1") || userLevel.equals("2")) && (processState.equals("1") || processState.equals("0"))) {
                     ToastUtil.showLong(mContext, "该" + s + "施工人员还未提交审核，您还不能进行审核!");
                     return;
                 }
-                if (userLevel.equals("2") && status.equals("2")) {
+                if (userLevel.equals("2") && processState.equals("2")) {
                     ToastUtil.showLong(mContext, "该" + s + "质检负责人还未进行审核，您还不能进行审核!");
                     return;
-                } else if (userLevel.equals("2") && status.equals("3")) {
+                } else if (userLevel.equals("2") && processState.equals("3")) {
                     ToastUtil.showLong(mContext, "该" + s + "已被质检负责人驳回给施工人员，您还不能进行审核!");
                     return;
                 }
@@ -1663,10 +1638,10 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 if (phoneList.size() < num) {
                     ToastUtil.showShort(mContext, "拍照数量不能小于最少拍照张数！");
                 } else {
-                    if (btnRight.getText().toString().equals("审核")) {
+                    if (btnExamine.getText().toString().equals("审核")) {
                         // 审核照片
                         if (userLevel.equals("0")) {
-                            switch (status) {
+                            switch (processState) {
                                 case "8":
                                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
                                     return;
@@ -1687,7 +1662,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                     return;
                             }
                         } else if (userLevel.equals("1")) {
-                            switch (status) {
+                            switch (processState) {
                                 case "8":
                                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
                                     return;
@@ -1717,7 +1692,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                 return;
                             }
                         } else if (userLevel.equals("2")) {
-                            switch (status) {
+                            switch (processState) {
                                 case "8":
                                     ToastUtil.showLong(mContext, "该" + s + "已抽检完成，您不能再次提交审核!");
                                     return;

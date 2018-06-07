@@ -101,7 +101,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                     boolean isHave = phoneList == null || phoneList.size() == 0 ? false : true;
                     if (!workingBean.getProcessState().equals("0") || isHave) {
                         // 直接拍照--->详情
-                        takePhotoActivity(workingBean.getProcessId(), true);
+                        takePhotoActivity(workingBean, true);
                     } else {
                         // 提示拍照要求--->详情
                         workingBean.setProcessName("混凝土");
@@ -112,7 +112,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                             @Override
                             public void returnTrueOrFalse(boolean trueOrFalse) {
                                 if (trueOrFalse) {
-                                    takePhotoActivity(workingBean.getProcessId(), true);
+                                    takePhotoActivity(workingBean, true);
                                 }
                             }
                         }, workingBean);
@@ -124,7 +124,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                     reviewProgressActivity(workingBean.getProcessId());
                     break;
                 case R.id.rlProcedurePath:
-                    takePhotoActivity(workingBean.getProcessId(), false);
+                    takePhotoActivity(workingBean, false);
                     break;
             }
         }
@@ -133,9 +133,12 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
     /**
      * 跳转到详情
      */
-    private void takePhotoActivity(String processId, boolean isPopTakePhoto) {
+    private void takePhotoActivity(WorkingBean bean, boolean isPopTakePhoto) {
         Intent intent = new Intent(mContext, V_3ContractorDetailsActivity.class);
-        intent.putExtra("processId", processId);
+        intent.putExtra("processId", bean.getProcessId());
+        intent.putExtra("processState", bean.getProcessState());
+        intent.putExtra("processPath", bean.getLevelNameAll());
+        intent.putExtra("taskId", bean.getTaskId());
         intent.putExtra("isPopTakePhoto", isPopTakePhoto);
         mContext.startActivity(intent);
     }

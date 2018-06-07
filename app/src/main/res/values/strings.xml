@@ -135,6 +135,7 @@
     <string name="submit_yun">上传云端</string>
     <string name="reject_photo">驳回原因：</string>
     <string name="reject">驳回</string>
+    <string name="examine">审核</string>
     <string name="elevation">现标高</string>
     <string name="PositionOfPileNumber">桩号位置</string>
     <string name="please_input_remark">请输入</string>

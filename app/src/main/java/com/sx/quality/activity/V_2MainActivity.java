@@ -417,9 +417,9 @@ public class V_2MainActivity extends BaseActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        String fileUrl = null;
+                                        String fileUrl;
                                         try {
-                                            fileUrl = obj.getString("fileUrl");
+                                            fileUrl = obj.getString("data");
                                             List<UserInfo> userList = DataSupport.where("userId=?", String.valueOf(SpUtil.get(mContext, ConstantsUtil.USER_ID, ""))).find(UserInfo.class);
                                             if (userList != null && userList.size() > 0) {
                                                 UserInfo user = userList.get(0);

@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <include
@@ -17,7 +19,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/llBottom"
+        android:layout_above="@+id/llButton"
         android:layout_below="@+id/actionBar"
         android:background="@null">
 
@@ -277,7 +279,6 @@
                 android:layout_marginRight="@dimen/ten_dp"
                 android:background="@color/gray" />
 
-
             <RelativeLayout
                 android:id="@+id/rlRejectPhotos"
                 android:layout_width="match_parent"
@@ -307,343 +308,322 @@
                     android:textSize="@dimen/fourteen_sp" />
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/one_dp"
-                android:layout_marginLeft="@dimen/ten_dp"
-                android:layout_marginRight="@dimen/ten_dp"
-                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/rlFixedPoint"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/one_hundred_dp"
+                android:layout_height="wrap_content"
                 android:background="@null"
-                android:paddingTop="@dimen/five_dp"
-                android:paddingBottom="@dimen/five_dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:paddingBottom="@dimen/ten_dp">
 
-                <TextView
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/one_dp"
+                    android:layout_marginLeft="@dimen/ten_dp"
+                    android:layout_marginRight="@dimen/ten_dp"
+                    android:background="@color/gray" />
+
+                <LinearLayout
                     android:id="@+id/fixedPoint"
-                    android:layout_width="@dimen/sixty_dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="@dimen/eighty_dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/ten_dp"
                     android:background="@null"
-                    android:gravity="center"
-                    android:text="@string/fixedPoint"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/fourteen_sp" />
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="@dimen/twenty_dp"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:text="@string/fixedPoint"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/ten_dp"
+                    android:layout_marginTop="@dimen/ten_dp"
                     android:layout_toRightOf="@+id/fixedPoint"
-                    android:orientation="horizontal">
+                    android:background="@null"
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="@dimen/one_dp"
+                        android:layout_height="@dimen/forty"
                         android:layout_weight="1"
-                        android:background="@drawable/search_bg"
+                        android:background="@null"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtWz1"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="位置点1"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtPositionOfPileNumber1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
                             android:gravity="left|center"
-                            android:hint="@string/PositionOfPileNumber"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
+                            android:text="位置点1："
                             android:textColor="@color/black"
                             android:textSize="@dimen/fourteen_sp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtElevation1"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_toRightOf="@+id/txtWz1"
                             android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/elevation"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            android:orientation="horizontal">
 
-                    </LinearLayout>
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
 
-                    <LinearLayout
+                            <EditText
+                                android:id="@+id/edtElevation1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="@dimen/one_dp"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginTop="@dimen/five_dp"
                         android:layout_weight="1"
-                        android:background="@drawable/search_bg"
+                        android:background="@null"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtWz2"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:gravity="center"
-                            android:text="位置点2"
+                            android:text="位置点2："
                             android:textColor="@color/black"
                             android:textSize="@dimen/fourteen_sp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtPositionOfPileNumber2"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_toRightOf="@+id/txtWz2"
                             android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/PositionOfPileNumber"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
 
-                        <EditText
-                            android:id="@+id/edtElevation2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/elevation"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            <EditText
+                                android:id="@+id/edtElevation2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="@dimen/one_dp"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginTop="@dimen/five_dp"
                         android:layout_weight="1"
-                        android:background="@drawable/search_bg"
+                        android:background="@null"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtWz3"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:gravity="center"
-                            android:text="位置点3"
+                            android:text="位置点3："
                             android:textColor="@color/black"
                             android:textSize="@dimen/fourteen_sp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtPositionOfPileNumber3"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_toRightOf="@+id/txtWz3"
                             android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/PositionOfPileNumber"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
 
-                        <EditText
-                            android:id="@+id/edtElevation3"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/elevation"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            <EditText
+                                android:id="@+id/edtElevation3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="@dimen/one_dp"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginTop="@dimen/five_dp"
                         android:layout_weight="1"
-                        android:background="@drawable/search_bg"
+                        android:background="@null"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtWz4"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:gravity="center"
-                            android:text="位置点4"
+                            android:text="位置点4："
                             android:textColor="@color/black"
                             android:textSize="@dimen/fourteen_sp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtPositionOfPileNumber4"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_toRightOf="@+id/txtWz4"
                             android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/PositionOfPileNumber"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
 
-                        <EditText
-                            android:id="@+id/edtElevation4"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/elevation"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            <EditText
+                                android:id="@+id/edtElevation4"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/forty"
+                        android:layout_marginTop="@dimen/five_dp"
                         android:layout_weight="1"
-                        android:background="@drawable/search_bg"
+                        android:background="@null"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtWz5"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
                             android:gravity="center"
-                            android:text="位置点5"
+                            android:text="位置点5："
                             android:textColor="@color/black"
                             android:textSize="@dimen/fourteen_sp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
-
-                        <EditText
-                            android:id="@+id/edtPositionOfPileNumber5"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_toRightOf="@+id/txtWz5"
                             android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/PositionOfPileNumber"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
+                            android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/one_dp"
-                            android:layout_marginLeft="@dimen/one_dp"
-                            android:layout_marginRight="@dimen/one_dp"
-                            android:background="@color/v_2_main_bg" />
+                            <EditText
+                                android:id="@+id/edtPositionOfPileNumber5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/PositionOfPileNumber"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
 
-                        <EditText
-                            android:id="@+id/edtElevation5"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:gravity="left|center"
-                            android:hint="@string/elevation"
-                            android:padding="@dimen/five_dp"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/fourteen_sp" />
-
-                    </LinearLayout>
+                            <EditText
+                                android:id="@+id/edtElevation5"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/five_dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/search_bg"
+                                android:gravity="center"
+                                android:hint="@string/elevation"
+                                android:padding="@dimen/five_dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fourteen_sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>
 
@@ -666,10 +646,10 @@
                     android:layout_height="match_parent"
                     android:background="@null"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:text="@string/photos"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/fourteen_sp" />
+                    android:textSize="@dimen/fourteen_sp"
+                    android:visibility="gone" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -678,7 +658,7 @@
                     android:layout_marginRight="@dimen/ten_dp"
                     android:layout_marginTop="@dimen/two_point_five_dp"
                     android:layout_toRightOf="@+id/photos"
-                    android:background="@drawable/search_bg">
+                    android:background="@null">
 
                     <RelativeLayout
                         android:id="@+id/rlButtons"
@@ -739,7 +719,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/llBottom"
+        android:id="@+id/llButton"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
         android:layout_alignParentBottom="true"
@@ -748,20 +728,10 @@
         android:padding="@dimen/five_dp">
 
         <Button
-            android:id="@+id/btnMeasuredRecord"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/five_dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_blue"
-            android:text="@string/measured_record"
-            android:textColor="@color/white"
-            android:textSize="@dimen/twelve_sp" />
-
-        <Button
             android:id="@+id/btnLocalSave"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/five_dp"
             android:layout_marginRight="@dimen/five_dp"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
@@ -770,23 +740,41 @@
             android:textSize="@dimen/twelve_sp" />
 
         <Button
-            android:id="@+id/btnReject"
-            android:layout_width="@dimen/fifty_dp"
+            android:id="@+id/btnLocalPreservation"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/five_dp"
             android:layout_marginRight="@dimen/five_dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_blue"
+            android:text="@string/saveFixedPoint"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp" />
+
+        <Button
+            android:id="@+id/btnReject"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/five_dp"
+            android:layout_marginRight="@dimen/five_dp"
+            android:layout_weight="1"
             android:background="@drawable/btn_blue"
             android:text="@string/reject"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp" />
 
         <Button
-            android:id="@+id/btnLocalPreservation"
+            android:id="@+id/btnExamine"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/five_dp"
+            android:layout_marginRight="@dimen/five_dp"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/saveFixedPoint"
+            android:text="@string/examine"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp" />
+
+
     </LinearLayout>
 </com.zhy.android.percent.support.PercentRelativeLayout>
