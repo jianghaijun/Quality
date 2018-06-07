@@ -106,7 +106,7 @@
         <activity
             android:name=".ShowPhotosActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <!-- 横屏拍照 -->
         <activity
             android:name=".PhotographActivity"

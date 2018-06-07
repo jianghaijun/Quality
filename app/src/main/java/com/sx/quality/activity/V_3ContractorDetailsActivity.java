@@ -4,9 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -16,7 +14,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,9 +51,8 @@ import com.sx.quality.listener.ReportListener;
 import com.sx.quality.listener.ShowPhotoListener;
 import com.sx.quality.manager.GPSLocationListener;
 import com.sx.quality.manager.GPSLocationManager;
-import com.sx.quality.manager.GPSProviderStatus;
-import com.sx.quality.model.ContractorDetailsModel;
 import com.sx.quality.model.PictureModel;
+import com.sx.quality.model.ProcessDetailsModel;
 import com.sx.quality.service.LocationService;
 import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
@@ -69,10 +65,10 @@ import com.sx.quality.utils.ScreenManagerUtil;
 import com.sx.quality.utils.SpUtil;
 import com.sx.quality.utils.ToastUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
-import org.xutils.common.util.DensityUtil;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -87,6 +83,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -118,7 +115,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     @ViewInject(R.id.txtTakePhotoNum)
     private TextView txtTakePhotoNum;
     @ViewInject(R.id.txtTakePhotoRequirement)
-    private EditText txtTakePhotoRequirement;
+    private TextView txtTakePhotoRequirement;
 
     @ViewInject(R.id.btnLocalSave)
     private Button btnLocalSave;
@@ -136,8 +133,6 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private RelativeLayout rlRejectPhotos;
     @ViewInject(R.id.rlFixedPoint)
     private RelativeLayout rlFixedPoint;
-    @ViewInject(R.id.rlLocationPosition)
-    private RelativeLayout rlLocationPosition;
     @ViewInject(R.id.llButton)
     private LinearLayout llButton;
     @ViewInject(R.id.workingNo)
@@ -202,9 +197,9 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private Context mContext;
     private String processId, taskId, processState, sLocation, userLevel, processPath;
     private double longitude, latitude;
-
-
-
+    // 最少拍照张数
+    private int num;
+    private Gson gson = new Gson();
     /**
      * 是否已点击上报按钮
      */
@@ -244,12 +239,17 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             // 查询本地保存的照片
             phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
             localPhotoList = phoneList;
-            if (phoneList != null && phoneList.size() > 0) {
+            /*if (phoneList != null && phoneList.size() > 0) {
                 imgBtnPhotos.setVisibility(View.VISIBLE);
-            }
-            setData();
-        }
+            }*/
 
+            List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
+            WorkingBean bean = null;
+            if (workList != null && workList.size() > 0) {
+                bean = workList.get(0);
+            }
+            setData(bean);
+        }
 
         initTimeLineView();
 
@@ -283,6 +283,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         setDataListItems();
         timeLineAdapter = new V_3TimeLineAdapter(mDataList);
         rvTimeMarker.setAdapter(timeLineAdapter);
+        rvTimeMarker.setNestedScrollingEnabled(false);
     }
 
     /**
@@ -365,7 +366,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         Map<String, Object> map = new HashMap<>();
         map.put("processId", processId);
         map.put("taskId", taskId);
-        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, map.toString());
+        RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, gson.toJson(map));
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_PROCESS_DETAIL)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
@@ -384,10 +385,21 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     List<String> strList = analysisJson(jsonData);
                     if (strList.size() > 0) {
                         if (strList.get(0).equals("true")) {
-                            Gson gson = new Gson();
+                            final List<ContractorListPhotosBean> fileList = new ArrayList<>();
+                            final ProcessDetailsModel model = gson.fromJson(jsonData, ProcessDetailsModel.class);
+                            try {
+                                JSONObject jsonObj = new JSONObject(jsonData);
+                                jsonObj = new JSONObject(jsonObj.get("data").toString());
+                                JSONArray jsonArr = jsonObj.has("sxZlPhotoList") ? jsonObj.getJSONArray("sxZlPhotoList") : null;
+                                int size = jsonArr == null ? 0 : jsonArr.length();
+                                for (int k = 0; k < size; k++) {
+                                    ContractorListPhotosBean bean = gson.fromJson(jsonArr.get(k).toString(), ContractorListPhotosBean.class);
+                                    fileList.add(bean);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-
-                            final ContractorDetailsModel model = gson.fromJson(jsonData, ContractorDetailsModel.class);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -395,14 +407,14 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                                     phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
                                     localPhotoList = phoneList;
                                     // 本地照片
-                                    if (phoneList != null && phoneList.size() > 0) {
+                                    /*if (phoneList != null && phoneList.size() > 0) {
                                         imgBtnPhotos.setVisibility(View.VISIBLE);
-                                    }
+                                    }*/
 
-                                    for (ContractorListPhotosBean photo : model.getData()) {
+                                    for (ContractorListPhotosBean photo : fileList) {
                                         phoneList.add(photo);
                                     }
-                                    setData();
+                                    setData(model.getData());
                                     LoadingUtils.hideLoading();
                                 }
                             });
@@ -420,58 +432,58 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     /**
      * 赋值
      */
-    private void setData() {
-        txtRejectPhoto.setText(getIntent().getStringExtra("dismissal"));
-
-        String distance = getIntent().getStringExtra("location") == null || TextUtils.isEmpty(getIntent().getStringExtra("location")) || getIntent().getStringExtra("location").equals("unknown") || getIntent().getStringExtra("location").equals("null") ? "" : getIntent().getStringExtra("location");
-        txtLocation.setText(distance);
-        //txtWorkingPath.setText(rootNodeName);
-        txtWorkingNo.setText(getIntent().getStringExtra("processCode"));
-        txtWorkingName.setText(getIntent().getStringExtra("processName"));
-        txtDistanceAngle.setText(getIntent().getStringExtra("distanceAngle"));
-        if (!TextUtils.isEmpty(distance)) {
-            rlLocationPosition.setVisibility(View.GONE);
-        }
-        txtEntryTime.setText(getIntent().getStringExtra("enterTime"));
-        txtTakePhotoNum.setText("最少拍照" + getIntent().getStringExtra("actualNumber") + "张");
-        txtTakePhotoRequirement.setText(getIntent().getStringExtra("photoContent"));
-        List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
-        WorkingBean bean = null;
-        if (workList != null && workList.size() > 0) {
-            bean = workList.get(0);
-        }
-        edtPositionOfPileNumber1.setText(checkData() ? bean == null ? "" : bean.getExt1() : getIntent().getStringExtra("ext1"));
-        edtElevation1.setText(checkData() ? bean == null ? "" : bean.getExt2() : getIntent().getStringExtra("ext2"));
-        edtPositionOfPileNumber2.setText(checkData() ? bean == null ? "" : bean.getExt3() : getIntent().getStringExtra("ext3"));
-        edtElevation2.setText(checkData() ? bean == null ? "" : bean.getExt4() : getIntent().getStringExtra("ext4"));
-        edtPositionOfPileNumber3.setText(checkData() ? bean == null ? "" : bean.getExt5() : getIntent().getStringExtra("ext5"));
-        edtElevation3.setText(checkData() ? bean == null ? "" : bean.getExt6() : getIntent().getStringExtra("ext6"));
-        edtPositionOfPileNumber4.setText(checkData() ? bean == null ? "" : bean.getExt7() : getIntent().getStringExtra("ext7"));
-        edtElevation4.setText(checkData() ? bean == null ? "" : bean.getExt8() : getIntent().getStringExtra("ext8"));
-        edtPositionOfPileNumber5.setText(checkData() ? bean == null ? "" : bean.getExt9() : getIntent().getStringExtra("ext9"));
-        edtElevation5.setText(checkData() ? bean == null ? "" : bean.getExt10() : getIntent().getStringExtra("ext10"));
-
+    private void setData(WorkingBean workingBean) {
+        txtRejectPhoto.setText(workingBean.getDismissal()); // 驳回原因
+        String strLocation = workingBean.getLocation();
+        String distance = strLocation == null || TextUtils.isEmpty(strLocation) || strLocation.equals("unknown") || strLocation.equals("null") ? "" : strLocation;
+        txtLocation.setText(distance);    // 拍照位置
+        txtWorkingNo.setText(workingBean.getProcessCode());     // 工序编号
+        txtWorkingName.setText(workingBean.getProcessName());   // 工序名称
+        txtDistanceAngle.setText(workingBean.getDismissal());   // 距离角度
+        txtEntryTime.setText(DateUtil.format(DateUtil.date(workingBean.getEnterTime() == 0 ? System.currentTimeMillis() : workingBean.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));    // 检查时间
+        num = Integer.valueOf(StrUtil.isEmpty(workingBean.getActualNumber()) ? "3" : workingBean.getActualNumber());
+        txtTakePhotoNum.setText("最少拍照" + num + "张");  // 拍照张三
+        txtTakePhotoRequirement.setText(workingBean.getPhotoContent());     // 拍照要求
+        // 图片列表
         if (phoneList != null) {
             adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
-
             LinearLayoutManager ms = new LinearLayoutManager(this);
             ms.setOrientation(LinearLayoutManager.HORIZONTAL);
             rvContractorDetails.setLayoutManager(ms);
             rvContractorDetails.setAdapter(adapter);
         }
+        // 所有填方工序显示层厚定点位置
+        if (processPath.contains("填方")) {
+            // 层厚定点位置信息
+            List<WorkingBean> workList = DataSupport.where("processId = ?", processId).find(WorkingBean.class);
+            WorkingBean bean = null;
+            if (workList != null && workList.size() > 0) {
+                bean = workList.get(0);
+            }
+            edtPositionOfPileNumber1.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt1() : workingBean.getExt1());
+            edtElevation1.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt2() : workingBean.getExt2());
+            edtPositionOfPileNumber2.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt3() : workingBean.getExt3());
+            edtElevation2.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt4() : workingBean.getExt4());
+            edtPositionOfPileNumber3.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt5() : workingBean.getExt5());
+            edtElevation3.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt6() : workingBean.getExt6());
+            edtPositionOfPileNumber4.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt7() : workingBean.getExt7());
+            edtElevation4.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt8() : workingBean.getExt8());
+            edtPositionOfPileNumber5.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt9() : workingBean.getExt9());
+            edtElevation5.setText(checkData(workingBean) ? bean == null ? "" : bean.getExt10() : workingBean.getExt10());
 
-        // 有网络并且不是领导 提交层厚定点位置信息
-        if (JudgeNetworkIsAvailable.isNetworkAvailable(this) && !userLevel.equals("3")) {
-            if (!getIntent().getBooleanExtra("check", true)) {
-                PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
-                    @Override
-                    public void returnTrueOrFalse(boolean trueOrFalse) {
-                        if (trueOrFalse) {
-                            submitElevation(true);
+            // 有网络并且不是领导 提交本地保存的层厚定点位置信息
+            if (JudgeNetworkIsAvailable.isNetworkAvailable(this) && !userLevel.equals("3")) {
+                if (!getIntent().getBooleanExtra("check", true)) {
+                    PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
+                        @Override
+                        public void returnTrueOrFalse(boolean trueOrFalse) {
+                            if (trueOrFalse) {
+                                submitElevation(true);
+                            }
                         }
-                    }
-                }, "提示", "该工序填写的层厚定点位置信息还未上传到云端，是否上传？", "否", "是");
-                promptDialog.show();
+                    }, "提示", "该工序填写的层厚定点位置信息还未上传到云端，是否上传？", "否", "是");
+                    promptDialog.show();
+                }
             }
         }
     }
@@ -481,17 +493,17 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
      *
      * @return
      */
-    private boolean checkData() {
-        String ext1 = getIntent().getStringExtra("ext1");
-        String ext2 = getIntent().getStringExtra("ext2");
-        String ext3 = getIntent().getStringExtra("ext3");
-        String ext4 = getIntent().getStringExtra("ext4");
-        String ext5 = getIntent().getStringExtra("ext5");
-        String ext6 = getIntent().getStringExtra("ext6");
-        String ext7 = getIntent().getStringExtra("ext7");
-        String ext8 = getIntent().getStringExtra("ext8");
-        String ext9 = getIntent().getStringExtra("ext9");
-        String ext10 = getIntent().getStringExtra("ext10");
+    private boolean checkData(WorkingBean workingBean) {
+        String ext1 = workingBean.getExt1();
+        String ext2 = workingBean.getExt2();
+        String ext3 = workingBean.getExt3();
+        String ext4 = workingBean.getExt4();
+        String ext5 = workingBean.getExt5();
+        String ext6 = workingBean.getExt6();
+        String ext7 = workingBean.getExt7();
+        String ext8 = workingBean.getExt8();
+        String ext9 = workingBean.getExt9();
+        String ext10 = workingBean.getExt10();
 
         if (TextUtils.isEmpty(ext1) && TextUtils.isEmpty(ext2) && TextUtils.isEmpty(ext3) && TextUtils.isEmpty(ext4) && TextUtils.isEmpty(ext5) && TextUtils.isEmpty(ext6) && TextUtils.isEmpty(ext7) && TextUtils.isEmpty(ext8) && TextUtils.isEmpty(ext9) && TextUtils.isEmpty(ext10)) {
             return true;
@@ -535,40 +547,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             public void returnUserId(String userId) {
                 if (!StrUtil.isEmpty(userId)) {
                     submitElevation(false);
-
-                    // 设置为已上传
-                /*for (ContractorListPhotosBean newBean : submitPictureList) {
-                    // 待审核
-                    PictureBean pictureBean = new PictureBean();
-                    pictureBean.setPhotoId(newBean.getPhotoId());
-                    pictureBeanList.add(pictureBean);
-                    String photoId = newBean.getPhotoId();
-                    for (ContractorListPhotosBean bean : phoneList) {
-                        if (bean.getPhotoAddress().equals(newBean.getPhotoAddress())) {
-                            bean.setIsNewAdd(-1);
-                            bean.setPhotoId(photoId);
-                            bean.setIsToBeUpLoad(-1);
-                            bean.setCheckFlag("0");
-                        }
-                    }
-                }*/
-
-                    // 0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监
-                    // 0:待拍照 1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过
-                    /*if (userLevel.equals("0")) {
-                        status = "2";
-                    } else if (userLevel.equals("1")) {
-                        status = "4";
-                    } else if (userLevel.equals("2")) {
-                        status = "6";
-                    }
-
-                    for (ContractorListPhotosBean bean : phoneList) {
-                        bean.setRoleFlag("0");
-                    }*/
-
                     adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
-
                     LinearLayoutManager ms = new LinearLayoutManager(mContext);
                     ms.setOrientation(LinearLayoutManager.HORIZONTAL);
                     rvContractorDetails.setLayoutManager(ms);
@@ -739,7 +718,6 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            /*FileDescriptionDialog fileDescriptionDialog;*/
             switch (requestCode) {
                 case 1:
                     if (data == null) {
@@ -778,7 +756,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
 
                     fileUrlName = String.valueOf(System.currentTimeMillis()) + ".png";
 
-                    //fileInfoListener.fileInfo("太原东二环高速公路", rootNodeName, "", "", false);
+                    fileInfoListener.fileInfo("太原东二环高速公路", processPath, "", "", false);
                     // 填写图片信息
                     /*fileDescriptionDialog = new FileDescriptionDialog(mContext, rootNodeName, fileInfoListener);
                     fileDescriptionDialog.show();*/
@@ -869,7 +847,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             // 添加图片按钮
             phoneList.add(0, addPhotoBean);
             // 显示本地保存照片文件夹
-            imgBtnPhotos.setVisibility(View.VISIBLE);
+            //imgBtnPhotos.setVisibility(View.VISIBLE);
             // 异步将图片存储到SD卡指定文件夹下
             new StorageTask().execute(strings);
         }
@@ -1095,7 +1073,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     public void returnTrueOrFalse(boolean trueOrFalse) {
                         if (trueOrFalse) {
                             // 隐藏本地图片菜单
-                            imgBtnPhotos.setVisibility(View.GONE);
+                            //imgBtnPhotos.setVisibility(View.GONE);
                             btnLocalPreservation.setVisibility(View.GONE);
 
                             // 完成工序接口
@@ -1605,7 +1583,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         }
     }
 
-    @Event({R.id.imgBtnLeft, R.id.btnRight, R.id.btnRightOne, R.id.imgBtnAdd, R.id.btnMeasuredRecord, R.id.btnLocalSave, R.id.btnSavePhoto, R.id.imgBtnPhotos, R.id.btnLocalPreservation })
+    @Event({R.id.imgBtnLeft, R.id.btnExamine, R.id.btnReject, R.id.imgBtnAdd, R.id.btnLocalSave, R.id.imgBtnPhotos, R.id.btnLocalPreservation })
     private void onClick(View v) {
         String type = (String) SpUtil.get(this, ConstantsUtil.USER_TYPE, "");
         String s;
@@ -1619,7 +1597,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 this.finish();
                 break;
             // 审核
-            case R.id.btnRight:
+            case R.id.btnExamine:
                 // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
                 // 工序状态 (0:待拍照1:已拍照 2:已提交初审 3:初审驳回 4:初审通过 5:复审驳回 6:复审通过 7:终审驳回 8:终审通过)
                 if ((userLevel.equals("1") || userLevel.equals("2")) && (processState.equals("1") || processState.equals("0"))) {
@@ -1634,7 +1612,6 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     return;
                 }
 
-                int num = Integer.valueOf(getIntent().getStringExtra("actualNumber"));
                 if (phoneList.size() < num) {
                     ToastUtil.showShort(mContext, "拍照数量不能小于最少拍照张数！");
                 } else {
@@ -1728,16 +1705,16 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                 break;
             // 拍照
             case R.id.imgBtnAdd:
-                takePictures();
-                /*if (getIntent().getStringExtra("canCheck").equals("0") && !userLevel.equals("0")) {
+                if (getIntent().getStringExtra("canCheck").equals("0") && !userLevel.equals("0")) {
                     ToastUtil.showLong(mContext, "该工序已提交给其它人处理，您不能拍照上传!");
                     return;
                 }
+
                 String sdSize = AppInfoUtil.getSDAvailableSize();
                 if (Integer.valueOf(sdSize) < 10) {
                     ToastUtil.showShort(mContext, "当前手机内存卡已无可用空间，请清理后再进行拍照！");
                 } else {
-                    if (txtLocationPosition.getText().toString().length() < 7 || txtLocationPosition.getText().toString().contains("正在定位")) {
+                    if (sLocation.length() < 7 || sLocation.contains("正在定位")) {
                         PromptDialog promptDialog = new PromptDialog(mContext, new ChoiceListener() {
                             @Override
                             public void returnTrueOrFalse(boolean trueOrFalse) {
@@ -1750,18 +1727,42 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     } else {
                         takePhotos();
                     }
-                }*/
+                }
                 break;
             // 实测记录
             case R.id.btnMeasuredRecord:
                 measuredRecord();
                 break;
-            // 驳回
+            // 本地保存
             case R.id.btnLocalSave:
+                if (localPhotoList.size() == 0) {
+                    ToastUtil.showShort(mContext, "您还未拍摄照片，请拍照后在进行保存！");
+                } else {
+                    ToastUtil.showShort(mContext, "照片已成功保存至本地！");
+                }
+                break;
+            // 驳回
+            case R.id.btnReject:
                 reject();
                 break;
-            // 保存层厚定点位置信息
-            case R.id.btnSavePhoto:
+            /*
+            // 预览本地存储照片
+              case R.id.imgBtnPhotos:
+                localPhotoList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+                // 图片浏览
+                ArrayList<String> urls = new ArrayList<>();
+                int len = localPhotoList.size();
+                for (int i = 0; i < len; i++) {
+                    String fileUrl = localPhotoList.get(i).getPhotoAddress();
+                    urls.add(fileUrl);
+                }
+                Intent intent = new Intent(mContext, ShowPhotosActivity.class);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
+                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(0));
+                startActivity(intent);
+                break;*/
+            // 保存层厚定点位置
+            case R.id.btnLocalPreservation:
                 if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
                     submitElevation(true);
                 } else {
@@ -1775,28 +1776,6 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                         }
                     }, "提示", "当前无可用网络，是否先保存至本地？", "否", "是");
                     promptDialog.show();
-                }
-                break;
-            // 本地保存文件夹
-            case R.id.imgBtnPhotos:
-                localPhotoList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
-                // 图片浏览
-                ArrayList<String> urls = new ArrayList<>();
-                int len = localPhotoList.size();
-                for (int i = 0; i < len; i++) {
-                    String fileUrl = localPhotoList.get(i).getPhotoAddress();
-                    urls.add(fileUrl);
-                }
-                Intent intent = new Intent(mContext, ShowPhotosActivity.class);
-                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_URLS, urls);
-                intent.putExtra(ShowPhotosActivity.EXTRA_IMAGE_INDEX, Integer.valueOf(0));
-                startActivity(intent);
-                break;
-            case R.id.btnLocalPreservation:
-                if (localPhotoList.size() == 0) {
-                    ToastUtil.showShort(mContext, "您还未拍摄照片，请拍照后在进行保存！");
-                } else {
-                    ToastUtil.showShort(mContext, "照片已成功保存至本地！");
                 }
                 break;
         }
