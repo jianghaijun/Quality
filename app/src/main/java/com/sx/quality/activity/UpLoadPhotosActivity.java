@@ -156,8 +156,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
             requestAuthority(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionListener() {
                 @Override
                 public void agree() {
-                    if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 50) {
-                        V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前50张？", "否", "是");
+                    if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 20) {
+                        V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前20张？", "否", "是");
                         promptDialog.show();
                     } else {
                         UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
@@ -176,8 +176,8 @@ public class UpLoadPhotosActivity extends BaseActivity {
                 }
             });
         } else {
-            if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 50) {
-                V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前50张？", "否", "是");
+            if (upLoadPhotosBeenList != null && upLoadPhotosBeenList.size() > 20) {
+                V_2PromptDialog promptDialog = new V_2PromptDialog(mContext, listener, "提示", "当前照片数量过多，是否先上传前20张？", "否", "是");
                 promptDialog.show();
             } else {
                 UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
@@ -196,7 +196,7 @@ public class UpLoadPhotosActivity extends BaseActivity {
         public void returnTrueOrFalse(boolean trueOrFalse) {
             isCanUpload = false;
             if (trueOrFalse) {
-                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createTime desc limit 0, 50", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
+                upLoadPhotosBeenList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? order by createTime desc limit 0, 20", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, "")).find(ContractorListPhotosBean.class);
                 UpLoadPhotosDialog upLoadPhotosDialog = new UpLoadPhotosDialog(mContext, upLoadPhotosBeenList, choiceListener);
                 upLoadPhotosDialog.setCancelable(false);
                 upLoadPhotosDialog.setCanceledOnTouchOutside(false);
