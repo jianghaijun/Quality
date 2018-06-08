@@ -108,7 +108,6 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/fourteen_sp" />
 
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sevenTy_dp"
@@ -116,22 +115,11 @@
                     android:background="@null"
                     android:padding="@dimen/five_dp">
 
-                    <Button
-                        android:id="@+id/btnSearch"
-                        android:layout_width="@dimen/sixty_dp"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:background="#004672"
-                        android:text="@string/search"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/fourteen_sp" />
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="@dimen/ten_dp"
                         android:layout_marginRight="@dimen/five_dp"
-                        android:layout_toRightOf="@+id/btnSearch"
+                        android:layout_toLeftOf="@+id/btnSearch"
                         android:background="@null"
                         android:orientation="vertical">
 
@@ -139,13 +127,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@null">
+                            android:background="#004672">
 
                             <TextView
                                 android:id="@+id/txtBegan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="#004672"
+                                android:background="@null"
                                 android:gravity="center"
                                 android:paddingLeft="@dimen/five_dp"
                                 android:paddingRight="@dimen/five_dp"
@@ -158,9 +146,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_toRightOf="@+id/txtBegan"
-                                android:background="#004672"
+                                android:background="@null"
                                 android:gravity="center"
-                                android:padding="@dimen/five_dp"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/fourteen_sp" />
 
@@ -170,13 +157,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:background="@null">
+                            android:background="#004672">
 
                             <TextView
                                 android:id="@+id/txtEnd"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="#004672"
+                                android:background="@null"
                                 android:gravity="center"
                                 android:paddingLeft="@dimen/five_dp"
                                 android:paddingRight="@dimen/five_dp"
@@ -191,12 +178,22 @@
                                 android:layout_toRightOf="@+id/txtEnd"
                                 android:background="#004672"
                                 android:gravity="center"
-                                android:padding="@dimen/five_dp"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/fourteen_sp" />
-
                         </RelativeLayout>
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnSearch"
+                        android:layout_width="@dimen/eighty_dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/five_dp"
+                        android:background="#004672"
+                        android:text="@string/search"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fourteen_sp" />
                 </RelativeLayout>
 
                 <TableLayout
