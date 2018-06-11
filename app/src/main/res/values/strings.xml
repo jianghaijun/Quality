@@ -144,7 +144,7 @@
     <string name="personal_msg">个人消息</string>
     <string name="same_day">各分部历史完成工序查询</string>
     <string name="working_info">截止目前各分部工序完成总统计图</string>
-    <string name="search">工序\n查询</string>
+    <string name="search">工序查询</string>
     <string name="beginDate">开始时间</string>
     <string name="endDate">结束时间</string>
     <string name="input_working_name">请输入工序名称</string>

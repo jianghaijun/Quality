@@ -104,10 +104,6 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                         takePhotoActivity(workingBean, true);
                     } else {
                         // 提示拍照要求--->详情
-                        workingBean.setProcessName("混凝土");
-                        workingBean.setPhotoNumber("3");
-                        workingBean.setPhotoDistance("整体+局部特写");
-                        workingBean.setPhotoContent("必须入像：标识牌（工程名称、分项/工序、技术员名字、监理名字、拍摄时间），责任人（现场技术员、现场监理、班组长），工程工序");
                         PhotoRequirementsDialog dialog = new PhotoRequirementsDialog(mContext, new ChoiceListener() {
                             @Override
                             public void returnTrueOrFalse(boolean trueOrFalse) {
