@@ -2,7 +2,6 @@ package com.sx.quality.utils;
 
 import com.sx.quality.bean.SameDayBean;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -18,7 +17,7 @@ public class ConstantsUtil {
     //public static final String BASE_URL = "http://jd.sxlqjt.cn:8002/";
     /**山西路桥路径*/
     //public static final String BASE_URL = "http://jd.sxlqjt.cn:8002";
-    public static final String BASE_URL = "http://192.168.1.155:8080/";
+    public static final String BASE_URL = "http://192.168.1.119:8080/web/";
 
     /**山西路桥传1  长陵机电传2*/
     public static String roleFlag = "1";
@@ -53,6 +52,8 @@ public class ConstantsUtil {
     public static String USER_HEAD = "USER_HEAD";
     /** 屏幕高度 */
     public static String SCREEN_HEIGHT = "SCREEN_HEIGHT";
+    /** 选中人员id */
+    public static String SELECT_USER_ID = "SELECT_USER_ID";
     /** OkHttpClient */
     public static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(30000L, TimeUnit.MILLISECONDS)
@@ -109,6 +110,8 @@ public class ConstantsUtil {
     public static final String PROCESS_PROCESS_REPORT_TODAY = prefix + "getProcessReportDetailToday";
     /** 按分部获取当日报表详情 */
     public static final String PROCESS_AND_PHOTO_LIST_TODAY = prefix + "getProcessAndPhotoListToday  ";
+    /** 获取人员结构 */
+    public static final String PERSONNEL_LIST = prefix + "getSysDepartmentUserAllTree  ";
 
     /**
      * 文件存储路径
