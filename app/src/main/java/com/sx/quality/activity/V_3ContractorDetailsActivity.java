@@ -251,7 +251,21 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         // 是否直接弹出相机
         boolean isPopTakePhoto = getIntent().getBooleanExtra("isPopTakePhoto", false);
         if (isPopTakePhoto) {
-            takePictures();
+            if (Build.VERSION.SDK_INT >= 23) {
+                requestAuthority(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA}, new PermissionListener() {
+                    @Override
+                    public void agree() {
+                        takePictures();
+                    }
+
+                    @Override
+                    public void refuse(List<String> refusePermission) {
+                        ToastUtil.showLong(mContext, "您已拒绝拍照权限!");
+                    }
+                });
+            } else {
+                takePictures();
+            }
         }
     }
 

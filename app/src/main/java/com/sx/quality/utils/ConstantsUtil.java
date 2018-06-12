@@ -16,8 +16,8 @@ public class ConstantsUtil {
     /**长陵机电路径*/
     //public static final String BASE_URL = "http://jd.sxlqjt.cn:8002/";
     /**山西路桥路径*/
-    //public static final String BASE_URL = "http://jd.sxlqjt.cn:8002";
-    public static final String BASE_URL = "http://192.168.1.155:8080/";
+    public static final String BASE_URL = "http://jd.sxlqjt.cn:8002";
+    //public static final String BASE_URL = "http://192.168.1.155:8080/";
 
     /**山西路桥传1  长陵机电传2*/
     public static String roleFlag = "1";
@@ -26,11 +26,11 @@ public class ConstantsUtil {
     /**山西路桥传21  长陵机电传2*/
     public static String roleFlag_3 = "21";
     /**前缀*/
-    //public static String prefix = "/apisxdehzl/";
-    public static String prefix = "";
+    public static String prefix = "/apisxdehzl/";
+    //public static String prefix = "";
     /**登录accountId*/
-    //public static String ACCOUNT_ID = "sx_qyh_deh_id";
-    public static String ACCOUNT_ID = "sx_qyh_woa_id";
+    public static String ACCOUNT_ID = "sx_qyh_deh_id";
+    //public static String ACCOUNT_ID = "sx_qyh_woa_id";
 
     /**参数格式*/
     public static SameDayBean sameDayBean;
