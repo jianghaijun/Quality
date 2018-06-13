@@ -3,7 +3,7 @@
     <string name="app_title">长临高速机电工程项目部</string>-->
     <string name="app_name">太原东二环高速公路</string>
     <string name="app_title">太原东二环高速公路</string>
-    <string name="not_network">当前无可用网络!</string>
+    <string name="not_network">当前无任何可用网络，请链接网络后重试！</string>
     <string name="person_setting">个人设置</string>
     <string name="contractor">承包商</string>
     <string name="owner">业主</string>
