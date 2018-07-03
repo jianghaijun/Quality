@@ -131,10 +131,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
         <!-- 实测记录 -->
-        <activity
+        <!--<activity
             android:name=".ActualMeasurementActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape" />-->
         <!-- 工序报表 -->
         <activity
             android:name=".ProcessReportActivity"
@@ -142,6 +142,20 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SameDayProjectDetailsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PersonnelSelectionActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" >
+
+        </activity>
+        <activity
+            android:name=".V_3WorkingProcedureActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".V_3ContractorDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
     </application>

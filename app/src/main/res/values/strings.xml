@@ -140,6 +140,7 @@
     <string name="PositionOfPileNumber">桩号位置</string>
     <string name="please_input_remark">请输入</string>
     <string name="no_msg">暂无消息！</string>
+    <string name="no_data">未选中任何人员！</string>
     <string name="local_msg">系统消息</string>
     <string name="personal_msg">个人消息</string>
     <string name="same_day">各分部历史完成工序查询</string>
@@ -151,4 +152,5 @@
     <string name="commonly_used">常用工序</string>
     <string name="all">全部工序</string>
     <string name="company_name">山西路桥集团  太原东二环高速有限公司</string>
+    <string name="already_select">已选择人员</string>
 </resources>
