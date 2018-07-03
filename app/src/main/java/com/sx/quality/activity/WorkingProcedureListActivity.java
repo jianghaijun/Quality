@@ -11,6 +11,7 @@ import com.sx.quality.adapter.BaseAdapter;
 import com.sx.quality.adapter.ILoadCallback;
 import com.sx.quality.adapter.LoadMoreAdapterWrapper;
 import com.sx.quality.adapter.OnLoad;
+import com.sx.quality.adapter.ToDoWorkingAdapter;
 import com.sx.quality.adapter.WorkingProcedureListAdapter;
 import com.sx.quality.model.WorkingModel;
 import com.sx.quality.utils.ConstantsUtil;
@@ -34,10 +35,12 @@ import okhttp3.Response;
 
 public class WorkingProcedureListActivity extends BaseActivity {
     private WorkingProcedureListAdapter mAdapter;
+    private ToDoWorkingAdapter toDoAdapter;
     private WorkingProcedureHolder holder;
     private BaseAdapter baseAdapter;
     private Activity mContext;
     private int sum = 0;
+    private int viewType;
 
     public WorkingProcedureListActivity(Activity mContext, View layoutWorkingProcedure) {
         this.mContext = mContext;
@@ -45,7 +48,12 @@ public class WorkingProcedureListActivity extends BaseActivity {
         x.view().inject(holder, layoutWorkingProcedure);
     }
 
-    public void setDate() {
+    /**
+     * 赋值
+     * @param viewType
+     */
+    public void setDate(int viewType) {
+        this.viewType = viewType;
         if (!JudgeNetworkIsAvailable.isNetworkAvailable(mContext)) {
             holder.rvMsg.setVisibility(View.GONE);
             holder.txtMsg.setVisibility(View.VISIBLE);
@@ -53,10 +61,15 @@ public class WorkingProcedureListActivity extends BaseActivity {
             holder.rvMsg.setVisibility(View.VISIBLE);
             holder.txtMsg.setVisibility(View.GONE);
             // 创建被装饰者类实例
-            mAdapter = new WorkingProcedureListAdapter(mContext);
-            mAdapter.updateData();
+            if (viewType == 1) {
+                mAdapter = new WorkingProcedureListAdapter(mContext);
+                mAdapter.updateData();
+            } else {
+                toDoAdapter = new ToDoWorkingAdapter(mContext);
+                toDoAdapter.updateData();
+            }
             // 创建装饰者实例，并传入被装饰者和回调接口
-            baseAdapter = new LoadMoreAdapterWrapper(mAdapter, new OnLoad() {
+            baseAdapter = new LoadMoreAdapterWrapper(viewType == 1 ? mAdapter : toDoAdapter, new OnLoad() {
                 @Override
                 public void load(int pagePosition, int pageSize, ILoadCallback callback) {
                     boolean isHave = pagePosition != 1 && (pagePosition-1) * pageSize > sum;
@@ -74,17 +87,31 @@ public class WorkingProcedureListActivity extends BaseActivity {
      * @param callback
      */
     private void getData(int pagePosition, int pageSize, final ILoadCallback callback, final boolean isHave) {
+        String url = "";
         JSONObject obj = new JSONObject();
         try {
             obj.put("page", pagePosition);
             obj.put("limit", pageSize);
-            obj.put("levelId", "1CE49FQJ4SMK6501A8C00000ED406270");
+            switch (viewType) {
+                case 1:
+                    url = ConstantsUtil.BASE_URL + ConstantsUtil.TO_DO_LIST;
+                    break;
+                case 2:
+                    // 待办
+                    url = ConstantsUtil.BASE_URL + ConstantsUtil.TO_DO_LIST;
+                    break;
+                case 3:
+                    // 已办
+                    url = ConstantsUtil.BASE_URL + ConstantsUtil.HAS_TO_DO_LIST;
+                    break;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, obj.toString());
         Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.PROCESS_LIST)
+                .url(url)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
@@ -115,14 +142,18 @@ public class WorkingProcedureListActivity extends BaseActivity {
                                     sum = model.getTotalNumber();
                                     // 数据的处理最终还是交给被装饰的adapter来处理
                                     if (!isHave) {
-                                        mAdapter.appendData(model.getData());
+                                        if (viewType == 1) {
+                                            mAdapter.appendData(model.getData());
+                                        } else {
+                                            toDoAdapter.appendData(model.getData());
+                                        }
                                     }
 
                                     callback.onSuccess();
 
                                     if (!isHave) {
                                         int sumSize = holder.rvMsg.computeVerticalScrollRange();
-                                        int size = mAdapter.getItemCount() * DensityUtil.dip2px(144);
+                                        int size = viewType == 1 ? mAdapter.getItemCount() * DensityUtil.dip2px(144) : toDoAdapter.getItemCount() * DensityUtil.dip2px(144);
                                         boolean isFull = size >= sumSize ? true : false;
                                         if (model == null || model.getData() == null || model.getData().size() == 0 || !isFull) {
                                             callback.onFailure();

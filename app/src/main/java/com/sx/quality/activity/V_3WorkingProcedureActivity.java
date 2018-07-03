@@ -173,9 +173,9 @@ public class V_3WorkingProcedureActivity extends BaseActivity {
      * 初始化列表数据
      */
     private void initRecyclerViewData() {
-        takePictureActivity.setDate();
-        toBeAuditedActivity.setDate();
-        finishActivity.setDate();
+        takePictureActivity.setDate(1);
+        toBeAuditedActivity.setDate(2);
+        finishActivity.setDate(3);
     }
 
     /**

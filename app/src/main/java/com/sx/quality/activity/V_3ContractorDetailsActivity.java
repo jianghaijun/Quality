@@ -37,6 +37,7 @@ import com.sx.quality.bean.ContractorListPhotosBean;
 import com.sx.quality.bean.OrderStatus;
 import com.sx.quality.bean.PictureBean;
 import com.sx.quality.bean.TimeLineModel;
+import com.sx.quality.bean.WorkFlowBean;
 import com.sx.quality.bean.WorkingBean;
 import com.sx.quality.dialog.HorizontalScreenHintDialog;
 import com.sx.quality.dialog.MeasuredProjectDialog;
@@ -53,9 +54,11 @@ import com.sx.quality.manager.GPSLocationListener;
 import com.sx.quality.manager.GPSLocationManager;
 import com.sx.quality.model.PictureModel;
 import com.sx.quality.model.ProcessDetailsModel;
+import com.sx.quality.model.WorkFlowModel;
 import com.sx.quality.service.LocationService;
 import com.sx.quality.utils.AppInfoUtil;
 import com.sx.quality.utils.ConstantsUtil;
+import com.sx.quality.utils.DataUtils;
 import com.sx.quality.utils.FileUtil;
 import com.sx.quality.utils.ImageUtil;
 import com.sx.quality.utils.JsonUtils;
@@ -188,11 +191,12 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private File imgFile;
     /*------------------------------拍照End---------------------------------------*/
     private Context mContext;
-    private String processId, taskId, processState, sLocation, userLevel, processPath, strType;
+    private String processId, taskId, workId, processState, sLocation, userLevel, processPath, strType;
     private double longitude, latitude;
     // 最少拍照张数
     private int num;
     private Gson gson = new Gson();
+    private WorkFlowModel model;
     /**
      * 是否已点击上报按钮
      */
@@ -211,20 +215,22 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.back_btn));
         txtTitle.setText(R.string.app_name);
 
-        // 工序id
-        processId = getIntent().getStringExtra("processId");
         // 任务id
-        taskId = getIntent().getStringExtra("taskId");
-        // 工序状态
+        workId = getIntent().getStringExtra("workId");
+
+
+        /*// 工序状态
         processState = getIntent().getStringExtra("processState");
         // 工序位置
         processPath = getIntent().getStringExtra("processPath");
         // 根据用户级别显示不同按钮(0:施工人员; 1:质检部长; 2:监理; 3:领导 21:监理组长 22：总监)
-        userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");
+        userLevel = (String) SpUtil.get(this, ConstantsUtil.USER_LEVEL, "");*/
 
         initFilePath();
         getPermissions();
-        initData();
+
+
+        // initData();
 
         if (JudgeNetworkIsAvailable.isNetworkAvailable(this)) {
             getData();
@@ -237,7 +243,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
             if (workList != null && workList.size() > 0) {
                 bean = workList.get(0);
             }
-            setData(bean);
+            //setData(bean);
         }
 
         initTimeLineView();
@@ -370,11 +376,10 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     private void getData() {
         LoadingUtils.showLoading(mContext);
         Map<String, Object> map = new HashMap<>();
-        map.put("processId", processId);
-        map.put("taskId", taskId);
+        map.put("workId", workId);
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, gson.toJson(map));
         Request request = new Request.Builder()
-                .url(ConstantsUtil.BASE_URL + ConstantsUtil.GET_PROCESS_DETAIL)
+                .url(ConstantsUtil.BASE_URL + ConstantsUtil.FLOW_DETAILS)
                 .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
@@ -391,31 +396,18 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     List<String> strList = analysisJson(jsonData);
                     if (strList.size() > 0) {
                         if (strList.get(0).equals("true")) {
-                            final List<ContractorListPhotosBean> fileList = new ArrayList<>();
-                            final ProcessDetailsModel model = gson.fromJson(jsonData, ProcessDetailsModel.class);
-                            try {
-                                JSONObject jsonObj = new JSONObject(jsonData);
-                                jsonObj = new JSONObject(jsonObj.get("data").toString());
-                                JSONArray jsonArr = jsonObj.has("sxZlPhotoList") ? jsonObj.getJSONArray("sxZlPhotoList") : null;
-                                int size = jsonArr == null ? 0 : jsonArr.length();
-                                for (int k = 0; k < size; k++) {
-                                    ContractorListPhotosBean bean = gson.fromJson(jsonArr.get(k).toString(), ContractorListPhotosBean.class);
-                                    fileList.add(bean);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
+                            // 解析
+                            model = gson.fromJson(jsonData, WorkFlowModel.class);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // 查询本地保存的照片
-                                    phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
+                                    /*phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ? order by createTime desc", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), processId).find(ContractorListPhotosBean.class);
                                     localPhotoList = phoneList;
                                     for (ContractorListPhotosBean photo : fileList) {
                                         phoneList.add(photo);
-                                    }
-                                    setData(model.getData());
+                                    }*/
+                                    setData(model.getMainTableObject());
                                     LoadingUtils.hideLoading();
                                 }
                             });
@@ -433,19 +425,18 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
     /**
      * 赋值
      */
-    private void setData(WorkingBean workingBean) {
-        txtRejectPhoto.setText(workingBean.getDismissal()); // 驳回原因
-        String strLocation = workingBean.getLocation();
-        String distance = strLocation == null || TextUtils.isEmpty(strLocation) || strLocation.equals("unknown") || strLocation.equals("null") ? "" : strLocation;
-        txtLocation.setText(distance);    // 拍照位置
-        txtWorkingNo.setText(workingBean.getProcessCode());     // 工序编号
-        txtWorkingName.setText(workingBean.getProcessName());   // 工序名称
-        txtDistanceAngle.setText(workingBean.getPhotoDistance());   // 距离角度
-        txtEntryTime.setText(DateUtil.format(DateUtil.date(workingBean.getEnterTime() == 0 ? System.currentTimeMillis() : workingBean.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));    // 检查时间
-        num = Integer.valueOf(StrUtil.isEmpty(workingBean.getActualNumber()) ? "3" : workingBean.getActualNumber());
-        txtTakePhotoNum.setText("最少拍照" + num + "张");  // 拍照张三
-        txtTakePhotoRequirement.setText(workingBean.getPhotoContent());     // 拍照要求
-        // 图片列表
+    private void setData(WorkFlowBean flowBean) {
+        txtWorkingName.setText(flowBean.getProcess_name());   // 工序名称
+        txtWorkingNo.setText(flowBean.getProcess_code());     // 工序编号
+        txtTakePhotoRequirement.setText(flowBean.getPhoto_content());     // 拍照要求
+        txtDistanceAngle.setText(flowBean.getPhoto_distance());   // 距离角度
+        txtTakePhotoNum.setText("最少拍照" + flowBean.getPhoto_number() + "张");  // 拍照张三
+        txtEntryTime.setText(DataUtils.setDataToStr(flowBean.getEnter_time()));    // 检查时间
+        txtLocation.setText(flowBean.getLocation());    // 拍照位置
+        txtRejectPhoto.setText(flowBean.getDismissal()); // 驳回原因
+
+
+        /*// 图片列表
         if (phoneList != null) {
             adapter = new V_2ContractorDetailsAdapter(mContext, phoneList, listener, getIntent().getStringExtra("levelId"), processState);
             LinearLayoutManager ms = new LinearLayoutManager(this);
@@ -486,7 +477,7 @@ public class V_3ContractorDetailsActivity extends BaseActivity {
                     promptDialog.show();
                 }
             }
-        }
+        }*/
     }
 
     /**

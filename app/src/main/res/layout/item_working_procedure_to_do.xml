@@ -22,7 +22,7 @@
             android:layout_marginRight="@dimen/ten_dp"
             android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <ImageView
             android:id="@+id/imgViewProgress"
@@ -42,7 +42,7 @@
             android:gravity="left|center"
             android:paddingLeft="@dimen/ten_dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
     </RelativeLayout>
 
     <View
@@ -56,8 +56,8 @@
         android:id="@+id/rlProcedurePath"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/one_dp"
         android:layout_marginLeft="@dimen/one_dp"
+        android:layout_marginRight="@dimen/one_dp"
         android:background="@drawable/touch_bg">
 
         <TextView
@@ -70,7 +70,7 @@
             android:minHeight="@dimen/sevenTy_dp"
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/fourteen_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <ImageView
             android:id="@+id/imgViewDetails"
@@ -91,25 +91,19 @@
         android:background="@color/gray" />
 
     <RelativeLayout
+        android:id="@+id/rlBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
         android:minHeight="@dimen/thirty_five">
 
-        <ImageView
-            android:id="@+id/imgViewTakePhoto"
-            android:layout_width="@dimen/twenty_dp"
-            android:layout_height="@dimen/twenty_dp"
+        <RelativeLayout
+            android:id="@+id/llRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/ten_dp"
-            android:background="@drawable/take_photos" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/ten_dp"
-            android:layout_toLeftOf="@+id/imgViewTakePhoto">
+            android:background="@null">
 
             <ImageView
                 android:id="@+id/imgViewProcedureState"
@@ -130,15 +124,22 @@
                 android:gravity="center"
                 android:maxHeight="@dimen/thirty_five"
                 android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/ten_dp"
+            android:layout_toLeftOf="@+id/llRight">
 
             <ImageView
                 android:id="@+id/imgViewPersonals"
                 android:layout_width="@dimen/twenty_dp"
                 android:layout_height="@dimen/twenty_dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/ten_dp"
                 android:layout_marginRight="@dimen/five_dp"
-                android:layout_toRightOf="@+id/txtProcedureState"
                 android:background="@drawable/personals" />
 
             <TextView
@@ -152,7 +153,7 @@
                 android:paddingBottom="@dimen/five_dp"
                 android:paddingTop="@dimen/five_dp"
                 android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp" />
 
             <TextView
                 android:id="@+id/txtCheckTime"
@@ -163,7 +164,7 @@
                 android:gravity="left|center"
                 android:maxHeight="@dimen/thirty_five"
                 android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp" />
+                android:textSize="@dimen/twelve_sp" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

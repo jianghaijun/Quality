@@ -7,6 +7,8 @@ import java.util.Date;
 
 import android.annotation.SuppressLint;
 
+import cn.hutool.core.date.DateUtil;
+
 /**
  * 日期
  *
@@ -24,6 +26,17 @@ public class DataUtils {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
         return formatter.format(curDate);
+    }
+
+    /**
+     * 获取系统当前日期
+     *
+     * @return
+     */
+    public static String setDataToStr(long lData) {
+        Date date = DateUtil.date(lData == 0 ? System.currentTimeMillis() : lData);
+        String strDate = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+        return strDate;
     }
 
     /**

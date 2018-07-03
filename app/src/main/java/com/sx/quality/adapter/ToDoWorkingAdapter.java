@@ -28,22 +28,16 @@ import java.util.List;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 
-public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> {
+public class ToDoWorkingAdapter extends BaseAdapter<List<WorkingBean>> {
     private Activity mContext;
-    private int pageType;
 
-    public WorkingProcedureListAdapter(Context mContext, int pageType) {
+    public ToDoWorkingAdapter(Context mContext) {
         this.mContext = (Activity) mContext;
-        this.pageType = pageType;
     }
 
     @Override
     public MsgHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 1) {
-            return new MsgHolder(LayoutInflater.from(mContext).inflate(R.layout.item_working_procedure, parent, false));
-        } else {
-            return new MsgHolder(LayoutInflater.from(mContext).inflate(R.layout.item_working_procedure_to_do, parent, false));
-        }
+        return new MsgHolder(LayoutInflater.from(mContext).inflate(R.layout.item_working_procedure_to_do, parent, false));
     }
 
     @Override
@@ -56,7 +50,6 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
         private TextView txtProcedureName;  // 工序名称
         private TextView txtProcedurePath;  // 工序部位
         private ImageView imgViewProgress; // 拍照
-        private ImageView imgViewTakePhoto; // 拍照
         private TextView txtProcedureState; // 拍照状态
         private TextView txtPersonals;      // 审核人员
         private TextView txtCheckTime;      // 检查时间
@@ -71,7 +64,6 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
             txtProcedureState = (TextView) itemView.findViewById(R.id.txtProcedureState);
             txtPersonals = (TextView) itemView.findViewById(R.id.txtPersonals);
             txtCheckTime = (TextView) itemView.findViewById(R.id.txtCheckTime);
-            imgViewTakePhoto = (ImageView) itemView.findViewById(R.id.imgViewTakePhoto);
             imgViewProgress = (ImageView) itemView.findViewById(R.id.imgViewProgress);
             rlProcedurePath = (RelativeLayout) itemView.findViewById(R.id.rlProcedurePath);
             rlBottom = (RelativeLayout) itemView.findViewById(R.id.rlBottom);
@@ -81,17 +73,9 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
             txtReviewProgress.setText(data.getTrackStatus());
             txtProcedureName.setText(data.getNodeName());
             txtProcedurePath.setText(data.getTitle());
-            if (pageType == 1) {
-                txtProcedureState.setText("待拍照");
-                txtPersonals.setText(StrUtil.isEmpty(data.getCheckNameAll()) ? "未审核" : data.getCheckNameAll());
-                txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getEnterTime() == 0 ? System.currentTimeMillis() : data.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));
-                imgViewTakePhoto.setOnClickListener(new onClick(data));
-            } else {
-                txtProcedureState.setText(data.getNodeName());
-                txtPersonals.setText(data.getSendUserName());
-                txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getSendTime() == 0 ? System.currentTimeMillis() : data.getSendTime()), "yyyy-MM-dd HH:mm:ss"));
-            }
-
+            txtProcedureState.setText(data.getNodeName());
+            txtPersonals.setText(data.getSendUserName());
+            txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getSendTime() == 0 ? System.currentTimeMillis() : data.getSendTime()), "yyyy-MM-dd HH:mm:ss"));
             rlBottom.setOnClickListener(new onClick(data));
             imgViewProgress.setOnClickListener(new onClick(data));
             txtReviewProgress.setOnClickListener(new onClick(data));

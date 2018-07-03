@@ -1,12 +1,26 @@
 package com.sx.quality.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +45,8 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,16 +57,29 @@ import okhttp3.Response;
 public class PersonnelSelectionActivity extends BaseActivity {
     @ViewInject(R.id.imgBtnLeft)
     private ImageButton imgBtnLeft;
+    @ViewInject(R.id.btnRight)
+    private Button btnRight;
     @ViewInject(R.id.txtTitle)
     private TextView txtTitle;
+    @ViewInject(R.id.txtNode)
+    private TextView txtNode;
+    @ViewInject(R.id.txtPersonalName)
+    private TextView txtPersonalName;
+    @ViewInject(R.id.txtNoPerson)
+    private TextView txtNoPerson;
+    @ViewInject(R.id.llPersonal)
+    private LinearLayout llPersonal;
     // 工序人员List
     @ViewInject(R.id.lvContractorList)
     private ListView lvPersonnelList;
     // 适配器
     private PersonnelTreeAdapter treeAdapter;
     private Activity mContext;
-    private Node choiceNode;
+    private List<Node> allNode = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
+    private Node selectNode;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,11 +92,37 @@ public class PersonnelSelectionActivity extends BaseActivity {
         imgBtnLeft.setVisibility(View.VISIBLE);
         imgBtnLeft.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.back_btn));
         txtTitle.setText("人员选择");
+        btnRight.setVisibility(View.VISIBLE);
+        btnRight.setText("确认");
 
         lvPersonnelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                treeAdapter.ExpandOrCollapse(position);
+                PersonnelTreeAdapter.ViewHolder holder = (PersonnelTreeAdapter.ViewHolder) view.getTag();
+                for (Node node : allNode) {
+                    if (node.getLevelId().equals(holder.levelId)) {
+                        if (!node.getFolderFlag().equals("2")) {
+                            boolean isHave = false;
+                            for (Node n : nodeList) {
+                                if (n.getLevelId().equals(node.getLevelId())) {
+                                    isHave = true;
+                                    break;
+                                }
+                            }
+                            if (!isHave) {
+                                nodeList.add(node);
+                                txtNode.setText(getClickableSpan(nodeList));
+                            }
+                        } else {
+                            selectNode = node;
+                            txtNoPerson.setVisibility(View.GONE);
+                            txtPersonalName.setText(node.getLevelName());
+                            llPersonal.setVisibility(View.VISIBLE);
+                        }
+                        treeAdapter.ExpandOrCollapse(node);
+                        break;
+                    }
+                }
             }
         });
 
@@ -76,7 +131,124 @@ public class PersonnelSelectionActivity extends BaseActivity {
         } else {
             ToastUtil.showShort(mContext, getString(R.string.not_network));
         }
+
+        txtNode.setClickable(true);
+        nodeList.clear();
+        Node node = new Node();
+        node.setLevelName("全部");
+        node.setLevelId("");
+        nodeList.add(node);
+        txtNode.setText(getClickableSpan(nodeList));
+        txtNode.setMovementMethod(LinkMovementMethod.getInstance());
+        txtNode.setHighlightColor(ContextCompat.getColor(mContext, android.R.color.transparent));
     }
+
+    /**
+     * 添加节点
+     * @param node
+     */
+    private void addNode(Node node) {
+        if (node.getParent() != null) {
+            allNode.add(node);
+        }
+        if (node.isLeaf())
+            return;
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            addNode(node.getChildren().get(i));
+        }
+    }
+
+    /**
+     * 局部点击
+     * @param nodeList
+     * @return
+     */
+    private SpannableString getClickableSpan(List<Node> nodeList) {
+        StringBuffer sb = new StringBuffer();
+        int size = nodeList.size();
+        for (int i = 0; i < size; i++) {
+            if (i < size - 1) {
+                sb.append(nodeList.get(i).getLevelName() + "/");
+            } else {
+                sb.append(nodeList.get(i).getLevelName());
+            }
+        }
+        SpannableString spannableInfo = new SpannableString(sb.toString());
+        // 查找可点击文本
+        String str = sb.toString();
+        int start, end;
+        for (int i = 0; i < size; i++) {
+            start = str.indexOf(nodeList.get(i).getLevelName());
+            end = start + nodeList.get(i).getLevelName().length();
+            // 实现局部点击效果
+            spannableInfo.setSpan(new Clickable(nodeList.get(i)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (i < size - 1) {
+                // 用来消除点击文字下划线
+                spannableInfo.setSpan(new NoUnderlineSpan(),start, end, Spanned.SPAN_MARK_MARK);
+            } else {
+                // 用来消除点击文字下划线
+                spannableInfo.setSpan(new NoUnderlineAndColorSpan(),start, end, Spanned.SPAN_MARK_MARK);
+            }
+        }
+        return spannableInfo;
+    }
+
+    /**
+     * 局部点击事件
+     */
+    class Clickable extends ClickableSpan implements View.OnClickListener {
+        private  Node node;
+
+        public Clickable(Node node) {
+            this.node = node;
+        }
+
+        @Override
+        public void onClick(View v){
+            nodeList.clear();
+            if (node.getLevelName().equals("全部")) {
+                Node n = new Node();
+                n.setLevelName("全部");
+                n.setLevelId("");
+                nodeList.add(n);
+                txtNode.setText(getClickableSpan(nodeList));
+                treeAdapter.ExpandOrCollapse(allNode.get(0).getParent());
+            } else {
+                Node n = new Node();
+                n.setLevelName("全部");
+                n.setLevelId("");
+                nodeList.add(n);
+                setParent(node);
+                txtNode.setText(getClickableSpan(nodeList));
+                treeAdapter.ExpandOrCollapse(node);
+            }
+        }
+    }
+
+    private void setParent(Node node) {
+        nodeList.add(node);
+
+        if (node.getParent() != null && node.getParent().getLevelId() != null) {
+            setParent(node.getParent());
+        }
+    }
+
+    public class NoUnderlineSpan extends UnderlineSpan {
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            ds.setColor(ContextCompat.getColor(mContext, R.color.v_2_main_bg));
+            ds.setUnderlineText(false);
+        }
+    }
+
+    public class NoUnderlineAndColorSpan extends UnderlineSpan {
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            ds.setColor(ContextCompat.getColor(mContext, R.color.black));
+            ds.setUnderlineText(false);
+        }
+    }
+
 
     /**
      * 获取数据
@@ -86,7 +258,7 @@ public class PersonnelSelectionActivity extends BaseActivity {
         RequestBody requestBody = RequestBody.create(ConstantsUtil.JSON, "");
         Request request = new Request.Builder()
                 .url(ConstantsUtil.BASE_URL + ConstantsUtil.PERSONNEL_LIST)
-                .addHeader("token", "b7055c4fe607ed7a0f18657f5dd1c6c16c06ebf2916e2317ce8377d0b9997ead66cd18d64da1d14224b6df3590b79b9e0b1c7aed240dfc23fd4f5e6a08c04fa665d908c4eea8f80a07c84e9be5682c9fe8364fed7826b064ee590527e2a8dadcac2bfa83d1058f217a8b2239721edbad01c3c688ebf77ea619249bfbf3f2b6364ac108f0cfe4feee7f28a5bc22aaead9")
+                .addHeader("token", (String) SpUtil.get(mContext, ConstantsUtil.TOKEN, ""))
                 .post(requestBody)
                 .build();
         ConstantsUtil.okHttpClient.newCall(request).enqueue(callback);
@@ -162,20 +334,17 @@ public class PersonnelSelectionActivity extends BaseActivity {
             // 创建根节点
             Node root = new Node();
             root.setFolderFlag("1");
-
             personnelNode(personnelNode, root);
-
-            treeAdapter = new PersonnelTreeAdapter(this, root);
-            /*设置展开和折叠时图标*/
-            treeAdapter.setExpandedCollapsedIcon(R.drawable.open, R.drawable.fold);
-            /*设置默认展开级别*/
-            treeAdapter.setExpandLevel(1);
-            lvPersonnelList.setAdapter(treeAdapter);
-            if (choiceNode != null) {
-                treeAdapter.expandParentNode(choiceNode);
-                treeAdapter.notifyDataSetChanged();
+            addNode(root);
+            if (selectNode != null) {
+                txtNoPerson.setVisibility(View.GONE);
+                txtPersonalName.setText(selectNode.getLevelName());
+            } else {
+                txtNoPerson.setVisibility(View.VISIBLE);
+                llPersonal.setVisibility(View.GONE);
             }
-            //SetListHeight.setListViewHeight(lvPersonnelList);
+            treeAdapter = new PersonnelTreeAdapter(this, root.getChildren());
+            lvPersonnelList.setAdapter(treeAdapter);
         }
     }
 
@@ -193,17 +362,16 @@ public class PersonnelSelectionActivity extends BaseActivity {
         n.setLevelName(personnelNode.getLabel());
         n.setParentId(personnelNode.getValuePid());
         n.setFolderFlag(personnelNode.getType());
-        String selectUserId = (String) SpUtil.get(mContext, ConstantsUtil.SELECT_USER_ID, "");
         n.setExpanded(false);
-        n.setCanClick(selectUserId.equals(personnelNode.getValue()));
-        if (selectUserId.equals(personnelNode.getValue())) {
-            choiceNode = n;
-        }
         root.add(n);
+        String selectUserId = (String) SpUtil.get(mContext, ConstantsUtil.SELECT_USER_ID, "");
+        if (selectUserId.equals(n.getLevelId())) {
+            selectNode = n;
+        }
 
         if (personnelNode.getChildren() != null && personnelNode.getChildren().size() > 0) {
-            for (PersonnelBean personnel : personnelNode.getChildren()) {
-                personnelNode(personnel, n);
+            for (PersonnelBean node : personnelNode.getChildren()) {
+                personnelNode(node, n);
             }
         }
     }
@@ -226,11 +394,20 @@ public class PersonnelSelectionActivity extends BaseActivity {
         });
     }
 
-    @Event({R.id.imgBtnLeft})
+    @Event({R.id.imgBtnLeft, R.id.ivDelete, R.id.btnRight})
     private void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgBtnLeft:
                 this.finish();
+                break;
+            case R.id.ivDelete:
+                SpUtil.remove(mContext, ConstantsUtil.SELECT_USER_ID);
+                treeAdapter.notifyDataSetChanged();
+                txtNoPerson.setVisibility(View.VISIBLE);
+                llPersonal.setVisibility(View.GONE);
+                break;
+            case R.id.btnRight:
+                ToastUtil.showShort(mContext, selectNode.getLevelName());
                 break;
         }
     }

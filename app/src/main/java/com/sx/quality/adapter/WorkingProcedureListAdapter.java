@@ -55,6 +55,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
         private TextView txtPersonals;      // 审核人员
         private TextView txtCheckTime;      // 检查时间
         private RelativeLayout rlProcedurePath;      // 检查时间
+        private RelativeLayout rlBottom;      //
 
         public MsgHolder(View itemView) {
             super(itemView);
@@ -67,16 +68,18 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
             imgViewTakePhoto = (ImageView) itemView.findViewById(R.id.imgViewTakePhoto);
             imgViewProgress = (ImageView) itemView.findViewById(R.id.imgViewProgress);
             rlProcedurePath = (RelativeLayout) itemView.findViewById(R.id.rlProcedurePath);
+            rlBottom = (RelativeLayout) itemView.findViewById(R.id.rlBottom);
         }
 
         public void bind(WorkingBean data) {
-            txtReviewProgress.setText("待审核");
-            txtProcedureName.setText(data.getProcessName());
-            txtProcedurePath.setText(data.getLevelNameAll().replace(",", "→"));
+            txtReviewProgress.setText(data.getTrackStatus());
+            txtProcedureName.setText(data.getNodeName());
+            txtProcedurePath.setText(data.getTitle());
             txtProcedureState.setText("待拍照");
             txtPersonals.setText(StrUtil.isEmpty(data.getCheckNameAll()) ? "未审核" : data.getCheckNameAll());
-            txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getEnterTime() == 0.0 || data.getEnterTime() == 0 ? System.currentTimeMillis() : data.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));
+            txtCheckTime.setText(DateUtil.format(DateUtil.date(data.getEnterTime() == 0 ? System.currentTimeMillis() : data.getEnterTime()), "yyyy-MM-dd HH:mm:ss"));
             imgViewTakePhoto.setOnClickListener(new onClick(data));
+            rlBottom.setOnClickListener(new onClick(data));
             imgViewProgress.setOnClickListener(new onClick(data));
             txtReviewProgress.setOnClickListener(new onClick(data));
             rlProcedurePath.setOnClickListener(new onClick(data));
@@ -99,7 +102,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                 case R.id.imgViewTakePhoto:
                     List<ContractorListPhotosBean> phoneList = DataSupport.where("isToBeUpLoad = 1 AND userId = ? AND processId = ?", (String) SpUtil.get(mContext, ConstantsUtil.USER_ID, ""), workingBean.getProcessId()).find(ContractorListPhotosBean.class);
                     boolean isHave = phoneList == null || phoneList.size() == 0 ? false : true;
-                    if (!workingBean.getProcessState().equals("0") || isHave) {
+                    if (!workingBean.getTrackStatus().equals("0") || isHave) {
                         // 直接拍照--->详情
                         takePhotoActivity(workingBean, true);
                     } else {
@@ -119,6 +122,7 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
                 case R.id.txtReviewProgress:
                     reviewProgressActivity(workingBean.getProcessId());
                     break;
+                case R.id.rlBottom:
                 case R.id.rlProcedurePath:
                     takePhotoActivity(workingBean, false);
                     break;
@@ -136,6 +140,10 @@ public class WorkingProcedureListAdapter extends BaseAdapter<List<WorkingBean>> 
         intent.putExtra("processPath", bean.getLevelNameAll());
         intent.putExtra("taskId", bean.getTaskId());
         intent.putExtra("canCheck", bean.getCanCheck());
+        intent.putExtra("isPopTakePhoto", isPopTakePhoto);
+        intent.putExtra("flowId", bean.getFlowId());
+        intent.putExtra("workId", bean.getWorkId());
+        intent.putExtra("flowName", bean.getFlowName());
         intent.putExtra("isPopTakePhoto", isPopTakePhoto);
         mContext.startActivity(intent);
     }

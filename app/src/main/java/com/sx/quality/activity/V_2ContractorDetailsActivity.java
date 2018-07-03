@@ -1179,7 +1179,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
     /**
      * 实测记录
      */
-    private void measuredRecord() {
+    /*private void measuredRecord() {
         if (JudgeNetworkIsAvailable.isNetworkAvailable(V_2ContractorDetailsActivity.this)) {
             MeasuredProjectDialog measuredProjectDialog = new MeasuredProjectDialog(mContext, new ReportListener() {
                 @Override
@@ -1196,7 +1196,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
         } else {
             ToastUtil.showLong(mContext, "当前无网络，请连接你的网络!");
         }
-    }
+    }*/
 
     /**
      * 驳回
@@ -1664,7 +1664,7 @@ public class V_2ContractorDetailsActivity extends BaseActivity {
                 break;
             // 实测记录
             case R.id.btnMeasuredRecord:
-                measuredRecord();
+                //measuredRecord();
                 break;
             // 驳回
             case R.id.btnLocalSave:

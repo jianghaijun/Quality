@@ -1,3 +1,4 @@
+/*
 package com.sx.quality.activity;
 
 import android.content.Context;
@@ -105,9 +106,11 @@ public class ActualMeasurementActivity extends BaseActivity {
         }
     }
 
-    /**
+    */
+/**
      * 获取数据
-     */
+     *//*
+
     private void getData() {
         LoadingUtils.showLoading(mContext);
         JSONObject obj = new JSONObject();
@@ -194,9 +197,11 @@ public class ActualMeasurementActivity extends BaseActivity {
         });
     }
 
-    /**
+    */
+/**
      * 保存数据
-     */
+     *//*
+
     private void saveData (List<MeasuredRecordBean> measuredList) {
         LoadingUtils.showLoading(mContext);
         Gson gson = new Gson();
@@ -274,10 +279,12 @@ public class ActualMeasurementActivity extends BaseActivity {
         });
     }
 
-    /**
+    */
+/**
      * 赋值
      * @param measuredList
-     */
+     *//*
+
     private void setData(List<MeasuredRecordBean> measuredList) {
         txtWorkingName.setText(processName);
         txtWorkingPosition.setText(rootNodeName);
@@ -532,3 +539,4 @@ public class ActualMeasurementActivity extends BaseActivity {
         ScreenManagerUtil.popActivity(this);
     }
 }
+*/
